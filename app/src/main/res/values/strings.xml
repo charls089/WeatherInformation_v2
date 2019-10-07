@@ -1,0 +1,126 @@
+<resources>
+    <string name="app_name">날씨정보</string>
+
+    <string name="info_progress">데이터 로딩중…</string>
+    <string name="info_location_timeout">위치 정보를 가져오는데 실패했습니다.(시간초과) 잠시 후 다시 진행합니다.</string>
+    <string name="info_deny_permission">"일부 기능이 제한될 수 있습니다."</string>
+    <string name="info_exit_message">\'뒤로\'버튼 한번 더 누르시면 종료됩니다.</string>
+    <string name="info_delete_message">선택하신 장소가 삭제됩니다.</string>
+    <string name="info_use_location_service">위치 서비스를 사용합니다.</string>
+    <string name="info_stop_use_location_service">위치 서비스 사용이 중지되었습니다.</string>
+    <string name="info_location_permission_request_message">"위치 서비스를 사용하려면 위치 권한이 필요합니다. 해당 권한을 아래의 방법으로 허용해주세요.\r\n\r\n   앱 권한 > 위치 스위치 ON"</string>
+
+    <string name="symbol_colon">:</string>
+    <string name="symbol_slash">/</string>
+    <string name="symbol_celsius">℃</string>
+    <string name="symbol_percent">%</string>
+    <string name="symbol_mm">mm</string>
+    <string name="symbol_cm">cm</string>
+    <string name="symbol_air">ppm</string>
+    <string name="symbol_dust">㎍/㎥</string>
+    <string name="symbol_yes">예</string>
+    <string name="symbol_no">아니요</string>
+    <string name="symbol_cancel">취소</string>
+
+    <string name="title_on_time_temperature">현재 날씨</string>
+    <string name="title_daily_temperature">일일 날씨</string>
+    <string name="title_weekly_temperature">주간 날씨</string>
+    <string name="title_life_list">생활 지수</string>
+    <string name="title_dialog_delete">즐겨찾는 장소 삭제</string>
+    <string name="title_dialog_location_permission">위치 권한이 필요함</string>
+
+    <string name="text_wind_chill">체감온도</string>
+    <string name="text_yesterday">어제</string>
+    <string name="text_am">오전</string>
+    <string name="text_pm">오후</string>
+    <string name="text_dust_pm_10">미세먼지</string>
+    <string name="text_dust_pm_25">초미세먼지</string>
+    <string name="text_dust_index_info">(미세먼지 단위 : ㎍/㎥)</string>
+    <string name="text_food_poisoning">식중독지수</string>
+    <string name="text_thi_index">불쾌지수</string>
+    <string name="text_heat_index">열지수</string>
+    <string name="text_heat_sensory_index">더위체감지수</string>
+    <string name="text_air_pollution_index">대기오염확산지수</string>
+    <string name="text_uv_index">자외선지수</string>
+    <string name="text_winter_index">동파가능지수</string>
+
+    <string name="text_on_time_rain_gauge">시간당 강수량</string>
+
+    <string name="info_add_place_maximum">즐겨 찾는 장소는 최대 5개까지 등록이 가능합니다.</string>
+    <string name="info_add_place_already">해당 장소는 이미 추가되어 있습니다.</string>
+    <string name="info_add_place_complete">장소 추가 완료</string>
+
+    <string name="info_data_is_empty">데이터를 가져오는데 실패하였습니다.\n다시 시도해주세요.</string>
+
+    <string name="guide_on_time_tpr">현재 기온</string>
+    <string name="guide_on_time_humidity">현재 습도</string>
+    <string name="guide_on_time_rain">현재 강수량</string>
+    <string name="guide_update_time">업데이트 시간</string>
+    <string name="guide_place_name">날씨 위치</string>
+    <string name="guide_special_weather_list">발효 중인 기상특보</string>
+    <string name="guide_today_min_tpr">최저기온</string>
+    <string name="guide_today_max_tpr">최고기온</string>
+    <string name="guide_on_time_wc_tpr">현재 체감온도</string>
+    <string name="guide_yesterday_wc_tpr">어제 체감온도</string>
+    <string name="guide_favorite_place">즐겨찾는 장소</string>
+    <string name="guide_district">시/도/군/구/읍/면/동</string>
+
+    <string name="guide_life_list_name">생활지수명</string>
+    <string name="guide_life_list_data">생활지수 데이터</string>
+
+    <string name="guide_search_place">지역 검색</string>
+    <string name="guide_prvn_select">광역시/도 선택</string>
+    <string name="guide_city_select">시/군/구 선택</string>
+    <string name="guide_district_select">읍/면/동 선택</string>
+    <string name="guide_area_select">아래 목록에서 원하는 지역 선택 후 \'다음\' 버튼을 눌러주세요.</string>
+
+    <string name="guide_btn_select">선택</string>
+    <string name="guide_btn_ok">완료</string>
+    <string name="guide_btn_prev">이전</string>
+
+    <string name="content_description_close">close dialog</string>
+
+    <!-- 코드값 매핑 -->
+    <string name="FCT">예보시간</string>
+    <string name="POP">강수확률</string>
+    <string name="PTY">강수형태</string>
+    <string name="R06">6시간 강수량</string>
+    <string name="RN1">1시간 강수량</string>
+    <string name="REH">습도</string>
+    <string name="S06">6시간 신적설</string>
+    <string name="SKY">하늘 상태</string>
+    <string name="TPR">예상기온</string>
+    <string name="TMN">아침 최저기온</string>
+    <string name="TMX">낮 최고기온</string>
+    <string name="UUU">풍속(동서성분)</string>
+    <string name="VVV">풍속(남북성분)</string>
+    <string name="WAV">파고</string>
+    <string name="VEC">풍향</string>
+    <string name="WSD">풍속</string>
+    <string name="LGT">낙뢰</string>
+    <string name="WCT">체감온도</string>
+
+    <string name="mapping_sejong">세종</string>
+
+    <!-- 메뉴 제목-->
+    <string name="favorite_place">즐겨찾는 장소</string>
+    <string name="refresh">새로고침</string>
+    <string name="settings">설정</string>
+    <string name="all_weather">전국 날씨</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+</resources>

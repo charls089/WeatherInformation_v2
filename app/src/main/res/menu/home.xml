@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_add_location"
+        android:icon="@drawable/baseline_add_24"
+        android:title="@string/favorite_place"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_refresh"
+        android:icon="@drawable/baseline_refresh_24"
+        android:title="@string/refresh"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_setting"
+        android:icon="@drawable/baseline_settings_white_24"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_show_all"
+        android:title="@string/all_weather"
+        app:showAsAction="never"/>
+</menu>

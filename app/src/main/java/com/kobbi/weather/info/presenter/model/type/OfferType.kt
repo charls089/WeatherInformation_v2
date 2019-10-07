@@ -1,0 +1,61 @@
+package com.kobbi.weather.info.presenter.model.type
+
+import com.kobbi.weather.info.util.DLog
+import com.kobbi.weather.info.util.Utils
+import java.util.*
+
+enum class OfferType(
+    val baseTimeList: Array<String>,
+    val offerTime: Int
+) {
+    BASE(Array(24) { i -> "${if (i < 10) "0" else ""}${i}00" }, 10),
+    CURRENT(Array(24) { i -> "${if (i < 10) "0" else ""}${i}30" }, 15),
+    DAILY(arrayOf("0200", "0500", "0800", "1100", "1400", "1700", "2000", "2300"), 10),
+    WEEKLY(arrayOf("0600", "1800"), 50),
+    LIFE(arrayOf("0900"), 10),
+    AIR(Array(24) { i -> "${if (i < 10) "0" else ""}${i}00" }, 15),
+    MINMAX(arrayOf("0200"), 0);
+
+    companion object {
+        private const val TAG = "OfferType"
+        private val DEFAULT_OFFER_TIME_RANGE = 0..7
+
+        fun isUpdateTime(type: OfferType): Boolean {
+            val currentTime = Utils.getCurrentTime("HHmm", System.currentTimeMillis()).toInt()
+            return type.baseTimeList.any {
+                val offerTime = it.toInt() + type.offerTime
+                currentTime - offerTime in DEFAULT_OFFER_TIME_RANGE
+            }
+        }
+
+        fun getBaseDateTime(type: OfferType): Pair<String, String> {
+            var baseTime = "0000"
+                val calendar = GregorianCalendar().apply {
+                    if (type == MINMAX) {
+                        baseTime = "0200"
+                    } else {
+                        val time = Utils.getCurrentTime("HH:mm", this.timeInMillis).split(":")
+                        val hour = time[0]
+                        val min = time[1]
+                        DLog.d(TAG, "getBaseDateTime() --> time : $time")
+                        val baseTimeList = type.baseTimeList
+                        val offerTime = type.offerTime
+                        for (i in baseTimeList.indices) {
+                            if ((hour + min).toInt() < (baseTimeList[i].toInt() + offerTime)) {
+                                baseTime = if (i == 0) {
+                                    this.add(Calendar.DATE, -1)
+                                    baseTimeList[baseTimeList.size - 1]
+                                } else {
+                                    baseTimeList[i - 1]
+                                }
+                                break
+                            }
+                        }
+                    }
+                }
+            val baseDate = Utils.getCurrentTime(time = calendar.timeInMillis)
+            DLog.d(TAG, "getBaseDateTime() --> baseDate : $baseDate / baseTime : $baseTime")
+            return Pair(baseDate, baseTime)
+        }
+    }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">newsky2.kma.go.kr</domain>
+        <domain includeSubdomains="true">openapi.airkorea.or.kr</domain>
+        <domain includeSubdomains="true">www.juso.go.kr</domain>
+        <domain includeSubdomains="true">openapi.epost.go.kr</domain>
+    </domain-config>
+</network-security-config>

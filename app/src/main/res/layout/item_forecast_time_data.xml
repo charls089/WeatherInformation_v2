@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="daily"
+            type="com.kobbi.weather.info.data.database.entity.DailyWeather" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="1.2dp"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_item_forecast_daily_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="8dp"
+            android:textSize="18dp"
+            app:setTime="@{daily.dateTime}"
+            tools:ignore="SpUsage" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/iv_item_forecast_daily_SKY"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:setDateTime="@{daily.dateTime}"
+                app:setPty="@{daily.pty}"
+                app:setSky="@{daily.sky}"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_item_forecast_daily_TPR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:text="@{daily.t3h}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/symbol_celsius" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/icons8_rainy_weather_24"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_item_forecast_daily_POP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:text="@{daily.pop}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/symbol_percent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/icons8_hygrometer_24"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_item_forecast_daily_REH"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:text="@{daily.reh}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/symbol_percent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/WCT" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/symbol_colon" />
+
+            <TextView
+                android:id="@+id/tv_item_forecast_daily_WCT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{daily.wct}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/symbol_celsius" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>
