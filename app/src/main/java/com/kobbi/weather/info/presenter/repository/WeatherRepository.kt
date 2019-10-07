@@ -214,9 +214,23 @@ class WeatherRepository private constructor(context: Context) {
                 when (lifeCode?.type) {
                     Constants.TYPE_DAY -> {
                         val today = getMapData(it, "today").toInt()
-                        val tomorrow = getMapData(it, "tomorrow").toInt()
-                        val data = LifeIndexDay(key, areaCode, dateTime.toLong(), code, today)
-                        mWeatherDB.lifeDayDao().insert(data)
+                        val todayData = LifeIndexDay(key, areaCode, dateTime.toLong(), code, today)
+                        mWeatherDB.lifeDayDao().insert(todayData)
+                        Utils.convertStringToDate(date = dateTime)?.let { tomorrowDate ->
+                            val tomorrow = getMapData(it, "tomorrow").toInt()
+                            Calendar.getInstance().run {
+                                time = tomorrowDate
+                                add(Calendar.DATE, 1)
+                                val tomorrowData = LifeIndexDay(
+                                    key,
+                                    areaCode,
+                                    Utils.getCurrentTime(time = this.timeInMillis).toLong(),
+                                    code,
+                                    tomorrow
+                                )
+                                mWeatherDB.lifeDayDao().insert(tomorrowData)
+                            }
+                        }
                     }
                     Constants.TYPE_3HOUR -> {
                         val valueList = mutableListOf<String>()
