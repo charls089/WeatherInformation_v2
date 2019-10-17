@@ -1,7 +1,6 @@
 package com.kobbi.weather.info.ui.view.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.preference.PreferenceFragmentCompat
 import com.kobbi.weather.info.R

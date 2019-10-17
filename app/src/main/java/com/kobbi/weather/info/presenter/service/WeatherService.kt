@@ -5,7 +5,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.OnLocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager

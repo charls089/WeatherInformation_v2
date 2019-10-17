@@ -59,9 +59,9 @@ class ApiConstants private constructor() {
         const val API_DONG_URL = "getEupMyunDongList"      //읍,면,동
     }
 
-    enum class LifeApi(name: String, val url: String, val startDate: Int, val endDate: Int) {
+    enum class LifeApi(name: String, val url: String, val startMonth: Int, val endMonth: Int) {
         SENSORY_TEM("체감온도", "getSensorytemLifeList", Calendar.NOVEMBER, Calendar.MARCH),
-        WINTER("자외선지수", "getWinterLifeList", Calendar.DECEMBER, Calendar.FEBRUARY),
+        WINTER("동파가능지수", "getWinterLifeList", Calendar.DECEMBER, Calendar.FEBRUARY),
         ULTRA_V("자외선지수", "getUltrvLifeList", Calendar.MARCH, Calendar.NOVEMBER),
         FSN("식중독지수", "getFsnLifeList", Calendar.JANUARY, Calendar.DECEMBER),
         HEAT("열지수", "getHeatLifeList", Calendar.JUNE, Calendar.SEPTEMBER),
@@ -70,10 +70,17 @@ class ApiConstants private constructor() {
         SENSORY_HEAT("더위체감지수", "getSensoryHeatLifeList", Calendar.MAY, Calendar.SEPTEMBER);
 
         companion object {
+            @JvmStatic
             fun checkRequestUrl(): List<LifeApi> {
-                val currentDate = Calendar.getInstance().get(Calendar.DATE)
+                val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
                 return values().filter {
-                    currentDate >= it.startDate || currentDate <= it.endDate
+                    it.run {
+                        if (startMonth <= endMonth) {
+                            currentMonth in startMonth..endMonth
+                        } else {
+                            currentMonth in startMonth..Calendar.DECEMBER || currentMonth in Calendar.JANUARY..endMonth
+                        }
+                    }
                 }
             }
         }

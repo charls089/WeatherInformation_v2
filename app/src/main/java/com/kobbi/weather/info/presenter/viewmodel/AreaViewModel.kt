@@ -1,15 +1,12 @@
 package com.kobbi.weather.info.presenter.viewmodel
 
 import android.app.Application
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.presenter.service.ServiceManager
-import com.kobbi.weather.info.util.SharedPrefHelper
 
 class AreaViewModel(application: Application) : AndroidViewModel(application) {
     private val weatherRepository = WeatherRepository.getInstance(application)

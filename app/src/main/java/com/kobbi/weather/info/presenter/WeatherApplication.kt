@@ -2,7 +2,6 @@ package com.kobbi.weather.info.presenter
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.presenter.service.ServiceManager
 import com.kobbi.weather.info.util.DLog

@@ -208,7 +208,8 @@ class WeatherRepository private constructor(context: Context) {
                 val dateTime = date.dropLast(2)
                 val baseTime = date.takeLast(2)
                 val lifeCode = LifeCode.findLifeCode(code)
-                val key = "${areaNo}_${code}_$dateTime"
+                val keyPrefix = "${areaNo}_${code}_"
+                val key = "$keyPrefix$dateTime"
                 DLog.d(javaClass, "code : $code, areaNo : $areaNo, dateTime : $dateTime")
                 DLog.d(javaClass, "lifeCode : $lifeCode")
                 when (lifeCode?.type) {
@@ -221,10 +222,13 @@ class WeatherRepository private constructor(context: Context) {
                             Calendar.getInstance().run {
                                 time = tomorrowDate
                                 add(Calendar.DATE, 1)
+                                val tomorrowDateTime =
+                                    Utils.getCurrentTime(time = this.timeInMillis).toLong()
+                                val tomorrowKey = "$keyPrefix$tomorrowDateTime"
                                 val tomorrowData = LifeIndexDay(
-                                    key,
+                                    tomorrowKey,
                                     areaCode,
-                                    Utils.getCurrentTime(time = this.timeInMillis).toLong(),
+                                    tomorrowDateTime,
                                     code,
                                     tomorrow
                                 )
