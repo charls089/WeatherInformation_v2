@@ -22,6 +22,7 @@ class SelectPlaceDialog : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
+        isCancelable = false
         val binding: DialogSelectAreaBinding =
             DataBindingUtil.inflate(inflater, R.layout.dialog_select_area, container, false)
         activity?.application?.let { application ->

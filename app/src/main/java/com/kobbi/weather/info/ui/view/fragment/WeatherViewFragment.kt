@@ -1,20 +1,18 @@
 package com.kobbi.weather.info.ui.view.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
 import com.kobbi.weather.info.R
-import com.kobbi.weather.info.data.database.entity.Area
 import com.kobbi.weather.info.databinding.FragmentWeatherBinding
 import com.kobbi.weather.info.presenter.viewmodel.AreaViewModel
 import com.kobbi.weather.info.presenter.viewmodel.WeatherViewModel
-import kotlinx.android.synthetic.main.fragment_weather.view.*
 
 class WeatherViewFragment : Fragment() {
 
@@ -50,7 +48,12 @@ class WeatherViewFragment : Fragment() {
                         ViewModelProviders.of(this)[WeatherViewModel::class.java]
 
                     areaVm =
-                        ViewModelProviders.of(this)[AreaViewModel::class.java]
+                        ViewModelProviders.of(this)[AreaViewModel::class.java].apply {
+                            state.observe(this@run, Observer {
+                                if (it == ViewPager.SCROLL_STATE_DRAGGING)
+                                    svContainer.smoothScrollTo(0, 0)
+                            })
+                        }
 
                     lifecycleOwner = this@WeatherViewFragment
                 }

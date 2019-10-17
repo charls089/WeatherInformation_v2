@@ -6,25 +6,21 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
-import com.kobbi.weather.info.data.database.entity.Area
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.presenter.service.ServiceManager
 
 class AreaViewModel(application: Application) : AndroidViewModel(application) {
     private val weatherRepository = WeatherRepository.getInstance(application)
-    val area:LiveData<List<Area>> get(){
-        Log.e("AreaViewModel","AreaViewModel.area get()")
-       return _area
-    }
+    val area = weatherRepository.loadActiveAreaLive()
     val position: LiveData<Int> get() = _position
     val state: LiveData<Int> get() = _state
 
-    private val _area = weatherRepository.loadActiveAreaLive()
     private val _position: MutableLiveData<Int> = MutableLiveData()
     private val _state: MutableLiveData<Int> = MutableLiveData()
 
     val listener: ViewPager.OnPageChangeListener = object : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(state: Int) {
+            Log.e("####", "onPageScrollStateChanged($state)")
             _state.postValue(state)
         }
 

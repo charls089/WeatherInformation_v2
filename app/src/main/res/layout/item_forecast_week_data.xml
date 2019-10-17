@@ -46,9 +46,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="12dp"
+                    android:text="오전"
                     android:textSize="14dp"
-                    tools:ignore="SpUsage"
-                    android:text="오전" />
+                    tools:ignore="SpUsage" />
 
                 <ImageView
                     android:id="@+id/iv_item_forecast_weekly_SKY_am"
@@ -68,13 +68,17 @@
                         android:id="@+id/tv_item_forecast_weekly_TMN"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{weekly.taMin}" />
+                        android:text="@{weekly.taMin}"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/symbol_celsius" />
+                        android:layout_marginStart="1.5dp"
+                        android:text="@string/symbol_celsius"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
                 </LinearLayout>
 
                 <ImageView
@@ -94,13 +98,17 @@
                         android:id="@+id/tv_item_forecast_weekly_POP_am"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{weekly.rnStAm}" />
+                        android:text="@{weekly.rnStAm}"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/symbol_percent" />
+                        android:layout_marginStart="1.5dp"
+                        android:text="@string/symbol_percent"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -124,9 +132,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="12dp"
+                    android:text="오후"
                     android:textSize="14dp"
-                    tools:ignore="SpUsage"
-                    android:text="오후" />
+                    tools:ignore="SpUsage" />
 
                 <ImageView
                     android:id="@+id/iv_item_forecast_weekly_SKY_pm"
@@ -146,13 +154,17 @@
                         android:id="@+id/tv_item_forecast_weekly_TMX"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{weekly.taMax}" />
+                        android:text="@{weekly.taMax}"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/symbol_celsius" />
+                        android:layout_marginStart="1.5dp"
+                        android:text="@string/symbol_celsius"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
                 </LinearLayout>
 
                 <ImageView
@@ -172,13 +184,17 @@
                         android:id="@+id/tv_item_forecast_weekly_POP_pm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{weekly.rnStPm}" />
+                        android:text="@{weekly.rnStPm}"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/symbol_percent" />
+                        android:layout_marginStart="1.5dp"
+                        android:text="@string/symbol_percent"
+                        android:textSize="13dp"
+                        tools:ignore="SpUsage" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

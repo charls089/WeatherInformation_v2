@@ -38,8 +38,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="5dp"
+            android:textSize="15dp"
             app:setDate="@{weatherVm.updateTime}"
-            app:setType="@{0}" />
+            app:setType="@{0}"
+            tools:ignore="SpUsage" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/sv_container"
@@ -245,21 +247,27 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
-                            android:text="@string/text_wind_chill" />
+                            android:text="@string/text_wind_chill"
+                            android:textSize="15dp"
+                            tools:ignore="SpUsage" />
 
                         <TextView
                             android:id="@+id/tv_forecast_now_wc_tpr_info"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="15dp"
                             app:setArea="@{areaVm.area}"
                             app:setPosition="@{areaVm.position}"
-                            app:setWct="@{weatherVm.currentWeather}" />
+                            app:setWct="@{weatherVm.currentWeather}"
+                            tools:ignore="SpUsage" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
-                            android:text="@string/symbol_celsius" />
+                            android:text="@string/symbol_celsius"
+                            android:textSize="15dp"
+                            tools:ignore="SpUsage" />
 
                         <LinearLayout
                             android:id="@+id/ll_yesterday_wc_temp"
@@ -274,27 +282,35 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:layout_marginEnd="10dp"
-                                android:text="@string/symbol_slash" />
+                                android:text="@string/symbol_slash"
+                                android:textSize="15dp"
+                                tools:ignore="SpUsage" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="10dp"
-                                android:text="@string/text_yesterday" />
+                                android:text="@string/text_yesterday"
+                                android:textSize="15dp"
+                                tools:ignore="SpUsage" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_yesterday_wc_tpr_info"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textSize="15dp"
                                 app:setArea="@{areaVm.area}"
                                 app:setPosition="@{areaVm.position}"
-                                app:setWct="@{weatherVm.yesterdayCurrent}" />
+                                app:setWct="@{weatherVm.yesterdayCurrent}"
+                                tools:ignore="SpUsage" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
-                                android:text="@string/symbol_celsius" />
+                                android:text="@string/symbol_celsius"
+                                android:textSize="15dp"
+                                tools:ignore="SpUsage" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -366,6 +382,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="15dp"
+                            tools:ignore="SpUsage"
                             android:text="@string/text_dust_index_info" />
                     </LinearLayout>
                 </LinearLayout>
