@@ -12,6 +12,10 @@
         <variable
             name="areaVm"
             type="com.kobbi.weather.info.presenter.viewmodel.AreaViewModel" />
+
+        <variable
+            name="position"
+            type="Integer" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +33,7 @@
             android:padding="5dp"
             android:textSize="21dp"
             app:address="@{areaVm.area}"
-            app:setPosition="@{areaVm.position}"
+            app:setPosition="@{position}"
             tools:ignore="SpUsage" />
 
         <TextView
@@ -77,7 +81,7 @@
                         android:textColor="#FFFFFF"
                         android:textSize="25dp"
                         app:setArea="@{areaVm.area}"
-                        app:setPosition="@{areaVm.position}"
+                        app:setPosition="@{position}"
                         app:setSpecial="@{weatherVm.special}"
                         tools:ignore="SpUsage" />
 
@@ -92,7 +96,7 @@
                             android:layout_height="40dp"
                             android:layout_gravity="center"
                             app:setArea="@{areaVm.area}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             app:setSky="@{weatherVm.currentWeather}"
                             tools:ignore="ContentDescription" />
 
@@ -104,7 +108,7 @@
                             android:layout_marginStart="8dp"
                             android:textSize="40dp"
                             app:setArea="@{areaVm.area}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             app:setTpr="@{weatherVm.currentWeather}"
                             tools:ignore="SpUsage" />
 
@@ -139,7 +143,7 @@
                                 android:padding="5dp"
                                 android:textSize="24dp"
                                 app:setArea="@{areaVm.area}"
-                                app:setPosition="@{areaVm.position}"
+                                app:setPosition="@{position}"
                                 app:setReh="@{weatherVm.currentWeather}"
                                 tools:ignore="SpUsage" />
 
@@ -160,7 +164,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="20dp"
                         app:setArea="@{areaVm.area}"
-                        app:setPosition="@{areaVm.position}"
+                        app:setPosition="@{position}"
                         app:setVisibility="@{weatherVm.currentWeather}">
 
                         <TextView
@@ -180,7 +184,7 @@
                             android:padding="5dp"
                             android:textSize="21dp"
                             app:setArea="@{areaVm.area}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             app:setRainGauge="@{weatherVm.currentWeather}"
                             tools:ignore="SpUsage" />
                     </LinearLayout>
@@ -198,7 +202,7 @@
                             android:textSize="21dp"
                             app:setArea="@{areaVm.area}"
                             app:setMinMax="@{weatherVm.minMaxTpr}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             tools:ignore="SpUsage" />
 
                         <TextView
@@ -225,7 +229,7 @@
                             android:textSize="21dp"
                             app:setArea="@{areaVm.area}"
                             app:setMinMax="@{weatherVm.minMaxTpr}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             tools:ignore="SpUsage" />
 
                         <TextView
@@ -257,7 +261,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="15dp"
                             app:setArea="@{areaVm.area}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             app:setWct="@{weatherVm.currentWeather}"
                             tools:ignore="SpUsage" />
 
@@ -274,7 +278,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:setArea="@{areaVm.area}"
-                            app:setPosition="@{areaVm.position}"
+                            app:setPosition="@{position}"
                             app:setVisibility="@{weatherVm.yesterdayCurrent}">
 
                             <TextView
@@ -300,7 +304,7 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="15dp"
                                 app:setArea="@{areaVm.area}"
-                                app:setPosition="@{areaVm.position}"
+                                app:setPosition="@{position}"
                                 app:setWct="@{weatherVm.yesterdayCurrent}"
                                 tools:ignore="SpUsage" />
 
@@ -341,7 +345,7 @@
                                 app:setAirCode="@{AirCode.PM10}"
                                 app:setAirLevel="@{weatherVm.airMeasure}"
                                 app:setArea="@{areaVm.area}"
-                                app:setPosition="@{areaVm.position}"
+                                app:setPosition="@{position}"
                                 tools:ignore="SpUsage" />
                         </LinearLayout>
 
@@ -368,7 +372,7 @@
                                 app:setAirCode="@{AirCode.PM25}"
                                 app:setAirLevel="@{weatherVm.airMeasure}"
                                 app:setArea="@{areaVm.area}"
-                                app:setPosition="@{areaVm.position}"
+                                app:setPosition="@{position}"
                                 tools:ignore="SpUsage" />
                         </LinearLayout>
                     </LinearLayout>
@@ -382,9 +386,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@string/text_dust_index_info"
                             android:textSize="15dp"
-                            tools:ignore="SpUsage"
-                            android:text="@string/text_dust_index_info" />
+                            tools:ignore="SpUsage" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -410,7 +414,7 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:setArea="@{areaVm.area}"
                     app:setDaily="@{weatherVm.dailyWeather}"
-                    app:setPosition="@{areaVm.position}" />
+                    app:setPosition="@{position}" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -433,7 +437,7 @@
                     android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:setArea="@{areaVm.area}"
-                    app:setPosition="@{areaVm.position}"
+                    app:setPosition="@{position}"
                     app:setWeekFromDaily="@{weatherVm.weekFromDaily}"
                     app:setWeekly="@{weatherVm.weeklyWeather}" />
 
@@ -458,7 +462,7 @@
                     app:createLifeDay="@{weatherVm.lifeIndexDay}"
                     app:createLifeHour="@{weatherVm.lifeIndexHour}"
                     app:setArea="@{areaVm.area}"
-                    app:setPosition="@{areaVm.position}">
+                    app:setPosition="@{position}">
 
                 </LinearLayout>
             </LinearLayout>
