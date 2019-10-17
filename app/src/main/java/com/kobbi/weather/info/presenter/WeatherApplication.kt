@@ -16,28 +16,18 @@ class WeatherApplication : Application() {
 
     companion object {
         private const val TAG = "WeatherApplication"
-        private var mIsServiceRunning = false
 
         fun startProcess(context: Context) {
-            DLog.d(TAG, "startProcess() -> isServiceRunning : $mIsServiceRunning")
-            if (!mIsServiceRunning) {
-                AreaCodeDatabase.initializeDB(context)
-                ServiceManager.restartService(context, true)
-            }
+            DLog.writeLogFile(context, TAG, "Start WeatherApplication")
+            AreaCodeDatabase.initializeDB(context)
+            ServiceManager.restartService(context, true)
         }
 
-        fun getServiceRunning() = mIsServiceRunning
-
-        fun setUpdateCheckTime(context: Context) {
-            val time = if (mIsServiceRunning) System.currentTimeMillis() else 0
+        fun setUpdateCheckTime(context: Context, time: Long = System.currentTimeMillis()) {
             SharedPrefHelper.setLong(context, SharedPrefHelper.KEY_LAST_UPDATE_CHECK_TIME, time)
         }
 
         fun getUpdateCheckTime(context: Context) =
             SharedPrefHelper.getLong(context, SharedPrefHelper.KEY_LAST_UPDATE_CHECK_TIME)
-
-        fun setServiceRunning(isStart: Boolean) {
-            mIsServiceRunning = isStart
-        }
     }
 }

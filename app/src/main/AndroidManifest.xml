@@ -45,9 +45,6 @@
         <service
             android:name=".presenter.service.WeatherService"
             android:exported="false" />
-        <service
-            android:name=".presenter.service.LocationService"
-            android:exported="false" />
 
         <receiver android:name=".presenter.receiver.RestartServiceReceiver">
             <intent-filter>

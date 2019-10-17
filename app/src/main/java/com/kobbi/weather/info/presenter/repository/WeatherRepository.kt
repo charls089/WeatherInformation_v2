@@ -210,8 +210,6 @@ class WeatherRepository private constructor(context: Context) {
                 val lifeCode = LifeCode.findLifeCode(code)
                 val keyPrefix = "${areaNo}_${code}_"
                 val key = "$keyPrefix$dateTime"
-                DLog.d(javaClass, "code : $code, areaNo : $areaNo, dateTime : $dateTime")
-                DLog.d(javaClass, "lifeCode : $lifeCode")
                 when (lifeCode?.type) {
                     Constants.TYPE_DAY -> {
                         val today = getMapData(it, "today").toInt()

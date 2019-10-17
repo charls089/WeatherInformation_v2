@@ -34,34 +34,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:selectDot="@{areaVm.position}" />
 
-        <ImageView
-            android:id="@+id/iv_prev"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/baseline_arrow_back_ios_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:setPosition="@{areaVm.position}"
-            app:setSize="@{areaVm.area.size()}"
-            app:setState="@{areaVm.state}"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/iv_forward"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/baseline_arrow_forward_ios_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:setPosition="@{areaVm.position}"
-            app:setSize="@{areaVm.area.size()}"
-            app:setState="@{areaVm.state}"
-            tools:ignore="ContentDescription" />
-
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/vp_main_page"
             android:layout_width="match_parent"

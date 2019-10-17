@@ -1,16 +1,20 @@
 package com.kobbi.weather.info.ui.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.data.database.entity.Area
 import com.kobbi.weather.info.databinding.FragmentWeatherBinding
 import com.kobbi.weather.info.presenter.viewmodel.AreaViewModel
 import com.kobbi.weather.info.presenter.viewmodel.WeatherViewModel
+import kotlinx.android.synthetic.main.fragment_weather.view.*
 
 class WeatherViewFragment : Fragment() {
 

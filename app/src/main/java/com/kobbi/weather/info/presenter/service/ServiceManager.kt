@@ -6,13 +6,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.receiver.RestartServiceReceiver
 import com.kobbi.weather.info.util.DLog
-import com.kobbi.weather.info.util.SharedPrefHelper
 
 object ServiceManager {
     private const val ACTION_RESTART = ".action.restart.weather.service"
@@ -22,7 +20,6 @@ object ServiceManager {
     private const val TAG = "ServiceManager"
 
     private var mWeatherService: WeatherService? = null
-    private var mLocationService: LocationService? = null
 
     private val mWeatherServiceConnection = object : ServiceConnection {
 
@@ -38,29 +35,14 @@ object ServiceManager {
         }
     }
 
-    private val mLocationServiceConnection = object : ServiceConnection {
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.d(TAG, "LocationService was disconnected.")
-        }
-
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.d(TAG, "LocationService was connected.")
-            val binder = service as LocationService.LocalBinder
-            mLocationService = binder.service
-            echo()
-        }
-    }
-
     fun restartService(context: Context, init: Boolean) {
+        DLog.writeLogFile(context, TAG, "ServiceManager.restartService($init)")
         context.applicationContext?.let {
             if (init) {
                 registerRestartReceiver(it)
             }
 
-            bindService(it, LocationService::class.java, mLocationServiceConnection)
             bindService(it, WeatherService::class.java, mWeatherServiceConnection)
-            echo()
 
             val beforeCheckTime = WeatherApplication.getUpdateCheckTime(it)
             if (System.currentTimeMillis() - beforeCheckTime > CHECK_WEATHER_INFO_INTERVAL)
@@ -70,20 +52,13 @@ object ServiceManager {
 
     @Synchronized
     fun getWeatherInfo(init: Boolean = false) {
-        val serviceRunning = WeatherApplication.getServiceRunning()
-        DLog.d(TAG, "getWeatherInfo() - WeatherService is Running : $serviceRunning")
-        if (serviceRunning)
-            return
-        WeatherApplication.setServiceRunning(true)
-        mWeatherService?.runService(init) ?: WeatherApplication.setServiceRunning(false)
-    }
-
-    fun startF() {
-        mLocationService?.startF()
-    }
-
-    fun stopF() {
-        mLocationService?.stopF()
+//        val serviceRunning = WeatherApplication.getServiceRunning()
+//        DLog.d(TAG, "getWeatherInfo() - WeatherService is Running : $serviceRunning")
+//        if (serviceRunning)
+//            return
+//        WeatherApplication.setServiceRunning(true)
+        DLog.d(TAG,"ServiceManager.getWeatherInfo($init)")
+        mWeatherService?.runService(init)/* ?: WeatherApplication.setServiceRunning(false)*/
     }
 
     fun getRestartAction(context: Context) = context.packageName + ACTION_RESTART
@@ -112,12 +87,4 @@ object ServiceManager {
             context.bindService(this, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
-
-    private fun echo() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startF()
-            stopF()
-        }
-    }
-
 }

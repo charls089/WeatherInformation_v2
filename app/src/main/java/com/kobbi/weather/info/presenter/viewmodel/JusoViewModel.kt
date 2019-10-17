@@ -118,10 +118,14 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun setAreaJuso(context: Context) {
         thread {
+            val lastAddress = weatherRepository.loadArea().lastOrNull()?.address
             weatherRepository.insertArea(context, codeList)
             val address = convertAddress(codeList)
             weatherRepository.insertPlace(address)
             weatherRepository.updateAreaCode(address, 0)
+            lastAddress?.let {
+                weatherRepository.updateAreaCode(lastAddress, 0)
+            }
         }
     }
 

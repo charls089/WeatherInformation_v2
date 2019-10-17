@@ -1,16 +1,21 @@
 package com.kobbi.weather.info.presenter.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
+import com.kobbi.weather.info.data.database.entity.Area
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.presenter.service.ServiceManager
 
 class AreaViewModel(application: Application) : AndroidViewModel(application) {
     private val weatherRepository = WeatherRepository.getInstance(application)
-    val area get() = _area
+    val area:LiveData<List<Area>> get(){
+        Log.e("AreaViewModel","AreaViewModel.area get()")
+       return _area
+    }
     val position: LiveData<Int> get() = _position
     val state: LiveData<Int> get() = _state
 

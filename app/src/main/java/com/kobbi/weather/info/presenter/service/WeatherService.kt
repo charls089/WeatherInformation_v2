@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.OnLocationListener
@@ -43,6 +44,7 @@ class WeatherService : Service() {
 
     private fun requestLocation() {
         applicationContext?.let { context ->
+            startF()
             LocationManager.getLocation(context, object : OnLocationListener {
                 override fun onComplete(responseCode: Int, location: Location?) {
                     var message = ""
@@ -62,7 +64,7 @@ class WeatherService : Service() {
                         }
                         LocationManager.RESPONSE_MISSING_PERMISSION -> {
                             //권한 요청 로직
-                            WeatherApplication.setUpdateCheckTime(context)
+                            WeatherApplication.setUpdateCheckTime(context, 0)
                             message = "Location needs runtime permission"
                         }
                     }
@@ -72,6 +74,7 @@ class WeatherService : Service() {
                     )
                 }
             })
+            stopF()
         }
     }
 
@@ -140,8 +143,26 @@ class WeatherService : Service() {
                 }
                 if (checkUpdateTime(init, isBaseUpdateTime))
                     ApiRequestRepository.requestNews(context)
-                WeatherApplication.setServiceRunning(false)
             }
+        }
+    }
+
+   private fun startF() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DLog.d(TAG, "startForeground")
+            val notificator = Notificator.getInstance()
+            val notification = notificator.getNotification(
+                applicationContext,
+                Notificator.ChannelType.TYPE_POLARIS
+            )
+            startForeground(notificator.getNotificationId(), notification)
+        }
+    }
+
+   private fun stopF() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DLog.d(TAG, "stopForeground")
+            stopForeground(true)
         }
     }
 }

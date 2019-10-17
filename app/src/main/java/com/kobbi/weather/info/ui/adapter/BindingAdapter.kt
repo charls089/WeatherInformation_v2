@@ -3,6 +3,7 @@ package com.kobbi.weather.info.ui.adapter
 import android.graphics.Color
 import android.text.TextUtils
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -521,27 +522,6 @@ class BindingAdapter {
             }
             view.visibility =
                 if (value.isNullOrEmpty() || value == "없음" || value == "0") View.GONE else View.VISIBLE
-        }
-
-        @BindingAdapter("app:setState", "app:setPosition", "app:setSize")
-        @JvmStatic
-        fun setVisibility(view: View, state: Int?, position: Int?, size: Int?) {
-            view.visibility = when (state) {
-                ViewPager.SCROLL_STATE_DRAGGING, ViewPager.SCROLL_STATE_SETTLING -> {
-                    View.INVISIBLE
-                }
-                else -> {
-                    when (view.id) {
-                        R.id.iv_prev -> {
-                            if (position == 0 || size == 0) View.INVISIBLE else View.VISIBLE
-                        }
-                        R.id.iv_forward -> {
-                            if (position == size?.minus(1) || size == 0) View.INVISIBLE else View.VISIBLE
-                        }
-                        else -> View.INVISIBLE
-                    }
-                }
-            }
         }
 
         @BindingAdapter("app:createDotPanel", "app:selectDot")

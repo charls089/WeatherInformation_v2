@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -29,19 +30,15 @@ class MainActivity : AppCompatActivity() {
             val weatherVm = ViewModelProviders.of(this@MainActivity)[WeatherViewModel::class.java]
             mAreaVm = ViewModelProviders.of(this@MainActivity)[AreaViewModel::class.java].apply {
                 area.observe(this@MainActivity, Observer {
-                    DLog.d(message = "area.observe() --> Area Change")
+                    DLog.d("AreaViewModel","area.observe() --> Area Change")
                     weatherVm.refreshData()
+                    vpMainPage.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.anim_fade_in))
                 })
             }
             areaVm = mAreaVm
             fragmentManager = supportFragmentManager
             lifecycleOwner = this@MainActivity
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mAreaVm?.refreshWeatherInfo()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
