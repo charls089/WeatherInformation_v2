@@ -6,8 +6,9 @@ import android.location.Location
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
 import com.kobbi.weather.info.presenter.WeatherApplication
-import com.kobbi.weather.info.presenter.listener.OnLocationListener
+import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
 import com.kobbi.weather.info.presenter.model.data.AreaCode
 import com.kobbi.weather.info.presenter.model.data.GridData
@@ -45,9 +46,10 @@ class WeatherService : Service() {
     private fun requestLocation() {
         applicationContext?.let { context ->
             startF()
-            LocationManager.getLocation(context, object : OnLocationListener {
+            LocationManager.getLocation(context, object : LocationListener {
                 override fun onComplete(responseCode: Int, location: Location?) {
                     var message = ""
+                    var toastMessage = ""
                     when (responseCode) {
                         LocationManager.RESPONSE_NO_ERROR -> {
                             location?.let {
@@ -61,17 +63,21 @@ class WeatherService : Service() {
                         LocationManager.RESPONSE_LOCATION_TIMEOUT -> {
                             //위치 획득 시간초과
                             message = "Location Timeout"
+                            toastMessage = "위치를 찾는데 실패했습니다. 새로고침을 눌러 주세요."
                         }
                         LocationManager.RESPONSE_MISSING_PERMISSION -> {
                             //권한 요청 로직
                             WeatherApplication.setUpdateCheckTime(context, 0)
                             message = "Location needs runtime permission"
+                            toastMessage = "위치권한이 없습니다. 위치 권한을 승인해주세요."
                         }
                     }
                     DLog.writeLogFile(
                         context, TAG,
                         "getLocation.onComplete() --> responseCode : $responseCode, message : $message"
                     )
+                    if (toastMessage.isNotEmpty())
+                        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
                 }
             })
             stopF()
@@ -147,7 +153,7 @@ class WeatherService : Service() {
         }
     }
 
-   private fun startF() {
+    private fun startF() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DLog.d(TAG, "startForeground")
             val notificator = Notificator.getInstance()
@@ -159,7 +165,7 @@ class WeatherService : Service() {
         }
     }
 
-   private fun stopF() {
+    private fun stopF() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DLog.d(TAG, "stopForeground")
             stopForeground(true)

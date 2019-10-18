@@ -65,8 +65,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
                 if (isAgree)
                     GoogleClient.checkLocationEnabled(this)
-                else
-                    doSomething()
+                doSomething()
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
 
 class ProgressDialog(context: Context) : Dialog(context) {
@@ -16,8 +17,8 @@ class ProgressDialog(context: Context) : Dialog(context) {
 
     override fun show() {
         super.show()
-        Handler(Looper.getMainLooper()).postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed(1500) {
             dismiss()
-        }, 1500)
+        }
     }
 }

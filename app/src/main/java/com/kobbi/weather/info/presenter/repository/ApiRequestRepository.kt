@@ -6,7 +6,7 @@ import com.kobbi.weather.info.data.network.client.AirMeasureClient
 import com.kobbi.weather.info.data.network.client.JusoClient
 import com.kobbi.weather.info.data.network.client.WeatherClient
 import com.kobbi.weather.info.data.network.response.*
-import com.kobbi.weather.info.presenter.listener.OnCompleteListener
+import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.type.Address
 import com.kobbi.weather.info.presenter.model.data.AreaCode
 import com.kobbi.weather.info.presenter.model.data.GridData
@@ -18,7 +18,6 @@ import com.kobbi.weather.info.util.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 import kotlin.collections.LinkedHashMap
 
 class ApiRequestRepository private constructor() {
@@ -190,7 +189,7 @@ class ApiRequestRepository private constructor() {
             }
         }
 
-        fun requestJuso(apiUrl: String, code: List<String>, listener: OnCompleteListener) {
+        fun requestJuso(apiUrl: String, code: List<String>, listener: CompleteListener) {
             val params = LinkedHashMap<String, Any>().apply {
                 if (code.isNotEmpty()) {
                     val brtcCd = Address.getSidoCode(code[0])?.shortName ?: return

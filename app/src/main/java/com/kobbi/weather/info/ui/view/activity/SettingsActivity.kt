@@ -35,7 +35,6 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SharedPrefHelper.registerPrefChangeListener(applicationContext, mListener)
-        init()
         DataBindingUtil.setContentView<ActivitySettingsBinding>(
             this,
             R.layout.activity_settings

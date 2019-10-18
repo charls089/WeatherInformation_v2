@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.data.network.domain.juso.JusoItem
-import com.kobbi.weather.info.presenter.listener.OnCompleteListener
+import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.type.Address
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
@@ -50,7 +50,7 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
     private var mDongCode = ""
     private var mDepth = 0
 
-    private val listener = object : OnCompleteListener {
+    private val listener = object : CompleteListener {
         override fun onComplete(code: Int, data: Any) {
             when (code) {
                 0 -> {

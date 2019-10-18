@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.ActivityAddPlaceBinding
-import com.kobbi.weather.info.presenter.listener.OnLocationListener
+import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
 import com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel
 import com.kobbi.weather.info.ui.view.dialog.SelectPlaceDialog
@@ -55,7 +55,7 @@ class AddPlaceActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mGoogleMap = googleMap
-        LocationManager.getLocation(applicationContext, object : OnLocationListener {
+        LocationManager.getLocation(applicationContext, object : LocationListener {
             override fun onComplete(responseCode: Int, location: Location?) {
                 location?.let {
                     setMapView(LatLng(it.latitude, it.longitude))

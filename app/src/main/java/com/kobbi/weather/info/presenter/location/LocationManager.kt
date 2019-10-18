@@ -8,7 +8,6 @@ import android.location.LocationManager.NETWORK_PROVIDER
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
-import com.kobbi.weather.info.presenter.listener.OnLocationListener
 import com.kobbi.weather.info.util.DLog
 import java.util.*
 import kotlin.concurrent.schedule
@@ -23,11 +22,11 @@ object LocationManager {
     private const val LOCATION_OFFER_TIME = 10 * 60 * 1000L
     private const val DEFAULT_WAIT_TIME = 4 * 1000L
 
-    private val mExecutionWaits = HashSet<OnLocationListener>()
+    private val mExecutionWaits = HashSet<com.kobbi.weather.info.presenter.listener.LocationListener>()
     private var mIsRunning = false
 
     @Synchronized
-    fun getLocation(context: Context, listener: OnLocationListener) {
+    fun getLocation(context: Context, listener: com.kobbi.weather.info.presenter.listener.LocationListener) {
         val locationManager =
             context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
 
