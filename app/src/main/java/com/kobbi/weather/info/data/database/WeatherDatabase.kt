@@ -31,7 +31,7 @@ abstract class WeatherDatabase : RoomDatabase() {
 
     companion object {
         private const val TAG = "WeatherDatabase"
-        private const val WEATHER_DB_NAME = "WeatherDatabase.db"
+        private const val DB_NAME = "WeatherDatabase.db"
 
         private val mCallback = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -50,7 +50,7 @@ abstract class WeatherDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context.applicationContext,
                     WeatherDatabase::class.java,
-                    WEATHER_DB_NAME
+                    DB_NAME
                 )
                     .addCallback(mCallback).build().also {
                         INSTANCE = it

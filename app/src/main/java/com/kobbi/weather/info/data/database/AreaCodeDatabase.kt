@@ -25,7 +25,7 @@ abstract class AreaCodeDatabase : RoomDatabase() {
 
     companion object {
         private const val TAG = "AreaCodeDatabase"
-        private const val WEATHER_DB_NAME = "AreaCodeDatabase.db"
+        private const val DB_NAME = "AreaCodeDatabase.db"
 
         private const val FCST_AREA_CODE_FILE_NAME = "FcstAreaCode.txt"
         private const val LIFE_AREA_CODE_FILE_NAME = "LifeListAreaCode.txt"
@@ -48,7 +48,7 @@ abstract class AreaCodeDatabase : RoomDatabase() {
                         setDatabaseData(context, LIFE_AREA_CODE_FILE_NAME)
                     }
                 }
-                Room.databaseBuilder(context, AreaCodeDatabase::class.java, WEATHER_DB_NAME)
+                Room.databaseBuilder(context, AreaCodeDatabase::class.java, DB_NAME)
                     .addCallback(callback)
                     .addMigrations(migration)
                     .build().also {
