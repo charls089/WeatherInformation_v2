@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.DialogSelectAreaBinding
 import com.kobbi.weather.info.presenter.viewmodel.JusoViewModel
@@ -25,19 +26,17 @@ class SelectPlaceDialog : DialogFragment() {
         isCancelable = false
         val binding: DialogSelectAreaBinding =
             DataBindingUtil.inflate(inflater, R.layout.dialog_select_area, container, false)
-        activity?.application?.let { application ->
-            val viewModel = JusoViewModel(application).apply {
-                clickEnd.observe(this@SelectPlaceDialog, Observer {
-                    this@SelectPlaceDialog.dismiss()
-                })
-                clickClose.observe(this@SelectPlaceDialog, Observer {
-                    this@SelectPlaceDialog.dismiss()
-                })
-            }
-            binding.run {
-                jusoVm = viewModel
-                lifecycleOwner = this@SelectPlaceDialog
-            }
+        val viewModel = ViewModelProviders.of(this)[JusoViewModel::class.java].apply {
+            clickEnd.observe(this@SelectPlaceDialog, Observer {
+                this@SelectPlaceDialog.dismiss()
+            })
+            clickClose.observe(this@SelectPlaceDialog, Observer {
+                this@SelectPlaceDialog.dismiss()
+            })
+        }
+        binding.run {
+            jusoVm = viewModel
+            lifecycleOwner = this@SelectPlaceDialog
         }
         return binding.root
     }
