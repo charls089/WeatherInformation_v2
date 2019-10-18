@@ -12,7 +12,7 @@ class SharedPrefHelper private constructor() {
         const val KEY_AGREE_TO_USE_LOCATION = "agree_to_use_location"
 
         @JvmStatic
-        fun getPreference(context: Context): SharedPreferences {
+        private fun getPreference(context: Context): SharedPreferences {
             return context.applicationContext.getSharedPreferences(
                 "${context.packageName}${KEY_PREFERENCE}", Context.MODE_PRIVATE
             )
@@ -41,5 +41,14 @@ class SharedPrefHelper private constructor() {
         fun getLong(context: Context, key: String, defValue: Long = 0L): Long {
             return getPreference(context).getLong(key, defValue)
         }
+
+        fun registerPrefChangeListener(context: Context, listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+            getPreference(context).registerOnSharedPreferenceChangeListener(listener)
+        }
+
+        fun unregisterPrefChangeListener(context: Context, listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+            getPreference(context).unregisterOnSharedPreferenceChangeListener(listener)
+        }
+
     }
 }

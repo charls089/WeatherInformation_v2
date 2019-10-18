@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -33,7 +34,7 @@ class AddPlaceActivity : AppCompatActivity(), OnMapReadyCallback {
         val binding = DataBindingUtil.setContentView<ActivityAddPlaceBinding>(
             this, R.layout.activity_add_place
         )
-        mPlaceVm = PlaceViewModel(application).apply {
+        mPlaceVm = ViewModelProviders.of(this)[PlaceViewModel::class.java].apply {
             isMultiCheck.observe(this@AddPlaceActivity,
                 Observer { isMulti ->
                     mIsMultiChoice = isMulti
