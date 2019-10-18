@@ -28,6 +28,7 @@
     <string name="title_life_list">생활 지수</string>
     <string name="title_dialog_delete">즐겨찾는 장소 삭제</string>
     <string name="title_dialog_location_permission">위치 권한이 필요함</string>
+    <string name="title_default_setting">기본 설정</string>
 
     <string name="text_wind_chill">체감온도</string>
     <string name="text_yesterday">어제</string>
@@ -45,6 +46,7 @@
     <string name="text_winter_index">동파가능지수</string>
 
     <string name="text_on_time_rain_gauge">시간당 강수량</string>
+    <string name="text_agree_my_location">내위치 날씨 보기 사용</string>
 
     <string name="info_add_place_maximum">즐겨 찾는 장소는 최대 5개까지 등록이 가능합니다.</string>
     <string name="info_add_place_already">해당 장소는 이미 추가되어 있습니다.</string>
