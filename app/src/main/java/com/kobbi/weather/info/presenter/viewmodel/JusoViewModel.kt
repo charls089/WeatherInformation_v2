@@ -33,7 +33,7 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
     private val _jusoTitle = MutableLiveData<Int>()
     private val _jusoList = MutableLiveData<List<String>>()
 
-    private val weatherRepository = WeatherRepository.getInstance(application)
+    private val _weatherRepository = WeatherRepository.getInstance(application)
 
     val clickEnd: LiveData<Any> get() = _clickEnd
     val clickClose: LiveData<Any> get() = _clickClose
@@ -118,13 +118,13 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun setAreaJuso(context: Context) {
         thread {
-            val lastAddress = weatherRepository.loadArea().lastOrNull()?.address
-            weatherRepository.insertArea(context, codeList)
+            val lastAddress = _weatherRepository.loadArea().lastOrNull()?.address
+            _weatherRepository.insertArea(context, codeList)
             val address = convertAddress(codeList)
-            weatherRepository.insertPlace(address)
-            weatherRepository.updateAreaCode(address, 0)
+            _weatherRepository.insertPlace(address)
+            _weatherRepository.updateAreaCode(address, 0)
             lastAddress?.let {
-                weatherRepository.updateAreaCode(lastAddress, 0)
+                _weatherRepository.updateAreaCode(lastAddress, 0)
             }
         }
     }

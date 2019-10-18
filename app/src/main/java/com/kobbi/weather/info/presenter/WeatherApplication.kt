@@ -19,6 +19,7 @@ class WeatherApplication : Application() {
 
         fun startProcess(context: Context) {
             DLog.writeLogFile(context, TAG, "Start WeatherApplication")
+            setUpdateCheckTime(context, 0)
             AreaCodeDatabase.initializeDB(context)
             ServiceManager.restartService(context, true)
         }

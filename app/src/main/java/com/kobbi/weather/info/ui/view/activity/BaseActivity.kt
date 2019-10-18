@@ -1,14 +1,11 @@
 package com.kobbi.weather.info.ui.view.activity
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.preference.PreferenceManager
 import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,9 +13,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.util.GoogleClient
 import com.kobbi.weather.info.util.SharedPrefHelper
 
-@SuppressLint("Registered")
-abstract class BaseActivity : AppCompatActivity(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
+abstract class BaseActivity : AppCompatActivity() {
     companion object {
         private val NEED_PERMISSIONS =
             arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -30,18 +25,6 @@ abstract class BaseActivity : AppCompatActivity(),
 
     fun init() {
         checkPermission()
-        SharedPrefHelper.getPreference(applicationContext)
-            .registerOnSharedPreferenceChangeListener(this)
-        PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            .registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onDestroy() {
-        SharedPrefHelper.getPreference(applicationContext)
-            .unregisterOnSharedPreferenceChangeListener(this)
-        PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            .unregisterOnSharedPreferenceChangeListener(this)
-        super.onDestroy()
     }
 
     override fun onRequestPermissionsResult(
@@ -114,33 +97,7 @@ abstract class BaseActivity : AppCompatActivity(),
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION -> {
-                val defPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                val value = SharedPrefHelper.getBool(
-                    applicationContext,
-                    SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION
-                )
-                defPref.edit().putBoolean("show_my_location_weather", value).apply()
-            }
-
-            "show_my_location_weather" -> {
-                applicationContext?.let { context ->
-                    val value = sharedPreferences?.getBoolean(key, false)
-                    value?.let {
-                        SharedPrefHelper.setBool(
-                            context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION, value
-                        )
-                        if (value)
-                            checkPermission()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun checkPermission() {
+    fun checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val needPermission: Array<String> = ArrayList<String>().run {
                 NEED_PERMISSIONS.forEach {

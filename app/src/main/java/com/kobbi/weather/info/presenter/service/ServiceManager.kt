@@ -52,13 +52,8 @@ object ServiceManager {
 
     @Synchronized
     fun getWeatherInfo(init: Boolean = false) {
-//        val serviceRunning = WeatherApplication.getServiceRunning()
-//        DLog.d(TAG, "getWeatherInfo() - WeatherService is Running : $serviceRunning")
-//        if (serviceRunning)
-//            return
-//        WeatherApplication.setServiceRunning(true)
         DLog.d(TAG,"ServiceManager.getWeatherInfo($init)")
-        mWeatherService?.runService(init)/* ?: WeatherApplication.setServiceRunning(false)*/
+        mWeatherService?.runService(init)
     }
 
     fun getRestartAction(context: Context) = context.packageName + ACTION_RESTART

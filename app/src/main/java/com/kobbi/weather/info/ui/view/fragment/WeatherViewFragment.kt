@@ -1,17 +1,13 @@
 package com.kobbi.weather.info.ui.view.fragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.viewpager.widget.ViewPager
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.FragmentWeatherBinding
 import com.kobbi.weather.info.presenter.viewmodel.AreaViewModel
@@ -47,6 +43,8 @@ class WeatherViewFragment : Fragment() {
                         ViewModelProviders.of(this)[AreaViewModel::class.java].apply {
                             position.observe(this@run, Observer {
                                 svContainer.smoothScrollTo(0, 0)
+                                rvForecastDailyData.smoothScrollToPosition(0)
+                                rvForecastWeeklyData.smoothScrollToPosition(0)
                             })
                         }
                     position = arguments?.getInt(POSITION_INDEX_CODE) ?: 0

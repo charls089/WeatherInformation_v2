@@ -9,10 +9,10 @@ import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.presenter.service.ServiceManager
 
 class AreaViewModel(application: Application) : AndroidViewModel(application) {
-    private val weatherRepository = WeatherRepository.getInstance(application)
-    val area = weatherRepository.loadActiveAreaLive()
-    val position: LiveData<Int> get() = _position
+    private val _weatherRepository = WeatherRepository.getInstance(application)
+    val area = _weatherRepository.loadActiveAreaLive()
 
+    val position: LiveData<Int> get() = _position
     private val _position: MutableLiveData<Int> = MutableLiveData()
 
     val listener: ViewPager.OnPageChangeListener = object : ViewPager.OnPageChangeListener {

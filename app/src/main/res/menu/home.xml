@@ -16,8 +16,4 @@
         android:icon="@drawable/baseline_settings_white_24"
         android:title="@string/settings"
         app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/action_show_all"
-        android:title="@string/all_weather"
-        app:showAsAction="never"/>
 </menu>

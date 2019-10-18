@@ -1,7 +1,6 @@
 package com.kobbi.weather.info.presenter.viewmodel
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +11,8 @@ class PlaceViewModel(application: Application) : AndroidViewModel(application) {
     val place get() = _place
     val selectedPositions: LiveData<List<Int>> get() = _selectedPositions
     val clickPosition: LiveData<String> get() = _clickPosition
-    private val weatherRepository = WeatherRepository.getInstance(application)
-    private val _place: LiveData<List<String>> = weatherRepository.loadPlaceAddressLive()
+    private val _weatherRepository = WeatherRepository.getInstance(application)
+    private val _place: LiveData<List<String>> = _weatherRepository.loadPlaceAddressLive()
     private val _selectedPositions: MutableLiveData<List<Int>> = MutableLiveData()
     private val _clickPosition: MutableLiveData<String> = MutableLiveData()
 
@@ -55,13 +54,13 @@ class PlaceViewModel(application: Application) : AndroidViewModel(application) {
                 mDeleteList.forEach { idx ->
                     val address = placeList[idx]
                     delList.add(address)
-                    weatherRepository.updateAreaCode(address, 1)
+                    _weatherRepository.updateAreaCode(address, 1)
                 }
             }
             mDeleteList.clear()
             _selectedPositions.postValue(mDeleteList)
             setMultiCheck(false)
-            weatherRepository.deletePlace(delList)
+            _weatherRepository.deletePlace(delList)
         }
     }
 

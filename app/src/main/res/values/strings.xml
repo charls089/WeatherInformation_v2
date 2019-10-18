@@ -8,7 +8,7 @@
     <string name="info_delete_message">선택하신 장소가 삭제됩니다.</string>
     <string name="info_use_location_service">위치 서비스를 사용합니다.</string>
     <string name="info_stop_use_location_service">위치 서비스 사용이 중지되었습니다.</string>
-    <string name="info_location_permission_request_message">"위치 서비스를 사용하려면 위치 권한이 필요합니다. 해당 권한을 아래의 방법으로 허용해주세요.\r\n\r\n   앱 권한 > 위치 스위치 ON"</string>
+    <string name="info_location_permission_request_message">"위치 서비스를 사용하려면 위치 권한이 필요합니다. 해당 권한을 아래의 방법으로 허용해주세요.\r\n\r\n   앱 권한 → 위치 스위치 ON"</string>
 
     <string name="symbol_colon">:</string>
     <string name="symbol_slash">/</string>
@@ -107,20 +107,4 @@
     <string name="refresh">새로고침</string>
     <string name="settings">설정</string>
     <string name="all_weather">전국 날씨</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

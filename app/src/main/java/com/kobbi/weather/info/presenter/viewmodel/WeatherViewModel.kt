@@ -21,7 +21,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     val special get() = _special
     val updateTime: MutableLiveData<Long> = MutableLiveData()
 
-    private val weatherRepository = WeatherRepository.getInstance(application)
+    private val _weatherRepository = WeatherRepository.getInstance(application)
 
     private var _current: LiveData<List<CurrentWeather>>? = null
     private var _yesterdayCurrent: LiveData<List<CurrentWeather>>? = null
@@ -36,15 +36,15 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
 
     fun refreshData() {
         updateTime.postValue(System.currentTimeMillis())
-        _current = weatherRepository.loadCurrentWeatherLive()
-        _yesterdayCurrent = weatherRepository.loadYesterdayWeatherLive()
-        _daily = weatherRepository.loadDailyWeatherLive()
-        _weekFromDaily = weatherRepository.loadWeekWeatherLive()
-        _weekly = weatherRepository.loadWeeklyWeatherLive()
-        _lifeDay = weatherRepository.loadLifeIndexDayLive()
-        _lifeHour = weatherRepository.loadLifeIndexHourLive()
-        _minMaxTpr = weatherRepository.loadMinMaxTprLive()
-        _air = weatherRepository.loadAirMeasureLive()
-        _special = weatherRepository.loadSpecialNewsLive()
+        _current = _weatherRepository.loadCurrentWeatherLive()
+        _yesterdayCurrent = _weatherRepository.loadYesterdayWeatherLive()
+        _daily = _weatherRepository.loadDailyWeatherLive()
+        _weekFromDaily = _weatherRepository.loadWeekWeatherLive()
+        _weekly = _weatherRepository.loadWeeklyWeatherLive()
+        _lifeDay = _weatherRepository.loadLifeIndexDayLive()
+        _lifeHour = _weatherRepository.loadLifeIndexHourLive()
+        _minMaxTpr = _weatherRepository.loadMinMaxTprLive()
+        _air = _weatherRepository.loadAirMeasureLive()
+        _special = _weatherRepository.loadSpecialNewsLive()
     }
 }
