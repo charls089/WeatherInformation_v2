@@ -1,6 +1,8 @@
 package com.kobbi.weather.info.presenter.model.type
 
+import android.text.TextUtils
 import com.kobbi.weather.info.util.Constants
+import java.lang.NumberFormatException
 
 enum class AirCode(
     val codeName: String,
@@ -21,9 +23,10 @@ enum class AirCode(
             }
         }
 
-        fun getAirLevel(code: String, value: Int): String? {
+        fun getAirLevel(code: String, ss: String): String {
             try {
                 var result = ""
+                val value = ss.toInt()
                 findAirCode(code)
                     ?.range?.let { range ->
                     for (i in 0 until range.size - 1) {
@@ -36,8 +39,8 @@ enum class AirCode(
                     }
                 }
                 return result
-            } catch (e: NoSuchElementException) {
-                return null
+            } catch (e: NumberFormatException) {
+                return "점검중"
             }
         }
     }

@@ -6,11 +6,10 @@ import androidx.room.Index
 
 @Entity(
     tableName = "AirMeasure",
-    primaryKeys = ["key"],
+    primaryKeys = ["sidoName", "cityName", "dateTime"],
     indices = [Index("sidoName", "cityName", "dateTime")]
 )
 data class AirMeasure(
-    val key: String,
     val dateTime: Long,
     val sidoName: String,
     val cityName: String,

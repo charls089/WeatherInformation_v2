@@ -34,8 +34,8 @@ interface DailyWeatherDAO {
     @Query("SELECT gridX, gridY, tmn, tmx FROM DailyWeather WHERE (dateTime = (:today+0600) OR dateTime = (:today+1500))")
     fun findMinMaxTpr(today: Long): List<MinMaxTpr>
 
-    @Query("SELECT * FROM DailyWeather WHERE (dateTime LIKE '%0600' OR dateTime LIKE '%1500') AND gridX = :x AND gridY = :y ORDER BY dateTime DESC LIMIT 6")
-    fun findWeekWeather(x: Int, y: Int): List<DailyWeather>
+    @Query("SELECT * FROM DailyWeather WHERE (dateTime BETWEEN :startDate AND :endDate) AND (dateTime LIKE '%0600' OR dateTime LIKE '%1500') ORDER BY dateTime")
+    fun findWeekWeather(startDate: Long, endDate: Long): List<DailyWeather>
 
     @Query("SELECT * FROM DailyWeather WHERE (dateTime BETWEEN :startDate AND :endDate) AND (dateTime LIKE '%0600' OR dateTime LIKE '%1500') ORDER BY dateTime")
     fun findWeekWeatherLive(startDate: Long, endDate: Long): LiveData<List<DailyWeather>>

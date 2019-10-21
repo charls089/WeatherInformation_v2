@@ -22,7 +22,7 @@ interface CurrentWeatherDAO {
     fun load(dateTime: Long): List<CurrentWeather>
 
     @Query("SELECT * FROM CurrentWeather WHERE dateTime = :dateTime")
-    fun loadLive(dateTime: Long): LiveData<List<CurrentWeather>>?
+    fun loadLive(dateTime: Long): LiveData<List<CurrentWeather>>
 
     @Query("SELECT * FROM CurrentWeather WHERE dateTime = :dateTime AND gridX = :x AND gridY = :y")
     fun findData(dateTime: Long, x: Int, y: Int) : CurrentWeather?

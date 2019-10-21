@@ -6,14 +6,13 @@ import androidx.room.Index
 
 @Entity(
     tableName = "CurrentWeather",
-    primaryKeys = ["key"],
+    primaryKeys = ["gridX", "gridY", "dateTime"],
     indices = [Index("gridX", "gridY", "dateTime")]
 )
 data class CurrentWeather(
-    val key: String,
+    val dateTime: Long,
     val gridX: Int,
     val gridY: Int,
-    val dateTime: Long,
     val t1h: String,
     val rn1: String,
     val sky: String,

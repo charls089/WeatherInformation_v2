@@ -48,6 +48,7 @@ object ServiceManager {
             if (System.currentTimeMillis() - beforeCheckTime > CHECK_WEATHER_INFO_INTERVAL)
                 getWeatherInfo()
         }
+        echoService()
     }
 
     @Synchronized
@@ -81,5 +82,9 @@ object ServiceManager {
         Intent(context, clazz).run {
             context.bindService(this, serviceConnection, Context.BIND_AUTO_CREATE)
         }
+    }
+
+    private fun echoService() {
+        mWeatherService?.echoService()
     }
 }

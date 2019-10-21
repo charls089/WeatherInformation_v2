@@ -6,8 +6,7 @@ import androidx.room.Index
 
 @Entity(
     tableName = "FavoritePlace",
-    primaryKeys = ["address"],
-    indices = [Index(value = ["address"], unique = true)]
+    primaryKeys = ["address"]
 )
 data class FavoritePlace(
     val address: String

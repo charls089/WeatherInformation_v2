@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -13,26 +15,51 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.ActivityMainBinding
 import com.kobbi.weather.info.presenter.viewmodel.AreaViewModel
 import com.kobbi.weather.info.presenter.viewmodel.WeatherViewModel
-import com.kobbi.weather.info.ui.view.dialog.ProgressDialog
 import com.kobbi.weather.info.util.BackPressedCloser
 import com.kobbi.weather.info.util.DLog
 
 class MainActivity : AppCompatActivity() {
 
     private var mAreaVm: AreaViewModel? = null
-    private val mProgressDialog by lazy { ProgressDialog(this) }
     private val mBackPressedCloser by lazy { BackPressedCloser(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mProgressDialog.show()
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).run {
             val weatherVm = ViewModelProviders.of(this@MainActivity)[WeatherViewModel::class.java]
             mAreaVm = ViewModelProviders.of(this@MainActivity)[AreaViewModel::class.java].apply {
                 area.observe(this@MainActivity, Observer {
-                    DLog.d("AreaViewModel","area.observe() --> Area Change")
+                    DLog.d("AreaViewModel", "area.observe() --> Area Change")
                     weatherVm.refreshData()
-                    vpMainPage.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.anim_fade_in))
+                    vpMainPage.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            applicationContext,
+                            R.anim.anim_fade_in
+                        )
+                    )
+                    pbDialog.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            applicationContext,
+                            R.anim.anim_fade_out
+                        ).apply {
+                            setAnimationListener(
+                                object : Animation.AnimationListener {
+                                    override fun onAnimationRepeat(animation: Animation?) {
+                                        //Nothing
+                                    }
+
+                                    override fun onAnimationEnd(animation: Animation?) {
+                                        pbDialog.visibility = View.GONE
+                                    }
+
+                                    override fun onAnimationStart(animation: Animation?) {
+                                        //Nothing
+                                    }
+                                }
+                            )
+                        }
+                    )
+
                 })
             }
             areaVm = mAreaVm
@@ -50,7 +77,6 @@ class MainActivity : AppCompatActivity() {
         when (item?.itemId) {
             R.id.action_refresh -> {
                 //데이터 새로고침
-                mProgressDialog.show()
                 mAreaVm?.refreshWeatherInfo(true)
             }
             R.id.action_add_location -> {

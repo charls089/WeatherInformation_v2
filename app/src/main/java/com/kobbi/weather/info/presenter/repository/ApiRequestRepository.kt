@@ -49,17 +49,22 @@ class ApiRequestRepository private constructor() {
                     call: Call<WeatherResponse>,
                     response: Response<WeatherResponse>
                 ) {
-                    DLog.d(
+                    DLog.writeLogFile(
+                        context,
                         TAG,
                         "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
                     )
                     val item = response.body()?.response?.body?.items?.item
-                    DLog.writeLogFile(context, TAG, "requestWeather.item : $item")
+                    DLog.d(TAG, "requestWeather.item : $item")
                     WeatherRepository.getInstance(context).insertWeather(gridData, item)
                 }
 
                 override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                    DLog.writeLogFile(context, TAG, "onFailure() -> <$apiUrl>call : $call, t : $t")
+                    DLog.writeLogFile(
+                        context,
+                        TAG,
+                        "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
+                    )
                 }
             })
         }
@@ -85,12 +90,16 @@ class ApiRequestRepository private constructor() {
                         "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
                     )
                     val item = response.body()?.response?.body?.items?.item
-                    DLog.writeLogFile(context, TAG, "requestMiddle.item : $item")
+                    DLog.d(TAG, "requestMiddle.item : $item")
                     WeatherRepository.getInstance(context).insertMiddle(areaCode, item)
                 }
 
                 override fun onFailure(call: Call<MiddleResponse>, t: Throwable) {
-                    DLog.writeLogFile(context, TAG, "onFailure() -> <$apiUrl>call : $call, t : $t")
+                    DLog.writeLogFile(
+                        context,
+                        TAG,
+                        "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
+                    )
                 }
             })
         }
@@ -114,13 +123,13 @@ class ApiRequestRepository private constructor() {
                             "requestLife.onResponse() -> <$apiUrl>call : $call, response : $response"
                         )
                         val indexModel = response.body()?.response?.body?.indexModel
-                        DLog.writeLogFile(context, TAG, "<$apiUrl>indexModel : $indexModel")
+                        DLog.d(TAG, "<$apiUrl>indexModel : $indexModel")
                         WeatherRepository.getInstance(context).insertLife(areaNo, indexModel)
                     }
 
                     override fun onFailure(call: Call<LifeResponse>, t: Throwable) {
                         DLog.writeLogFile(
-                            context, TAG, "onFailure() -> <$apiUrl>call : $call, t : $t"
+                            context, TAG, "requestLife.onFailure() -> <$apiUrl>call : $call, t : $t"
                         )
                     }
                 })
@@ -143,12 +152,16 @@ class ApiRequestRepository private constructor() {
                         "requestNews.onResponse() -> call : $call, response : $response"
                     )
                     val item = response.body()?.response?.body?.items?.item
-                    DLog.writeLogFile(context, TAG, "requestNews.item : $item")
+                    DLog.d(TAG, "requestNews.item : $item")
                     WeatherRepository.getInstance(context).insertSpecialNews(item)
                 }
 
                 override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                    DLog.writeLogFile(context, TAG, "onFailure() -> call : $call, t : $t")
+                    DLog.writeLogFile(
+                        context,
+                        TAG,
+                        "requestNews.onFailure() -> call : $call, t : $t"
+                    )
                 }
             })
         }
@@ -174,14 +187,14 @@ class ApiRequestRepository private constructor() {
                             "requestAirMeasure.onResponse() -> call : $call, response : $response"
                         )
                         val list = response.body()?.list
-                        DLog.writeLogFile(context, TAG, "requestAirMeasure.list : $list")
+                        DLog.d(TAG, "requestAirMeasure.list : $list")
                         WeatherRepository.getInstance(context)
                             .insertAirMeasure(addressCode.fullName, list)
                     }
 
                     override fun onFailure(call: Call<AirResponse>, t: Throwable) {
                         DLog.writeLogFile(
-                            context, TAG, "onFailure() -> call : $call, t : $t"
+                            context, TAG, "requestAirMeasure.onFailure() -> call : $call, t : $t"
                         )
                     }
 

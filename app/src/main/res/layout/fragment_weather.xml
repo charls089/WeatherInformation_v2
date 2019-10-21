@@ -332,16 +332,16 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/text_dust_pm_10"
-                                android:textSize="21dp"
+                                android:textSize="19dp"
                                 tools:ignore="SpUsage" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_now_pm10_info"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="15dp"
+                                android:layout_marginStart="10dp"
                                 android:textColor="@color/colorWhite"
-                                android:textSize="21dp"
+                                android:textSize="19dp"
                                 app:setAirCode="@{AirCode.PM10}"
                                 app:setAirLevel="@{weatherVm.airMeasure}"
                                 app:setArea="@{areaVm.area}"
@@ -357,18 +357,17 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="21dp"
                                 android:text="@string/text_dust_pm_25"
-                                android:textSize="21dp"
+                                android:textSize="19dp"
                                 tools:ignore="SpUsage" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_now_pm25_info"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="15dp"
+                                android:layout_marginStart="10dp"
                                 android:textColor="@color/colorWhite"
-                                android:textSize="21dp"
+                                android:textSize="19dp"
                                 app:setAirCode="@{AirCode.PM25}"
                                 app:setAirLevel="@{weatherVm.airMeasure}"
                                 app:setArea="@{areaVm.area}"

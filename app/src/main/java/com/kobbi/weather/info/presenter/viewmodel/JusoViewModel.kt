@@ -14,6 +14,7 @@ import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.util.ApiConstants
 import com.kobbi.weather.info.util.DLog
+import com.kobbi.weather.info.util.LocationUtils
 import com.kobbi.weather.info.util.SingleLiveEvent
 import kotlin.concurrent.thread
 
@@ -124,7 +125,7 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
             _weatherRepository.insertPlace(address)
             _weatherRepository.updateAreaCode(address, 0)
             lastAddress?.let {
-                _weatherRepository.updateAreaCode(lastAddress, 0)
+                _weatherRepository.insertArea(context, LocationUtils.splitAddressLine(lastAddress))
             }
         }
     }
@@ -175,8 +176,7 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
                 if (mSidoCode == Address.SEJONG.fullName) {
                     mDepth++
                     ApiConstants.API_DONG_URL
-                }
-                else
+                } else
                     ApiConstants.API_CITY_URL
             }
             CITY_DEPTH -> ApiConstants.API_DONG_URL

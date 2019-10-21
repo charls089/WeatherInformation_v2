@@ -3,7 +3,6 @@ package com.kobbi.weather.info.ui.adapter
 import android.graphics.Color
 import android.text.TextUtils
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -401,9 +400,13 @@ class BindingAdapter {
             getAreaFromViewModel(areas, position)?.run {
                 val filterDay = lifeDay?.filter {
                     it.areaCode == areaCode
+                }?.sortedBy {
+                    it.codeNo
                 }
                 val filterHour = lifeHour?.filter {
                     it.areaCode == areaCode
+                }?.sortedBy {
+                    it.codeNo
                 }
                 filterDay?.let {
                     DLog.d(message = "filterDay : $filterDay")
@@ -479,27 +482,14 @@ class BindingAdapter {
                         it.sidoName == addressList[0] && it.cityName == addressList[1]
                     }
                     airMeasure?.let {
-                        when (code) {
-                            AirCode.PM10 -> {
-                                val value = it.pm10
-                                if (!TextUtils.isEmpty(value)) {
-                                    val level = AirCode.getAirLevel(code.codeNo, value.toInt())
-                                    view.run {
-                                        text = value
-                                        setBackgroundResource(getLevelColor(level))
-                                    }
-                                }
-                            }
-                            AirCode.PM25 -> {
-                                val value = it.pm25
-                                if (!TextUtils.isEmpty(value)) {
-                                    val level = AirCode.getAirLevel(code.codeNo, value.toInt())
-                                    view.run {
-                                        text = value
-                                        setBackgroundResource(getLevelColor(level))
-                                    }
-                                }
-                            }
+                        val value = when (code) {
+                            AirCode.PM10 -> it.pm10
+                            AirCode.PM25 -> it.pm25
+                        }
+                        val level = AirCode.getAirLevel(code.codeNo, value)
+                        view.run {
+                            text = if (TextUtils.isEmpty(value)) "점검중" else value
+                            setBackgroundResource(getLevelColor(level))
                         }
                     }
                 }
@@ -682,7 +672,7 @@ class BindingAdapter {
                 val secondDayPm = list[3]
                 result.add(
                     WeeklyWeather(
-                        "", "", firstDayAm.dateTime,
+                        firstDayAm.dateTime, "", "",
                         firstDayAm.tpr, firstDayPm.tpr,
                         firstDayAm.wf, firstDayPm.wf,
                         firstDayAm.rnSt, firstDayPm.rnSt
@@ -690,7 +680,7 @@ class BindingAdapter {
                 )
                 result.add(
                     WeeklyWeather(
-                        "", "", secondDayAm.dateTime,
+                        secondDayAm.dateTime, "", "",
                         secondDayAm.tpr, secondDayPm.tpr,
                         secondDayAm.wf, secondDayPm.wf,
                         secondDayAm.rnSt, secondDayPm.rnSt

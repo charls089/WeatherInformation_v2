@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "ForecastArea",
+    primaryKeys = ["address"],
     indices = [Index(value = ["address"], unique = true)]
 )
 data class Area(
-    @PrimaryKey
     val address: String,
     val prvnCode: String,
     val cityCode: String,

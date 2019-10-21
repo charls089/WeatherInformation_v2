@@ -6,14 +6,13 @@ import androidx.room.Index
 
 @Entity(
     tableName = "WeeklyTpr",
-    primaryKeys = ["key"],
+    primaryKeys = ["cityCode", "dateTime"],
     indices = [Index("cityCode", "dateTime")]
 )
 data class WeeklyTpr(
-    val key: String,
+    val dateTime: Long,
     val prvnCode: String,
     val cityCode: String,
-    val dateTime: Long,
     val taMin: String,
     val taMax: String
 )
