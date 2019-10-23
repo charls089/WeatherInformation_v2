@@ -84,5 +84,8 @@ class Utils private constructor() {
                 show()
             }
         }
+
+        @JvmStatic
+        fun combineDate(today: Long, time: Long) = String.format("%d%d", today, time)
     }
 }

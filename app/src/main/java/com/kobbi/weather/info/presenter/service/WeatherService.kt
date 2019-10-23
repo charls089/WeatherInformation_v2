@@ -1,18 +1,22 @@
 package com.kobbi.weather.info.presenter.service
 
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
+import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.*
+import java.util.*
 import kotlin.concurrent.thread
 
 class WeatherService : Service() {
@@ -44,6 +48,38 @@ class WeatherService : Service() {
         DLog.writeLogFile(applicationContext, TAG, "echoService")
         startF()
         stopF()
+    }
+
+    fun notifyMyLocation() {
+        thread {
+            weatherRepository.loadLocatedArea()?.let { area ->
+                area.address
+                GregorianCalendar().apply {
+                    val today = (Utils.getCurrentTime() + "0000").toLong()
+                    this.add(Calendar.DATE, -1)
+                    val yesterday = (Utils.getCurrentTime(time = this.timeInMillis) + "0000").toLong()
+                    this.add(Calendar.HOUR, 1)
+                    val time = (Utils.getCurrentTime("HH", this.timeInMillis) + "00").toLong()
+                    val weatherInfo =
+                        weatherRepository.getNotificateData(today, yesterday, time, area.gridX, area.gridY)
+                    weatherInfo?.run {
+                        Notificator.getInstance().showNotification(
+                            applicationContext,
+                            Notificator.ChannelType.TYPE_DEFAULT,
+                            String.format(getString(R.string.holder_weather_notify), tpr, wct, yesterdayWct, tmn, tmx),
+                            getString(R.string.info_more_weather_info_message),
+                            WeatherUtils.getSkyIcon(today + time, pty, sky),
+                            PendingIntent.getActivity(
+                                applicationContext,
+                                0,
+                                Intent(applicationContext, SplashActivity::class.java),
+                                0
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun requestLocation() {

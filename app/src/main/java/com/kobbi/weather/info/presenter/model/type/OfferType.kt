@@ -19,7 +19,7 @@ enum class OfferType(
 
     companion object {
         private const val TAG = "OfferType"
-        private val DEFAULT_OFFER_TIME_RANGE = 0..7
+        private val DEFAULT_OFFER_TIME_RANGE = 0..10
 
         fun isNeedToUpdate(type: OfferType): Boolean {
             val currentTime = Utils.getCurrentTime("HHmm", System.currentTimeMillis()).toInt()

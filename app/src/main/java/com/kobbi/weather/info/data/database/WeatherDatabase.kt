@@ -28,6 +28,7 @@ abstract class WeatherDatabase : RoomDatabase() {
     abstract fun lifeDayDao(): LifeIndexDayDAO
     abstract fun lifeHourDao(): LifeIndexHourDAO
     abstract fun specialNewsDao(): SpecialNewsDAO
+    abstract fun weatherInfoDao():WeatherInfoDAO
 
     companion object {
         private const val TAG = "WeatherDatabase"

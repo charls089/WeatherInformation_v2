@@ -11,11 +11,15 @@ import android.os.SystemClock
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.receiver.RestartServiceReceiver
 import com.kobbi.weather.info.util.DLog
-import com.kobbi.weather.info.util.Notificator
+import java.util.*
 
 object ServiceManager {
-    private const val ACTION_RESTART = ".action.restart.weather.service"
+    const val ACTION_RESTART = ".action.restart.weather.service"
+    const val ACTION_NOTIFY = ".action.notify.weather.service"
+    private const val RESTART_REQUEST_CODE = 986
+    private const val NOTIFY_REQUEST_CODE = 987
     private const val RESTART_SERVICE_INTERVAL = 1 * 60 * 1000L
+    private const val NOTIFY_INFO_INTERVAL = 12 * 60 * 60 * 1000L
     private const val CHECK_WEATHER_INFO_INTERVAL = 5 * 60 * 1000L
 
     private const val TAG = "ServiceManager"
@@ -41,6 +45,7 @@ object ServiceManager {
         context.applicationContext?.let {
             if (init) {
                 registerRestartReceiver(it)
+                registerNotifyReceiver(it)
             }
 
             bindService(it, WeatherService::class.java, mWeatherServiceConnection)
@@ -54,23 +59,47 @@ object ServiceManager {
 
     @Synchronized
     fun getWeatherInfo(init: Boolean = false) {
-        DLog.d(TAG,"ServiceManager.getWeatherInfo($init)")
+        DLog.d(TAG, "ServiceManager.getWeatherInfo($init)")
         mWeatherService?.runService(init)
     }
 
-    fun getRestartAction(context: Context) = context.packageName + ACTION_RESTART
+    fun notifyWeather() {
+        DLog.d(TAG, "ServiceManager.notifyWeather()")
+        mWeatherService?.notifyMyLocation()
+    }
+
+    fun getAction(context: Context, action: String) = context.packageName + action
 
     private fun registerRestartReceiver(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, RestartServiceReceiver::class.java).apply {
-            action = getRestartAction(context)
+            action = getAction(context, ACTION_RESTART)
         }
         val pendingIntent =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+            PendingIntent.getBroadcast(context, RESTART_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         alarmManager.setInexactRepeating(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime(),
             RESTART_SERVICE_INTERVAL,
+            pendingIntent
+        )
+    }
+
+    private fun registerNotifyReceiver(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, RestartServiceReceiver::class.java).apply {
+            action = getAction(context, ACTION_NOTIFY)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(context, NOTIFY_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val cal = GregorianCalendar().apply {
+            set(Calendar.HOUR_OF_DAY, 6)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+        alarmManager.setInexactRepeating(
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            cal.timeInMillis,
+            NOTIFY_INFO_INTERVAL,
             pendingIntent
         )
     }

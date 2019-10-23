@@ -21,10 +21,7 @@ import com.kobbi.weather.info.presenter.model.type.LifeCode
 import com.kobbi.weather.info.presenter.viewmodel.JusoViewModel
 import com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel
 import com.kobbi.weather.info.ui.view.LifeItemLayout
-import com.kobbi.weather.info.util.DLog
-import com.kobbi.weather.info.util.LocationUtils
-import com.kobbi.weather.info.util.SharedPrefHelper
-import com.kobbi.weather.info.util.Utils
+import com.kobbi.weather.info.util.*
 import kotlinx.android.synthetic.main.item_life_list.view.*
 import java.util.*
 
@@ -281,14 +278,14 @@ object BindingAdapter {
     ) {
         val currentWeather = getCurrentWeather(areas, position, items)
         currentWeather?.run {
-            val dayOrNight = getDayOrNight(dateTime)
-            val rainType = getRainFallType(pty)
-            val skyState = getSkyCloudCover(sky)
+            val dayOrNight = WeatherUtils.getDayOrNight(dateTime)
+            val rainType = WeatherUtils.getRainFallType(pty)
+            val skyState = WeatherUtils.getSkyCloudCover(sky)
             view.setImageResource(
                 if (rainType == "없음")
-                    getSkyResId(skyState, dayOrNight)
+                    WeatherUtils.getSkyResId(skyState, dayOrNight)
                 else
-                    getSkyResId(rainType, dayOrNight)
+                    WeatherUtils.getSkyResId(rainType, dayOrNight)
             )
         }
     }
@@ -296,22 +293,14 @@ object BindingAdapter {
     @BindingAdapter("setDateTime", "setPty", "setSky")
     @JvmStatic
     fun setSky(view: ImageView, dateTime: Long?, pty: String?, sky: String?) {
-        val dayOrNight = getDayOrNight(dateTime)
-        val rainType = getRainFallType(pty)
-        val skyState = getSkyCloudCover(sky)
-        view.setImageResource(
-            if (rainType == "없음")
-                getSkyResId(skyState, dayOrNight)
-            else
-                getSkyResId(rainType, dayOrNight)
-        )
+        view.setImageResource(WeatherUtils.getSkyIcon(dateTime, pty, sky))
     }
 
     @BindingAdapter("setSky", "setDayOrNight")
     @JvmStatic
     fun setWeeklyCloud(view: ImageView, sky: String?, dayOrNight: Int) {
         sky?.let {
-            view.setImageResource(getSkyResId(sky, dayOrNight))
+            view.setImageResource(WeatherUtils.getSkyResId(sky, dayOrNight))
         }
     }
 
@@ -325,7 +314,7 @@ object BindingAdapter {
     ) {
         val currentWeather = getCurrentWeather(areas, position, items)
         currentWeather?.run {
-            view.text = getRainGauge(rn1)
+            view.text = WeatherUtils.getRainGauge(rn1)
         }
     }
 
@@ -590,65 +579,6 @@ object BindingAdapter {
     }
 
     @JvmStatic
-    private fun getRainGauge(value: String): String {
-        if (value.isEmpty())
-            return ""
-        return when (value.toFloat()) {
-            in 0.0f..0.1f -> ""
-            in 0.1f..1.0f -> "1mm 미만"
-            in 1.0f..5.0f -> "1~4mm"
-            in 5.0f..10.0f -> "5~9mm"
-            in 10.0f..20.0f -> "10~20mm"
-            in 20.0f..40.0f -> "20~40mm"
-            in 40.0f..70.0f -> "40~70mm"
-            else -> "70mm 이상"
-        }
-    }
-
-    @JvmStatic
-    private fun getSkyCloudCover(sky: String?): String {
-        return when (sky) {
-            "3" -> "구름많음"
-            "1" -> "맑음"
-            else -> "흐림"
-        }
-    }
-
-    @JvmStatic
-    private fun getRainFallType(pty: String?): String {
-        return when (pty) {
-            "1" -> "비"
-            "2" -> "비/눈"
-            "3" -> "눈"
-            "4" -> "소나기"
-            else -> "없음"
-        }
-    }
-
-    @JvmStatic
-    private fun getSkyResId(sky: String, dayOrNight: Int): Int {
-        return when {
-            sky.contains("맑음") -> if (dayOrNight == 0) R.drawable.icons8_sun_96 else R.drawable.icons8_moon_100
-            sky.contains("구름많음") -> if (dayOrNight == 0) R.drawable.icons8_partly_cloudy_day_90 else R.drawable.icons8_partly_cloudy_night_100
-            sky.contains("비/눈") || sky.contains("눈/비") -> R.drawable.icons8_sleet_96
-            sky.contains("비") || sky.contains("소나기") -> R.drawable.icons8_rain_96
-            sky.contains("눈") -> R.drawable.icons8_snow_96
-            else -> R.drawable.icons8_cloud_96
-        }
-    }
-
-    @JvmStatic
-    private fun getDayOrNight(dateTime: Long?): Int {
-        if (dateTime == 0L) {
-            return 0
-        }
-        val hour = dateTime?.toString()?.substring(8..9)?.toInt()
-        return hour?.let {
-            if (hour > 19 || hour < 7) 1 else 0
-        } ?: 0
-    }
-
-    @JvmStatic
     private fun sortDailyToWeekly(daily: List<DailyWeather>?, area: Area): List<WeeklyWeather> {
         val filters = daily?.filter {
             it.gridX == area.gridX && it.gridY == area.gridY
@@ -656,8 +586,8 @@ object BindingAdapter {
         val list = mutableListOf<WeeklyData>()
         filters?.forEach {
             val date = it.dateTime.toString().substring(0..7)
-            val rainType = getRainFallType(it.pty)
-            val wf = if (rainType == "없음") getSkyCloudCover(it.sky) else rainType
+            val rainType = WeatherUtils.getRainFallType(it.pty)
+            val wf = if (rainType == "없음") WeatherUtils.getSkyCloudCover(it.sky) else rainType
             list.add(
                 WeeklyData(
                     date.toLong(),

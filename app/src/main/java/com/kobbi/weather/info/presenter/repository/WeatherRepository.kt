@@ -336,6 +336,9 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadPlaceAddressLive() = mWeatherDB.favoritePlaceDao().loadAddressLive()
 
+    fun getNotificateData(date: Long, yesterday: Long, time: Long, x: Int, y: Int) =
+        mWeatherDB.weatherInfoDao().getWeatherInfo(date, yesterday, time, x, y)
+
     fun findCurrentWeather(x: Int, y: Int) =
         mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.CURRENT), x, y)
 
