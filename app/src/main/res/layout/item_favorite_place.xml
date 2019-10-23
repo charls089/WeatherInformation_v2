@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <variable
             name="address"
             type="String" />
+
         <variable
             name="isSelected"
             type="Boolean" />
@@ -15,16 +18,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="1.2dp"
-        app:setBackground="@{isSelected}"
-        android:padding="8dp">
+        android:padding="8dp"
+        app:setBackground="@{isSelected}">
 
         <TextView
             android:id="@+id/tv_item_favorite_area"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:padding="2dp"
             android:text="@{address}"
             android:textAlignment="textStart"
-            android:textSize="21dp"
+            android:textSize="19dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_show_map"
             app:layout_constraintStart_toStartOf="parent"
