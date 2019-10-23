@@ -150,13 +150,8 @@ class WeatherService : Service() {
                                 }
                             }
                             OfferType.AIR -> {
-                                weatherRepository.loadAllAddress().forEach { address ->
-                                    val splitAddr = LocationUtils.splitAddressLine(address)
-                                    if (splitAddr.isNotEmpty())
-                                        ApiRequestRepository.requestAirMeasure(
-                                            context,
-                                            splitAddr[0]
-                                        )
+                                weatherRepository.loadAllCityName().forEach { cityName ->
+                                    ApiRequestRepository.requestAirMeasure(context, cityName)
                                 }
                             }
                             OfferType.BASE -> {

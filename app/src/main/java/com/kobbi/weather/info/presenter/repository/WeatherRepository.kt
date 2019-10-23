@@ -326,6 +326,17 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadAllAddress() = mWeatherDB.areaDao().loadAllAddress()
 
+    fun loadAllCityName(): List<String> {
+        val cityList = mutableSetOf<String>()
+        mWeatherDB.areaDao().loadAllAddress().forEach { address ->
+            val splitAddr = LocationUtils.splitAddressLine(address)
+            if (splitAddr.isNotEmpty())
+                cityList.add(splitAddr[0])
+        }
+        DLog.d(javaClass, "loadAllCityName() --> list : $cityList")
+        return cityList.toList()
+    }
+
     fun loadAllGridData() = mWeatherDB.areaDao().loadAllGridData()
 
     fun loadAllAreaCode() = mWeatherDB.areaDao().loadAllAreaCode()
