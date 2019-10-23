@@ -118,6 +118,10 @@ class Constants private constructor() {
             VALUE_PM10_LEVEL_VERY_BAD
         )
 
+        const val STATE_CODE_ACTIVE = 0
+        const val STATE_CODE_INACTIVE = 1
+        const val STATE_CODE_LOCATED = 2
+
         //기상특보 맵핑
         /*
         108     서울  전국

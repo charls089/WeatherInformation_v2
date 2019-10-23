@@ -11,6 +11,7 @@ import android.os.SystemClock
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.receiver.RestartServiceReceiver
 import com.kobbi.weather.info.util.DLog
+import com.kobbi.weather.info.util.Notificator
 
 object ServiceManager {
     private const val ACTION_RESTART = ".action.restart.weather.service"

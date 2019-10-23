@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -26,16 +27,20 @@ class SelectPlaceDialog : DialogFragment() {
         isCancelable = false
         val binding: DialogSelectAreaBinding =
             DataBindingUtil.inflate(inflater, R.layout.dialog_select_area, container, false)
-        val viewModel = ViewModelProviders.of(this)[JusoViewModel::class.java].apply {
-            clickEnd.observe(this@SelectPlaceDialog, Observer {
-                this@SelectPlaceDialog.dismiss()
-            })
-            clickClose.observe(this@SelectPlaceDialog, Observer {
-                this@SelectPlaceDialog.dismiss()
-            })
-        }
         binding.run {
-            jusoVm = viewModel
+            jusoVm = ViewModelProviders.of(this@SelectPlaceDialog)[JusoViewModel::class.java].apply {
+                clickEnd.observe(this@SelectPlaceDialog, Observer {
+                    this@SelectPlaceDialog.dismiss()
+                })
+                clickClose.observe(this@SelectPlaceDialog, Observer {
+                    this@SelectPlaceDialog.dismiss()
+                })
+                jusoList.observe(this@SelectPlaceDialog, Observer {
+                    context?.applicationContext?.let { context ->
+                        rvDialogAreaList.startAnimation(AnimationUtils.loadAnimation(context, R.anim.translate_up))
+                    }
+                })
+            }
             lifecycleOwner = this@SelectPlaceDialog
         }
         return binding.root
@@ -43,9 +48,10 @@ class SelectPlaceDialog : DialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        val params = dialog?.window?.attributes
-        params?.width = ConstraintLayout.LayoutParams.MATCH_PARENT
-        params?.height = ConstraintLayout.LayoutParams.MATCH_PARENT
+        val params = dialog?.window?.attributes?.apply {
+            width = ConstraintLayout.LayoutParams.MATCH_PARENT
+            height = ConstraintLayout.LayoutParams.MATCH_PARENT
+        }
         dialog?.window?.attributes = params as android.view.WindowManager.LayoutParams
     }
 }

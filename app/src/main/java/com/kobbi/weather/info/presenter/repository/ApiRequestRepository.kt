@@ -25,48 +25,47 @@ class ApiRequestRepository private constructor() {
         private const val TAG = "ApiRequestRepository"
 
         @JvmStatic
-        fun requestWeather(
-            context: Context, apiUrl: String, gridData: GridData, isFirst: Boolean = false
-        ) {
-            val baseTime = OfferType.getBaseDateTime(
-                when {
-                    apiUrl == ApiConstants.API_FORECAST_TIME_DATA -> OfferType.CURRENT
-                    isFirst -> OfferType.MINMAX
-                    else -> OfferType.DAILY
-                }
-            )
-            val params = LinkedHashMap<String, Any>().apply {
-                put("base_date", baseTime.first)
-                put("base_time", baseTime.second)
-                put("nx", gridData.x)
-                put("ny", gridData.y)
-                put("numOfRows", 1000)
-                put("_type", "json")
+        fun requestWeather(context: Context, type: OfferType, gridData: GridData) {
+            val apiUrl = when (type) {
+                OfferType.CURRENT, OfferType.YESTERDAY -> ApiConstants.API_FORECAST_TIME_DATA
+                OfferType.MINMAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
+                else -> ""
             }
-            val client = WeatherClient.getInstance()
-            client.requestWeather(apiUrl, params).enqueue(object : Callback<WeatherResponse> {
-                override fun onResponse(
-                    call: Call<WeatherResponse>,
-                    response: Response<WeatherResponse>
-                ) {
-                    DLog.writeLogFile(
-                        context,
-                        TAG,
-                        "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
-                    )
-                    val item = response.body()?.response?.body?.items?.item
-                    DLog.d(TAG, "requestWeather.item : $item")
-                    WeatherRepository.getInstance(context).insertWeather(gridData, item)
+            if (apiUrl.isNotEmpty()) {
+                val baseTime = OfferType.getBaseDateTime(type)
+                val params = LinkedHashMap<String, Any>().apply {
+                    put("base_date", baseTime.first)
+                    put("base_time", baseTime.second)
+                    put("nx", gridData.x)
+                    put("ny", gridData.y)
+                    put("numOfRows", 1000)
+                    put("_type", "json")
                 }
+                val client = WeatherClient.getInstance()
+                client.requestWeather(apiUrl, params).enqueue(object : Callback<WeatherResponse> {
+                    override fun onResponse(
+                        call: Call<WeatherResponse>,
+                        response: Response<WeatherResponse>
+                    ) {
+                        DLog.writeLogFile(
+                            context,
+                            TAG,
+                            "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
+                        )
+                        val item = response.body()?.response?.body?.items?.item
+                        DLog.d(TAG, "requestWeather.item : $item")
+                        WeatherRepository.getInstance(context).insertWeather(gridData, item)
+                    }
 
-                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                    DLog.writeLogFile(
-                        context,
-                        TAG,
-                        "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
-                    )
-                }
-            })
+                    override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                        DLog.writeLogFile(
+                            context,
+                            TAG,
+                            "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
+                        )
+                    }
+                })
+            }
         }
 
         @JvmStatic
@@ -247,9 +246,10 @@ class ApiRequestRepository private constructor() {
                 val gridData =
                     GridData(area.gridX, area.gridY)
                 val areaNo = area.areaCode
-                requestWeather(context, ApiConstants.API_FORECAST_TIME_DATA, gridData)
-                requestWeather(context, ApiConstants.API_FORECAST_SPACE_DATA, gridData, true)
-                requestWeather(context, ApiConstants.API_FORECAST_SPACE_DATA, gridData)
+                requestWeather(context, OfferType.CURRENT, gridData)
+                requestWeather(context, OfferType.YESTERDAY, gridData)
+                requestWeather(context, OfferType.DAILY, gridData)
+                requestWeather(context, OfferType.MINMAX, gridData)
                 requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
                 requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
                 requestLife(context, areaNo)

@@ -1,6 +1,5 @@
 package com.kobbi.weather.info.presenter.model.type
 
-import android.text.TextUtils
 import com.kobbi.weather.info.util.Constants
 import java.lang.NumberFormatException
 

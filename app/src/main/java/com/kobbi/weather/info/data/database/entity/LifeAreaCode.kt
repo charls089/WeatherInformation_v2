@@ -13,5 +13,7 @@ class LifeAreaCode(
     val prvnName: String,
     val cityName: String,
     val guGunName: String,
-    val dongName: String
+    val dongName: String,
+    val gridX:Int,
+    val gridY:Int
 )

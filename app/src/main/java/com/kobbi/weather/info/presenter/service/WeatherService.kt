@@ -9,8 +9,6 @@ import android.os.IBinder
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
-import com.kobbi.weather.info.presenter.model.data.AreaCode
-import com.kobbi.weather.info.presenter.model.data.GridData
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
@@ -58,8 +56,9 @@ class WeatherService : Service() {
                         LocationManager.RESPONSE_NO_ERROR -> {
                             location?.let {
                                 val time = Utils.getCurrentTime("yyyy-MM-dd, HH:mm:ss", it.time)
-                                val address = LocationUtils.splitAddressLine(context, location)
-                                weatherRepository.insertArea(context, address)
+                                val address = LocationUtils.getAddressLine(context, location)
+                                val addrList = LocationUtils.splitAddressLine(address)
+                                weatherRepository.insertArea(context, addrList, Constants.STATE_CODE_LOCATED)
                                 message =
                                     "time : $time, provider : ${it.provider}, LatLng:(${it.latitude},${it.longitude}), area : $address"
                             }
@@ -84,71 +83,66 @@ class WeatherService : Service() {
         }
     }
 
-    private fun checkUpdateTime(init: Boolean, typeUpdateTime: Boolean): Boolean {
-        return init || typeUpdateTime
-    }
-
     private fun requestWeather(init: Boolean) {
-        val isCurrentUpdateTime = OfferType.isUpdateTime(OfferType.CURRENT)
-        val isDailyUpdateTime = OfferType.isUpdateTime(OfferType.DAILY)
-        val isWeeklyUpdateTime = OfferType.isUpdateTime(OfferType.WEEKLY)
-        val isLifeUpdateTime = OfferType.isUpdateTime(OfferType.LIFE)
-        val isAirUpdateTime = OfferType.isUpdateTime(OfferType.AIR)
-        val isBaseUpdateTime = OfferType.isUpdateTime(OfferType.BASE)
-        applicationContext?.let { context ->
-            thread {
-                weatherRepository.loadArea().let { areaList ->
-                    val anySet = mutableSetOf<Any>()
-                    for (area in areaList) {
-                        area.run {
-                            if (checkUpdateTime(init, isCurrentUpdateTime))
-                                anySet.add(GridData(gridX, gridY))
-
-                            if (checkUpdateTime(init, isDailyUpdateTime))
-                                anySet.add(GridData(gridX, gridY))
-
-                            if (checkUpdateTime(init, isWeeklyUpdateTime))
-                                anySet.add(AreaCode(prvnCode, cityCode))
-
-                            if (checkUpdateTime(init, isLifeUpdateTime))
-                                anySet.add(areaCode)
-
-                            if (checkUpdateTime(init, isAirUpdateTime)) {
-                                val sidoName = LocationUtils.splitAddressLine(address)
-                                if (sidoName.isNotEmpty())
-                                    anySet.add(sidoName[0])
+        OfferType.values().forEach { type ->
+            if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
+                applicationContext?.let { context ->
+                    thread {
+                        when (type) {
+                            OfferType.CURRENT, OfferType.DAILY -> {
+                                weatherRepository.loadAllGridData().forEach { gridData ->
+                                    ApiRequestRepository.requestWeather(context, type, gridData)
+                                }
                             }
-                        }
-                    }
-                    anySet.forEach {
-                        when (it) {
-                            is GridData -> {
-                                ApiRequestRepository.requestWeather(
-                                    context, ApiConstants.API_FORECAST_TIME_DATA, it
-                                )
-                                ApiRequestRepository.requestWeather(
-                                    context, ApiConstants.API_FORECAST_SPACE_DATA, it
-                                )
+                            OfferType.WEEKLY -> {
+                                weatherRepository.loadAllAreaCode().forEach { areaCode ->
+                                    ApiRequestRepository.requestMiddle(
+                                        context,
+                                        ApiConstants.API_MIDDLE_LAND_WEATHER,
+                                        areaCode
+                                    )
+                                    ApiRequestRepository.requestMiddle(
+                                        context,
+                                        ApiConstants.API_MIDDLE_TEMPERATURE,
+                                        areaCode
+                                    )
+                                }
                             }
-                            is AreaCode -> {
-                                ApiRequestRepository.requestMiddle(
-                                    context, ApiConstants.API_MIDDLE_TEMPERATURE, it
-                                )
-                                ApiRequestRepository.requestMiddle(
-                                    context, ApiConstants.API_MIDDLE_LAND_WEATHER, it
-                                )
+                            OfferType.LIFE -> {
+                                weatherRepository.loadAllAreaNo().forEach { areaNo ->
+                                    ApiRequestRepository.requestLife(context, areaNo)
+                                }
                             }
-                            is String -> {
-                                if (it.length == 10)
-                                    ApiRequestRepository.requestLife(context, it)
-                                else
-                                    ApiRequestRepository.requestAirMeasure(context, it)
+                            OfferType.AIR -> {
+                                weatherRepository.loadAllAddress().forEach { address ->
+                                    val splitAddr = LocationUtils.splitAddressLine(address)
+                                    if (splitAddr.isNotEmpty())
+                                        ApiRequestRepository.requestAirMeasure(
+                                            context,
+                                            splitAddr[0]
+                                        )
+                                }
+                            }
+                            OfferType.BASE -> {
+                                ApiRequestRepository.requestNews(context)
+                            }
+                            OfferType.YESTERDAY -> {
+                                weatherRepository.loadAllGridData().forEach { gridData ->
+                                    if (weatherRepository.findYesterdayWeather(
+                                            gridData.x,
+                                            gridData.y
+                                        ) == null
+                                    ) {
+                                        ApiRequestRepository.requestWeather(context, type, gridData)
+                                    }
+                                }
+                            }
+                            OfferType.MINMAX -> {
+                                //Nothing
                             }
                         }
                     }
                 }
-                if (checkUpdateTime(init, isBaseUpdateTime))
-                    ApiRequestRepository.requestNews(context)
             }
         }
     }

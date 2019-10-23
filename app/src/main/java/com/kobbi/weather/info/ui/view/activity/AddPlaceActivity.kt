@@ -1,5 +1,6 @@
 package com.kobbi.weather.info.ui.view.activity
 
+import android.content.DialogInterface
 import android.location.Location
 import android.os.Bundle
 import android.view.Menu
@@ -22,12 +23,13 @@ import com.kobbi.weather.info.presenter.location.LocationManager
 import com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel
 import com.kobbi.weather.info.ui.view.dialog.SelectPlaceDialog
 import com.kobbi.weather.info.util.LocationUtils
-import kotlin.concurrent.thread
+import com.kobbi.weather.info.util.Utils
 
 class AddPlaceActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mGoogleMap: GoogleMap? = null
     private var mPlaceVm: PlaceViewModel? = null
     private var mIsMultiChoice: Boolean = false
+    private var mIsLimit: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,9 @@ class AddPlaceActivity : AppCompatActivity(), OnMapReadyCallback {
             clickPosition.observe(this@AddPlaceActivity, Observer { address ->
                 val latLng = LocationUtils.convertAddress(applicationContext, address)
                 setMapView(latLng)
+            })
+            place.observe(this@AddPlaceActivity, Observer {
+                mIsLimit = it.size >= 5
             })
         }
         binding.placeVm = mPlaceVm
@@ -77,30 +82,34 @@ class AddPlaceActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_add_place -> {
-                thread {
-                    runOnUiThread {
-                        SelectPlaceDialog().show(
-                            supportFragmentManager,
-                            SelectPlaceDialog.TAG
-                        )
-                    }
+                if (mIsLimit) {
+                    Utils.showAlertDialog(
+                        this@AddPlaceActivity,
+                        R.string.title_add_place_maximum,
+                        R.string.info_add_place_maximum,
+                        DialogInterface.OnClickListener { dialog, _ ->
+                            dialog.dismiss()
+                        })
+                    return false
                 }
+                SelectPlaceDialog().show(
+                    supportFragmentManager,
+                    SelectPlaceDialog.TAG
+                )
             }
             R.id.action_remove_place -> {
-                AlertDialog.Builder(this).run {
-                    setTitle(R.string.title_dialog_delete)
-                    setMessage(R.string.info_delete_message)
-                    setCancelable(false)
-                    setPositiveButton(R.string.symbol_yes) { dialog, _ ->
+                Utils.showAlertDialog(
+                    this@AddPlaceActivity,
+                    R.string.title_dialog_delete,
+                    R.string.info_delete_message,
+                    DialogInterface.OnClickListener { dialog, _ ->
                         mPlaceVm?.deletePlace()
                         dialog.dismiss()
-                    }
-                    setNegativeButton(R.string.symbol_cancel) { dialog, _ ->
+                    },
+                    DialogInterface.OnClickListener { dialog, _ ->
                         mPlaceVm?.clearSelectedPlace()
                         dialog.dismiss()
-                    }
-                    create().show()
-                }
+                    })
             }
         }
         return super.onOptionsItemSelected(item)

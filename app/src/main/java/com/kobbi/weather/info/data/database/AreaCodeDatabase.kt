@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.kobbi.weather.info.data.database.dao.ForecastAreaCodeDAO
 import com.kobbi.weather.info.data.database.dao.LifeAreaCodeDAO
@@ -17,7 +16,7 @@ import kotlin.concurrent.thread
 
 @Database(
     entities = [ForecastAreaCode::class, LifeAreaCode::class],
-    version = 2
+    version = 1
 )
 abstract class AreaCodeDatabase : RoomDatabase() {
     abstract fun fcstAreaCodeDao(): ForecastAreaCodeDAO
@@ -43,14 +42,8 @@ abstract class AreaCodeDatabase : RoomDatabase() {
                         DLog.d(TAG, "callback.onCreate()")
                     }
                 }
-                val migration = object : Migration(1, 2) {
-                    override fun migrate(database: SupportSQLiteDatabase) {
-                        setDatabaseData(context, LIFE_AREA_CODE_FILE_NAME)
-                    }
-                }
                 Room.databaseBuilder(context, AreaCodeDatabase::class.java, DB_NAME)
                     .addCallback(callback)
-                    .addMigrations(migration)
                     .build().also {
                         INSTANCE = it
                     }
@@ -76,7 +69,7 @@ abstract class AreaCodeDatabase : RoomDatabase() {
             Executors.newSingleThreadScheduledExecutor().execute {
                 val database = getDatabase(context)
                 if (list != null) {
-                    when(fileName) {
+                    when (fileName) {
                         FCST_AREA_CODE_FILE_NAME -> {
                             database.fcstAreaCodeDao()
                                 .insertAll(list.filterIsInstance<ForecastAreaCode>())
@@ -99,14 +92,24 @@ abstract class AreaCodeDatabase : RoomDatabase() {
             val list = mutableListOf<Any>()
             context.applicationContext.assets.open(fileName).use { ips ->
                 ips.bufferedReader().readLines().run {
+                    var count = 0
                     this.forEach {
+                        count++
                         val data = it.split(",")
                         val code = when (fileName) {
                             FCST_AREA_CODE_FILE_NAME -> {
                                 ForecastAreaCode(data[0], data[1], data[2])
                             }
                             LIFE_AREA_CODE_FILE_NAME -> {
-                                LifeAreaCode(data[0], data[1], data[2], data[3], data[4])
+                                LifeAreaCode(
+                                    data[0],
+                                    data[1],
+                                    data[2],
+                                    data[3],
+                                    data[4],
+                                    data[5].toInt(),
+                                    data[6].toInt()
+                                )
                             }
                             else -> {
                                 Any()

@@ -1,5 +1,10 @@
 package com.kobbi.weather.info.util
 
+import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
+import androidx.appcompat.app.AlertDialog
+import com.kobbi.weather.info.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,6 +61,27 @@ class Utils private constructor() {
             } catch (e: ParseException) {
                 e.printStackTrace()
                 null
+            }
+        }
+
+        @JvmStatic
+        fun showAlertDialog(
+            activity: Activity,
+            titleId: Int,
+            messageId: Int,
+            positive: DialogInterface.OnClickListener,
+            negative: DialogInterface.OnClickListener? = null
+        ) {
+            AlertDialog.Builder(activity).run {
+                setCancelable(false)
+                setTitle(titleId)
+                setMessage(messageId)
+                setPositiveButton(R.string.symbol_yes, positive)
+                negative?.let {
+                    setNegativeButton(R.string.symbol_no, negative)
+                }
+                create()
+                show()
             }
         }
     }

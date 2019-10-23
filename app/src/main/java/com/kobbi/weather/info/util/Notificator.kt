@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
@@ -40,10 +41,11 @@ class Notificator private constructor() {
         channelType: ChannelType,
         title: String,
         message: String,
-        icon: Int = context.applicationContext.applicationInfo.icon,
+        icon: Int? = null,
         pendingIntent: PendingIntent? = null
     ) {
-        val notification = getNotification(context, channelType, title, message, icon, pendingIntent)
+        val notification =
+            getNotification(context, channelType, title, message, icon, pendingIntent)
         val manager = getNotificationManager(context)
         val notificationId = getNotificationId()
         manager.notify(notificationId, notification)
@@ -55,22 +57,25 @@ class Notificator private constructor() {
         channelType: ChannelType,
         title: String? = null,
         message: String? = null,
-        icon: Int = context.applicationContext.applicationInfo.icon,
+        icon: Int? = null,
         pendingIntent: PendingIntent? = null
     ): Notification {
         val applicationContext = context.applicationContext
-        val builder: NotificationCompat.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChannel(applicationContext, channelType)
-            NotificationCompat.Builder(applicationContext, channelType.channelId)
-        } else {
-            NotificationCompat.Builder(applicationContext)
-        }
+        val builder: NotificationCompat.Builder =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                createChannel(applicationContext, channelType)
+                NotificationCompat.Builder(applicationContext, channelType.channelId)
+            } else {
+                NotificationCompat.Builder(applicationContext)
+            }
         if (title != null && message != null)
             with(builder) {
                 setContentTitle(title)
                 setContentText(message)
-                setSmallIcon(icon)
+                setSmallIcon(context.applicationContext.applicationInfo.icon)
                 setAutoCancel(true)
+                if (icon != null)
+                    setLargeIcon(BitmapFactory.decodeResource(context.resources, icon))
 
                 pendingIntent?.let {
                     setContentIntent(pendingIntent)
@@ -88,7 +93,11 @@ class Notificator private constructor() {
         channelType: ChannelType
     ) {
         val notificationChannel =
-            NotificationChannel(channelType.channelId, channelType.channelName, channelType.importance)
+            NotificationChannel(
+                channelType.channelId,
+                channelType.channelName,
+                channelType.importance
+            )
         val manager = getNotificationManager(context)
         manager.createNotificationChannel(notificationChannel)
     }

@@ -10,6 +10,7 @@ import com.kobbi.weather.info.data.network.domain.weather.WeatherItem
 import com.kobbi.weather.info.presenter.model.data.AreaCode
 import com.kobbi.weather.info.presenter.model.data.ForecastData
 import com.kobbi.weather.info.presenter.model.data.GridData
+import com.kobbi.weather.info.presenter.model.data.BranchCode
 import com.kobbi.weather.info.presenter.model.type.LifeCode
 import com.kobbi.weather.info.presenter.model.type.SearchTime
 import com.kobbi.weather.info.util.Constants
@@ -41,13 +42,12 @@ class WeatherRepository private constructor(context: Context) {
     private val mWeatherDB: WeatherDatabase = WeatherDatabase.getDatabase(context)
     private val mAreaCodeDB: AreaCodeDatabase = AreaCodeDatabase.getDatabase(context)
 
-    fun insertArea(context: Context, addressList: List<String>) {
+    fun insertArea(context: Context, addressList: List<String>, stateCode: Int) {
         thread {
             if (addressList.isNotEmpty()) {
-                val startIdx = if (addressList[0] == "대한민국") 1 else 0
                 val endIdx = if (addressList.size >= 4) 4 else addressList.size
                 val address = StringBuilder().run {
-                    for (i in startIdx until endIdx) {
+                    for (i in 0 until endIdx) {
                         if (addressList[i].isNotBlank()) {
                             append(addressList[i])
                             append(" ")
@@ -56,7 +56,6 @@ class WeatherRepository private constructor(context: Context) {
                     toString()
                 }.dropLast(1)
 
-                val grid = LocationUtils.convertGrid(LocationUtils.convertAddress(context, address))
                 val areaName = LocationUtils.getCityCode(address)
                 val areaCode = mAreaCodeDB.fcstAreaCodeDao().findCode(areaName)
                 val list = LocationUtils.splitAddressLine(address).toMutableList()
@@ -65,7 +64,7 @@ class WeatherRepository private constructor(context: Context) {
                         list.add(0, "")
                     val dao = mAreaCodeDB.lifeAreaCodeDao()
 
-                    fun findAreaCode(list: List<String>): String? {
+                    fun findAreaCode(list: List<String>): BranchCode? {
                         val size = list.size
                         return when (size) {
                             0 -> null
@@ -76,10 +75,16 @@ class WeatherRepository private constructor(context: Context) {
                         } ?: if (size - 1 > 0) findAreaCode(list.subList(0, size - 1)) else null
                     }
 
-                    val areaNo = findAreaCode(list)
+                    val pointCode = findAreaCode(list)
+                    DLog.d(javaClass, "insertArea() --> pointCode : ${pointCode.toString()}")
+                    val grid = if (pointCode?.gridX == null)
+                        LocationUtils.convertGrid(LocationUtils.convertAddress(context, address))
+                    else
+                        GridData(pointCode.gridX, pointCode.gridY)
+                    val areaNo = pointCode?.areaNo
                     DLog.d(
                         javaClass,
-                        "area = $address, gridX = ${grid?.x}, gridY = ${grid?.y}, prvnCode = ${areaCode?.prvnCode}, cityCode = ${areaCode?.cityCode}, areaCode = $areaNo"
+                        "insertArea() --> area = $address, gridX = ${grid?.x}, gridY = ${grid?.y}, prvnCode = ${areaCode?.prvnCode}, cityCode = ${areaCode?.cityCode}, areaCode = $areaNo"
                     )
                     if (grid != null && areaCode != null && areaNo != null) {
                         val area =
@@ -89,10 +94,12 @@ class WeatherRepository private constructor(context: Context) {
                                 areaCode.cityCode,
                                 areaNo,
                                 grid.x,
-                                grid.y
+                                grid.y,
+                                stateCode
                             )
                         ApiRequestRepository.initBaseAreaData(context, area)
-                        inactiveLastArea()
+                        if (stateCode == Constants.STATE_CODE_LOCATED)
+                            changeStateBeforeArea()
                         mWeatherDB.areaDao().insert(area)
                     }
                 }
@@ -305,18 +312,38 @@ class WeatherRepository private constructor(context: Context) {
         return mWeatherDB.areaDao().updateCodeArea(address, stateCode)
     }
 
+    fun findArea(address: String) = mWeatherDB.areaDao().findArea(address)
+
     fun loadArea() = mWeatherDB.areaDao().loadAll()
+
+    fun loadActiveArea() = mWeatherDB.areaDao().loadActiveArea()
 
     fun loadActiveAreaLive() = mWeatherDB.areaDao().loadActiveAreaLive()
 
+    fun loadLocatedArea() = mWeatherDB.areaDao().loadLocatedArea()
+
     fun loadAreaFromAddress(address: String) = mWeatherDB.areaDao().findArea(address)
+
+    fun loadAllAddress() = mWeatherDB.areaDao().loadAllAddress()
+
+    fun loadAllGridData() = mWeatherDB.areaDao().loadAllGridData()
+
+    fun loadAllAreaCode() = mWeatherDB.areaDao().loadAllAreaCode()
+
+    fun loadAllAreaNo() = mWeatherDB.areaDao().loadAllAreaNo()
 
     fun loadPlaceAddress() = mWeatherDB.favoritePlaceDao().loadAddress()
 
     fun loadPlaceAddressLive() = mWeatherDB.favoritePlaceDao().loadAddressLive()
 
+    fun findCurrentWeather(x: Int, y: Int) =
+        mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.CURRENT), x, y)
+
     fun loadCurrentWeatherLive() =
         mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.CURRENT))
+
+    fun findYesterdayWeather(x: Int, y: Int) =
+        mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.YESTERDAY), x, y)
 
     fun loadYesterdayWeatherLive() =
         mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.YESTERDAY))
@@ -325,6 +352,9 @@ class WeatherRepository private constructor(context: Context) {
         val dailyTerm = SearchTime.getTerm(SearchTime.DAILY_START, SearchTime.DAILY_END)
         return mWeatherDB.dailyWeatherDao().loadLive(dailyTerm.first, dailyTerm.second)
     }
+
+    fun findMinMaxTpr(x: Int, y: Int) =
+        mWeatherDB.dailyWeatherDao().findMinMaxTpr(SearchTime.getDate(SearchTime.DEFAULT), x, y)
 
     fun loadMinMaxTprLive() =
         mWeatherDB.dailyWeatherDao().findMinMaxTprLive(SearchTime.getDate(SearchTime.DEFAULT))
@@ -379,13 +409,15 @@ class WeatherRepository private constructor(context: Context) {
         return forecastDataList
     }
 
-    private fun inactiveLastArea() {
-        val lastAddress = loadArea().lastOrNull()?.address
+    private fun changeStateBeforeArea() {
+        val lastAddress = loadLocatedArea()?.address
         lastAddress?.let {
             val favoritePlaceList = loadPlaceAddress()
-            val isContain = favoritePlaceList.contains(lastAddress)
-            if (!isContain)
-                updateAreaCode(lastAddress, 1)
+            val stateCode = if (favoritePlaceList.contains(lastAddress))
+                Constants.STATE_CODE_ACTIVE
+            else
+                Constants.STATE_CODE_INACTIVE
+            updateAreaCode(lastAddress, stateCode)
         }
     }
 
@@ -399,13 +431,16 @@ class WeatherRepository private constructor(context: Context) {
      * @param t Temperature
      * @param w Wind Velocity
      */
-    private fun getWindChillTemperature(t: String?, w: String?): String {
-        if (!t.isNullOrEmpty() && !w.isNullOrEmpty()) {
+    private fun getWindChillTemperature(t: String, w: String): String {
+        return try {
             val tpr = t.toDouble()
             val v = w.toDouble()
-            return (13.12 + 0.6215 * tpr - 11.37 * v.pow(0.16) + 0.3965 * v.pow(0.16) * tpr).roundToInt()
+            (13.12 + 0.6215 * tpr - 11.37 * v.pow(0.16) + 0.3965 * v.pow(0.16) * tpr).roundToInt()
                 .toString()
+        } catch (e: NumberFormatException) {
+            ""
+        } catch (e: IllegalArgumentException) {
+            ""
         }
-        return ""
     }
 }

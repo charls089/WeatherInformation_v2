@@ -27,6 +27,7 @@
     <string name="title_weekly_temperature">주간 날씨</string>
     <string name="title_life_list">생활 지수</string>
     <string name="title_dialog_delete">즐겨찾는 장소 삭제</string>
+    <string name="title_add_place_maximum">즐겨찾는 장소 개수 초과</string>
     <string name="title_dialog_location_permission">위치 권한이 필요함</string>
     <string name="title_default_setting">기본 설정</string>
 
@@ -103,6 +104,8 @@
     <string name="WCT">체감온도</string>
 
     <string name="mapping_sejong">세종</string>
+
+    <string name="holder_level_value">%1$s (%2$d)</string>
 
     <!-- 메뉴 제목-->
     <string name="favorite_place">즐겨찾는 장소</string>

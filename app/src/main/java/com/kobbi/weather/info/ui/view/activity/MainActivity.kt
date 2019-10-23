@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -31,33 +29,11 @@ class MainActivity : AppCompatActivity() {
                 area.observe(this@MainActivity, Observer {
                     DLog.d("AreaViewModel", "area.observe() --> Area Change")
                     weatherVm.refreshData()
-                    vpMainPage.startAnimation(
-                        AnimationUtils.loadAnimation(
-                            applicationContext,
-                            R.anim.anim_fade_in
-                        )
+                    clViewContainer.startAnimation(
+                        AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in)
                     )
                     pbDialog.startAnimation(
-                        AnimationUtils.loadAnimation(
-                            applicationContext,
-                            R.anim.anim_fade_out
-                        ).apply {
-                            setAnimationListener(
-                                object : Animation.AnimationListener {
-                                    override fun onAnimationRepeat(animation: Animation?) {
-                                        //Nothing
-                                    }
-
-                                    override fun onAnimationEnd(animation: Animation?) {
-                                        pbDialog.visibility = View.GONE
-                                    }
-
-                                    override fun onAnimationStart(animation: Animation?) {
-                                        //Nothing
-                                    }
-                                }
-                            )
-                        }
+                        AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out)
                     )
 
                 })
@@ -81,11 +57,17 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_add_location -> {
                 //즐겨찾는 장소 화면 이동
-                startActivity(Intent(this, AddPlaceActivity::class.java))
+                val intent = Intent(this, AddPlaceActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
+                startActivity(intent)
             }
             R.id.action_setting -> {
                 //설정 화면 이동
-                startActivity(Intent(this, SettingsActivity::class.java))
+                val intent = Intent(this, SettingsActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)

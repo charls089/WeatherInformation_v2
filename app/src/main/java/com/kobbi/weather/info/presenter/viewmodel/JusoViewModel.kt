@@ -2,7 +2,10 @@ package com.kobbi.weather.info.presenter.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
+import androidx.core.os.postDelayed
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,8 +16,8 @@ import com.kobbi.weather.info.presenter.model.type.Address
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.util.ApiConstants
+import com.kobbi.weather.info.util.Constants
 import com.kobbi.weather.info.util.DLog
-import com.kobbi.weather.info.util.LocationUtils
 import com.kobbi.weather.info.util.SingleLiveEvent
 import kotlin.concurrent.thread
 
@@ -43,13 +46,15 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
     private val _clickClose = SingleLiveEvent<Any>()
 
     // 광역시/도, 시/군/구 데이터 저장 리스트
-    private val codeList = mutableListOf<String>()
+    private val mCodeList = mutableListOf<String>()
 
     private var mPrevPosition = -1
     private var mSidoCode = ""
     private var mSigunguCode = ""
     private var mDongCode = ""
     private var mDepth = 0
+
+    private var mIsLocked = false
 
     private val listener = object : CompleteListener {
         override fun onComplete(code: Int, data: Any) {
@@ -96,6 +101,12 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadJusoList(position: Int = -1) {
+        if (mIsLocked)
+            return
+        mIsLocked = true
+        Handler(Looper.getMainLooper()).postDelayed(500) {
+            mIsLocked = false
+        }
         mPrevPosition = if (mPrevPosition == position) -1 else position
         if (mPrevPosition != -1) {
             val selectedJuso = _jusoList.value?.get(position)
@@ -104,28 +115,25 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
         val apiUrl = getApiUrl()
         setJusoTitle(apiUrl)
         val jusoList = getJusoList()
-        codeList.clear()
-        codeList.addAll(jusoList)
-        _address.postValue(convertAddress(codeList))
+        mCodeList.clear()
+        mCodeList.addAll(jusoList)
+        _address.postValue(convertAddress(mCodeList))
         if (mDepth == DONG_DEPTH) {
             setAreaJuso(getApplication())
             clickClose()
         } else {
             mPrevPosition = -1
             _depth.postValue(++mDepth)
-            ApiRequestRepository.requestJuso(apiUrl, codeList, listener = listener)
+            ApiRequestRepository.requestJuso(apiUrl, mCodeList, listener = listener)
         }
     }
 
     private fun setAreaJuso(context: Context) {
         thread {
-            val lastAddress = _weatherRepository.loadArea().lastOrNull()?.address
-            _weatherRepository.insertArea(context, codeList)
-            val address = convertAddress(codeList)
-            _weatherRepository.insertPlace(address)
-            _weatherRepository.updateAreaCode(address, 0)
-            lastAddress?.let {
-                _weatherRepository.insertArea(context, LocationUtils.splitAddressLine(lastAddress))
+            with(_weatherRepository) {
+                insertArea(context, mCodeList, Constants.STATE_CODE_ACTIVE)
+                val address = convertAddress(mCodeList)
+                insertPlace(address)
             }
         }
     }

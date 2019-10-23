@@ -25,7 +25,7 @@ class SettingViewModel(application: Application) : AndroidViewModel(application)
         } else {
             thread {
                 _weatherRepository.run {
-                    loadArea().lastOrNull()?.address?.let { lastAddress ->
+                    loadLocatedArea()?.address?.let { lastAddress ->
                         updateAreaCode(lastAddress, 1)
                     }
                 }

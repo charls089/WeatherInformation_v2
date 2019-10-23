@@ -17,6 +17,6 @@ data class Area(
     val areaCode: String,
     val gridX: Int,
     val gridY: Int,
-    //0 -> Active, 1 -> Inactive
-    val isActive: Int = 0
+    //0 -> Active, 1 -> Inactive, 2 -> located
+    val stateCode: Int
 )

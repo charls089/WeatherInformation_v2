@@ -31,7 +31,7 @@ class LocationUtils private constructor() {
         private const val olon = OLON * DEGRAD
         private const val olat = OLAT * DEGRAD
 
-        fun convertAddress(context:Context, address: String): LatLng? {
+        fun convertAddress(context: Context, address: String): LatLng? {
             return try {
                 val filterAddress =
                     if (address.contains("세종")) address.replace("세종특별자치시", "연기군") else address
@@ -95,6 +95,10 @@ class LocationUtils private constructor() {
                 DLog.writeLogFile(context, message = e.message)
                 null
             }
+        }
+
+        fun getAddressLine(context: Context, location: Location): String {
+            return getAddress(context, location)?.getAddressLine(0)?.replace("대한민국 ","") ?: ""
         }
 
         @JvmStatic
