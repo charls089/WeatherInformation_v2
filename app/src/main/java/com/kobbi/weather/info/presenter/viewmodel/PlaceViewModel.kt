@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
+import com.kobbi.weather.info.util.Constants
 import kotlin.concurrent.thread
 
 class PlaceViewModel(application: Application) : AndroidViewModel(application) {
@@ -54,7 +55,7 @@ class PlaceViewModel(application: Application) : AndroidViewModel(application) {
                 mDeleteList.forEach { idx ->
                     val address = placeList[idx]
                     delList.add(address)
-                    _weatherRepository.updateAreaCode(address, 1)
+                    _weatherRepository.updateAreaCode(address, Constants.STATE_CODE_INACTIVE)
                 }
             }
             mDeleteList.clear()

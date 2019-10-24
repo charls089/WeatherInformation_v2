@@ -16,9 +16,12 @@ class Notificator private constructor() {
     enum class ChannelType constructor(
         val channelId: String,
         val channelName: String,
-        val importance: Int = NotificationManager.IMPORTANCE_DEFAULT
+        val importance: Int = NotificationManager.IMPORTANCE_DEFAULT,
+        val isRepeat: Boolean = true,
+        val id: Int = -1
     ) {
         TYPE_DEFAULT("NotificationChannel", "NotificationService"),
+        TYPE_("_Channel", "Service", isRepeat = false, id = 703),
         TYPE_POLARIS("PolarisChannel", "Polaris", NotificationManager.IMPORTANCE_LOW)
     }
 
@@ -47,7 +50,7 @@ class Notificator private constructor() {
         val notification =
             getNotification(context, channelType, title, message, icon, pendingIntent)
         val manager = getNotificationManager(context)
-        val notificationId = getNotificationId()
+        val notificationId = getNotificationId(channelType)
         manager.notify(notificationId, notification)
     }
 
@@ -85,7 +88,9 @@ class Notificator private constructor() {
         return builder.build()
     }
 
-    fun getNotificationId() = SystemClock.elapsedRealtime().toInt()
+    fun getNotificationId(type: ChannelType) =
+        if (type.isRepeat) SystemClock.elapsedRealtime().toInt() else type.id
+
 
     @TargetApi(Build.VERSION_CODES.O)
     private fun createChannel(

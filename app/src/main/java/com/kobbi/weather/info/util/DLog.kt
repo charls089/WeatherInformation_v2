@@ -12,6 +12,12 @@ class DLog private constructor() {
         private const val LOG_SUFFIX = "_log.txt"
 
         @JvmStatic
+        fun i(tag: String = "default", message: String) {
+            if (BuildConfig.DEBUG)
+                Log.i(TAG_PREFIX + tag, message)
+        }
+
+        @JvmStatic
         fun d(tag: String = "default", message: String) {
             if (BuildConfig.DEBUG)
                 Log.d(TAG_PREFIX + tag, message)

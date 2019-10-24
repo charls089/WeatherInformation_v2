@@ -1,11 +1,13 @@
 package com.kobbi.weather.info.ui.adapter
 
 import android.graphics.Color
+import android.os.Handler
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.os.postDelayed
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
@@ -86,8 +88,15 @@ object BindingAdapter {
                             val isMulti = placeVm?.isMultiCheck?.value
                             if (isMulti == true)
                                 placeVm.addDeleteItem(position)
-                            else
+                            else {
+                                view.isClickable = false
+                                view.isEnabled = false
+                                Handler().postDelayed(1000) {
+                                    view.isClickable = true
+                                    view.isEnabled = true
+                                }
                                 placeVm?.selectItem(position)
+                            }
                         }
                     })
                     this.setOnLongClickListener(object : LongClickListener {
@@ -397,7 +406,6 @@ object BindingAdapter {
                 it.codeNo
             }
             filterDay?.let {
-                DLog.d(message = "filterDay : $filterDay")
                 for (idxDay in filterDay) {
                     val codeNo = idxDay.codeNo
                     val value = idxDay.value
@@ -409,7 +417,8 @@ object BindingAdapter {
                             tv_life_title.text = codeName
                             level?.let {
                                 tv_life_data.run {
-                                    text = context.getString(R.string.holder_level_value, level, value)
+                                    text =
+                                        context.getString(R.string.holder_level_value, level, value)
                                     setTextColor(if (level == "주의") Color.BLACK else Color.WHITE)
                                     setBackgroundResource(getLevelColor(level))
                                 }
@@ -445,7 +454,8 @@ object BindingAdapter {
                             tv_life_title.text = codeName
                             level?.let {
                                 tv_life_data.run {
-                                    text = context.getString(R.string.holder_level_value, level, value)
+                                    text =
+                                        context.getString(R.string.holder_level_value, level, value)
                                     setTextColor(if (level == "주의") Color.BLACK else Color.WHITE)
                                     setBackgroundResource(getLevelColor(level))
                                 }
@@ -485,6 +495,22 @@ object BindingAdapter {
                     }
                 }
             }
+        }
+    }
+
+    @BindingAdapter("setItemVisibility")
+    @JvmStatic
+    fun setItemVisibility(view: View, items: List<*>?) {
+        items?.let {
+            view.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+        }
+    }
+
+    @BindingAdapter("setGuideVisibility")
+    @JvmStatic
+    fun setGuideVisibility(view: View, items: List<*>?) {
+        items?.let {
+            view.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
@@ -625,8 +651,6 @@ object BindingAdapter {
 
     @JvmStatic
     private fun getAreaFromViewModel(areas: List<Area>?, position: Int?): Area? {
-        DLog.d("BindingAdapter", "getAreaFromViewModel() --> areas : $areas")
-        DLog.d("BindingAdapter", "getAreaFromViewModel() --> position : $position")
         return position?.run {
             areas?.get(position)
         }

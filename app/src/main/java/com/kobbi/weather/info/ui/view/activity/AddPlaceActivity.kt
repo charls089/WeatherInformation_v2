@@ -4,12 +4,10 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.maps.SupportMapFragment
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.ActivityAddPlaceBinding
 import com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel
@@ -29,21 +27,22 @@ class AddPlaceActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityAddPlaceBinding>(
             this, R.layout.activity_add_place
         ).run {
-            mPlaceVm = ViewModelProviders.of(this@AddPlaceActivity)[PlaceViewModel::class.java].apply {
-                isMultiCheck.observe(this@AddPlaceActivity,
-                    Observer { isMulti ->
-                        mIsMultiChoice = isMulti
-                        invalidateOptionsMenu()
+            mPlaceVm =
+                ViewModelProviders.of(this@AddPlaceActivity)[PlaceViewModel::class.java].apply {
+                    isMultiCheck.observe(this@AddPlaceActivity,
+                        Observer { isMulti ->
+                            mIsMultiChoice = isMulti
+                            invalidateOptionsMenu()
+                        })
+                    clickPosition.observe(this@AddPlaceActivity, Observer { address ->
+                        val latLng = LocationUtils.convertAddress(applicationContext, address)
+                        MapViewDialog(latLng).show(supportFragmentManager, SelectPlaceDialog.TAG)
+                        DLog.d(javaClass, "clickPosition.observe() --> latLng : $latLng")
                     })
-                clickPosition.observe(this@AddPlaceActivity, Observer { address ->
-                    val latLng = LocationUtils.convertAddress(applicationContext, address)
-                    MapViewDialog(latLng).show(supportFragmentManager, SelectPlaceDialog.TAG)
-                    DLog.d(javaClass, "clickPosition.observe() --> latLng : $latLng")
-                })
-                place.observe(this@AddPlaceActivity, Observer {
-                    mIsLimit = it.size >= 5
-                })
-            }
+                    place.observe(this@AddPlaceActivity, Observer {
+                        mIsLimit = it.size >= 5
+                    })
+                }
             placeVm = mPlaceVm
             lifecycleOwner = this@AddPlaceActivity
         }

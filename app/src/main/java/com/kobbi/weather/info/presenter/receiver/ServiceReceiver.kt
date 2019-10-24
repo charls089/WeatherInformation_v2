@@ -6,12 +6,12 @@ import android.content.Intent
 import com.kobbi.weather.info.presenter.service.ServiceManager
 import com.kobbi.weather.info.util.DLog
 
-class RestartServiceReceiver : BroadcastReceiver() {
+class ServiceReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
             DLog.writeLogFile(
                 context,
-                "RestartServiceReceiver",
+                "ServiceReceiver",
                 "context : $context / action : ${intent?.action}"
             )
             intent?.action?.let { action ->

@@ -35,13 +35,17 @@ class MainActivity : AppCompatActivity() {
                     pbDialog.startAnimation(
                         AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out)
                     )
-
                 })
             }
             areaVm = mAreaVm
             fragmentManager = supportFragmentManager
             lifecycleOwner = this@MainActivity
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mAreaVm?.refreshWeatherInfo()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

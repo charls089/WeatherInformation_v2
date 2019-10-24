@@ -57,22 +57,38 @@ class WeatherService : Service() {
                 GregorianCalendar().apply {
                     val today = (Utils.getCurrentTime() + "0000").toLong()
                     this.add(Calendar.DATE, -1)
-                    val yesterday = (Utils.getCurrentTime(time = this.timeInMillis) + "0000").toLong()
+                    val yesterday =
+                        (Utils.getCurrentTime(time = this.timeInMillis) + "0000").toLong()
                     this.add(Calendar.HOUR, 1)
                     val time = (Utils.getCurrentTime("HH", this.timeInMillis) + "00").toLong()
                     val weatherInfo =
-                        weatherRepository.getNotificateData(today, yesterday, time, area.gridX, area.gridY)
+                        weatherRepository.getNotificateData(
+                            today,
+                            yesterday,
+                            time,
+                            area.gridX,
+                            area.gridY
+                        )
                     weatherInfo?.run {
                         Notificator.getInstance().showNotification(
                             applicationContext,
-                            Notificator.ChannelType.TYPE_DEFAULT,
-                            String.format(getString(R.string.holder_weather_notify), tpr, wct, yesterdayWct, tmn, tmx),
+                            Notificator.ChannelType.TYPE_,
+                            String.format(
+                                getString(R.string.holder_weather_notify),
+                                tpr,
+                                wct,
+                                yesterdayWct,
+                                tmn,
+                                tmx
+                            ),
                             getString(R.string.info_more_weather_info_message),
                             WeatherUtils.getSkyIcon(today + time, pty, sky),
                             PendingIntent.getActivity(
                                 applicationContext,
                                 0,
-                                Intent(applicationContext, SplashActivity::class.java),
+                                Intent(applicationContext, SplashActivity::class.java).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                },
                                 0
                             )
                         )
@@ -94,7 +110,11 @@ class WeatherService : Service() {
                                 val time = Utils.getCurrentTime("yyyy-MM-dd, HH:mm:ss", it.time)
                                 val address = LocationUtils.getAddressLine(context, location)
                                 val addrList = LocationUtils.splitAddressLine(address)
-                                weatherRepository.insertArea(context, addrList, Constants.STATE_CODE_LOCATED)
+                                weatherRepository.insertArea(
+                                    context,
+                                    addrList,
+                                    Constants.STATE_CODE_LOCATED
+                                )
                                 message =
                                     "time : $time, provider : ${it.provider}, LatLng:(${it.latitude},${it.longitude}), area : $address"
                             }
@@ -182,11 +202,9 @@ class WeatherService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DLog.d(TAG, "startForeground")
             val notificator = Notificator.getInstance()
-            val notification = notificator.getNotification(
-                applicationContext,
-                Notificator.ChannelType.TYPE_POLARIS
-            )
-            startForeground(notificator.getNotificationId(), notification)
+            val type = Notificator.ChannelType.TYPE_POLARIS
+            val notification = notificator.getNotification(applicationContext, type)
+            startForeground(notificator.getNotificationId(type), notification)
         }
     }
 

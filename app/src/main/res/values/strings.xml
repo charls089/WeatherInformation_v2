@@ -10,6 +10,7 @@
     <string name="info_stop_use_location_service">위치 서비스 사용이 중지되었습니다.</string>
     <string name="info_location_permission_request_message">"위치 서비스를 사용하려면 위치 권한이 필요합니다. 해당 권한을 아래의 방법으로 허용해주세요.\n\n   앱 권한 → 위치 스위치 ON"</string>
     <string name="info_more_weather_info_message">더 자세한 내용을 보고 싶으시면 클릭해주세요.</string>
+    <string name="info_favorite_place_is_empty">등록된 장소가 없습니다.\n우측 상단 버튼을 클릭하여 추가해주세요.</string>
 
     <string name="symbol_colon">:</string>
     <string name="symbol_slash">/</string>

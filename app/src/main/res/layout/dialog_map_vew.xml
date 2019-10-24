@@ -9,7 +9,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/rv_favorite_area_list">
+    app:layout_constraintTop_toBottomOf="@+id/rv_favorite_place_list">
 
     <fragment
         android:id="@+id/fragment_map_view"

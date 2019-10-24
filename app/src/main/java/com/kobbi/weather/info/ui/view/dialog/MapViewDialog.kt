@@ -22,7 +22,7 @@ class MapViewDialog(private val latLng: LatLng?) : DialogFragment(), OnMapReadyC
     private var mGoogleMap: GoogleMap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dialog_map_vew, null, false)
+        return inflater.inflate(R.layout.dialog_map_vew, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

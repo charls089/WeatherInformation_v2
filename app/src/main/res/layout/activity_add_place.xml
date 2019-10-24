@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.view.activity.AddPlaceActivity">
 
     <data>
 
@@ -10,34 +11,50 @@
             type="com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        tools:context=".ui.view.activity.AddPlaceActivity">
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/tv_title_favorite_place"
+            android:id="@+id/tv_empty_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/favorite_place"
-            android:textSize="21dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="center"
+            android:text="@string/info_favorite_place_is_empty"
+            android:textSize="17dp"
+            app:setGuideVisibility="@{placeVm.place}"
             tools:ignore="SpUsage" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_favorite_area_list"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_favorite_place_container"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="7dp"
-            android:orientation="vertical"
-            app:getVm="@{placeVm}"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title_favorite_place"
-            app:place="@{placeVm.place}"
-            app:selectedPosition="@{placeVm.selectedPositions}" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            app:setItemVisibility="@{placeVm.place}">
+
+            <TextView
+                android:id="@+id/tv_title_favorite_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/favorite_place"
+                android:textSize="21dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpUsage" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_favorite_place_list"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="7dp"
+                android:orientation="vertical"
+                app:getVm="@{placeVm}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_favorite_place"
+                app:place="@{placeVm.place}"
+                app:selectedPosition="@{placeVm.selectedPositions}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

@@ -9,7 +9,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.SystemClock
 import com.kobbi.weather.info.presenter.WeatherApplication
-import com.kobbi.weather.info.presenter.receiver.RestartServiceReceiver
+import com.kobbi.weather.info.presenter.receiver.ServiceReceiver
 import com.kobbi.weather.info.util.DLog
 import java.util.*
 
@@ -29,11 +29,11 @@ object ServiceManager {
     private val mWeatherServiceConnection = object : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.d(TAG, "WeatherService was disconnected.")
+            DLog.i(TAG, "WeatherService was disconnected.")
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.d(TAG, "WeatherService was connected.")
+            DLog.i(TAG, "WeatherService was connected.")
             val binder = service as WeatherService.LocalBinder
             mWeatherService = binder.service
             getWeatherInfo()
@@ -70,14 +70,37 @@ object ServiceManager {
 
     fun getAction(context: Context, action: String) = context.packageName + action
 
-    private fun registerRestartReceiver(context: Context) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, RestartServiceReceiver::class.java).apply {
-            action = getAction(context, ACTION_RESTART)
+    private fun getActionIntent(context: Context, action: String): Intent {
+        return Intent(context, ServiceReceiver::class.java).apply {
+            this.action = getAction(context, action)
         }
-        val pendingIntent =
-            PendingIntent.getBroadcast(context, RESTART_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-        alarmManager.setInexactRepeating(
+    }
+
+    private fun getPendingIntent(
+        context: Context,
+        requestCode: Int,
+        intent: Intent,
+        flag: Int = PendingIntent.FLAG_CANCEL_CURRENT
+    ): PendingIntent {
+        return PendingIntent.getBroadcast(context, requestCode, intent, flag)
+    }
+
+    private fun setAlarmRepeat(
+        context: Context,
+        type: Int,
+        time: Long,
+        interval: Long,
+        pendingIntent: PendingIntent
+    ) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setInexactRepeating(type, time, interval, pendingIntent)
+    }
+
+    private fun registerRestartReceiver(context: Context) {
+        val intent = getActionIntent(context, ACTION_RESTART)
+        val pendingIntent = getPendingIntent(context, RESTART_REQUEST_CODE, intent)
+        setAlarmRepeat(
+            context,
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime(),
             RESTART_SERVICE_INTERVAL,
@@ -86,19 +109,22 @@ object ServiceManager {
     }
 
     private fun registerNotifyReceiver(context: Context) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, RestartServiceReceiver::class.java).apply {
-            action = getAction(context, ACTION_NOTIFY)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(context, NOTIFY_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val intent = getActionIntent(context, ACTION_NOTIFY)
+        val pendingIntent = getPendingIntent(context, NOTIFY_REQUEST_CODE, intent)
         val cal = GregorianCalendar().apply {
             set(Calendar.HOUR_OF_DAY, 6)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
-        alarmManager.setInexactRepeating(
-            AlarmManager.ELAPSED_REALTIME_WAKEUP,
-            cal.timeInMillis,
+        var triggerTime = cal.timeInMillis
+        while (System.currentTimeMillis() > triggerTime)
+            triggerTime += NOTIFY_INFO_INTERVAL
+
+        setAlarmRepeat(
+            context,
+            AlarmManager.RTC,
+            triggerTime,
             NOTIFY_INFO_INTERVAL,
             pendingIntent
         )
