@@ -216,7 +216,16 @@ object BindingAdapter {
                 )
                 view.run {
                     visibility = if (result.isEmpty()) View.GONE else View.VISIBLE
-                    text = result.toString()
+                    val sb = StringBuilder().apply {
+                        for (i in result.indices) {
+                            append(result[i])
+                            if (i < result.size - 1)
+                                append(", ")
+                        }
+                    }
+                    text = String.format(
+                        view.context.getString(R.string.holder_special_value), sb.toString()
+                    )
                 }
             }
         }
