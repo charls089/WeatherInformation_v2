@@ -108,8 +108,11 @@
     <string name="mapping_sejong">세종</string>
 
     <string name="holder_level_value">%1$s (%2$d)</string>
-    <string name="holder_weather_notify">%1$s℃ (%3$s℃ / %4$s℃) 체감온도 : %2$s℃</string>
+    <string name="holder_weather_notify">%6$s 날씨 %1$s℃ (%4$s℃ / %5$s℃) 체감온도 : %2$s℃</string>
     <string name="holder_special_value">$s 발효중</string>
+    <string name="holder_update_time">업데이트 : %1$s</string>
+    <string name="holder_sensory_tpr">(체감 : %1$s℃)</string>
+    <string name="holder_current_tpr">%1$s℃</string>
 
     <!-- 메뉴 제목-->
     <string name="favorite_place">즐겨찾는 장소</string>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lo_widget_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_widget_sky"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/baseline_location_on_white_24" />
+
+                <TextView
+                    android:id="@+id/tv_widget_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="현위치"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="24dp"
+                    tools:ignore="SpUsage" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_widget_tpr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="현재 기온"
+                android:textColor="@color/colorWhite"
+                android:textSize="48dp"
+                tools:ignore="SpUsage" />
+
+            <TextView
+                android:id="@+id/tv_widget_wct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="체감 기온"
+                android:textColor="@color/colorWhite"
+                android:textSize="21dp"
+                tools:ignore="SpUsage" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_widget_update_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="업데이트 시간"
+        android:textColor="@color/colorWhite"
+        android:textSize="16dp"
+        tools:ignore="SpUsage" />
+</LinearLayout>

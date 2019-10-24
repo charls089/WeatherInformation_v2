@@ -7,10 +7,7 @@ import com.kobbi.weather.info.data.database.WeatherDatabase
 import com.kobbi.weather.info.data.database.entity.*
 import com.kobbi.weather.info.data.network.domain.news.NewsItem
 import com.kobbi.weather.info.data.network.domain.weather.WeatherItem
-import com.kobbi.weather.info.presenter.model.data.AreaCode
-import com.kobbi.weather.info.presenter.model.data.ForecastData
-import com.kobbi.weather.info.presenter.model.data.GridData
-import com.kobbi.weather.info.presenter.model.data.BranchCode
+import com.kobbi.weather.info.presenter.model.data.*
 import com.kobbi.weather.info.presenter.model.type.LifeCode
 import com.kobbi.weather.info.presenter.model.type.SearchTime
 import com.kobbi.weather.info.util.Constants
@@ -349,6 +346,27 @@ class WeatherRepository private constructor(context: Context) {
 
     fun getNotificateData(date: Long, yesterday: Long, time: Long, x: Int, y: Int) =
         mWeatherDB.weatherInfoDao().getWeatherInfo(date, yesterday, time, x, y)
+
+    fun getWeatherInfo(): WeatherInfo? {
+        loadLocatedArea()?.let { area ->
+            GregorianCalendar().apply {
+                val today = (Utils.getCurrentTime() + "0000").toLong()
+                this.add(Calendar.DATE, -1)
+                val yesterday =
+                    (Utils.getCurrentTime(time = this.timeInMillis) + "0000").toLong()
+                this.add(Calendar.HOUR, 1)
+                val time = (Utils.getCurrentTime("HH", this.timeInMillis) + "00").toLong()
+                return getNotificateData(
+                    today,
+                    yesterday,
+                    time,
+                    area.gridX,
+                    area.gridY
+                )
+            }
+        }
+        return null
+    }
 
     fun findCurrentWeather(x: Int, y: Int) =
         mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.CURRENT), x, y)

@@ -3,20 +3,24 @@ package com.kobbi.weather.info.presenter.model.data
 import androidx.room.ColumnInfo
 
 data class WeatherInfo(
+    @ColumnInfo(name = "address")
+    val address:String,
+    @ColumnInfo(name = "today_dateTime")
+    val dateTime: Long,
     @ColumnInfo(name = "today_tpr")
-    val tpr:String,
+    val tpr: String,
     @ColumnInfo(name = "today_rn")
-    val rn:String,
+    val rn: String,
     @ColumnInfo(name = "today_pty")
-    val pty:String,
+    val pty: String,
     @ColumnInfo(name = "today_sky")
-    val sky:String,
+    val sky: String,
     @ColumnInfo(name = "today_wct")
-    val wct:String,
+    val wct: String,
     @ColumnInfo(name = "yesterday_wct")
-    val yesterdayWct:String,
+    val yesterdayWct: String,
     @ColumnInfo(name = "tmn")
-    val tmn:String,
+    val tmn: String,
     @ColumnInfo(name = "tmx")
-    val tmx:String
+    val tmx: String
 )

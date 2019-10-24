@@ -11,6 +11,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
+import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
@@ -52,48 +53,30 @@ class WeatherService : Service() {
 
     fun notifyMyLocation() {
         thread {
-            weatherRepository.loadLocatedArea()?.let { area ->
-                area.address
-                GregorianCalendar().apply {
-                    val today = (Utils.getCurrentTime() + "0000").toLong()
-                    this.add(Calendar.DATE, -1)
-                    val yesterday =
-                        (Utils.getCurrentTime(time = this.timeInMillis) + "0000").toLong()
-                    this.add(Calendar.HOUR, 1)
-                    val time = (Utils.getCurrentTime("HH", this.timeInMillis) + "00").toLong()
-                    val weatherInfo =
-                        weatherRepository.getNotificateData(
-                            today,
-                            yesterday,
-                            time,
-                            area.gridX,
-                            area.gridY
-                        )
-                    weatherInfo?.run {
-                        Notificator.getInstance().showNotification(
-                            applicationContext,
-                            Notificator.ChannelType.TYPE_,
-                            String.format(
-                                getString(R.string.holder_weather_notify),
-                                tpr,
-                                wct,
-                                yesterdayWct,
-                                tmn,
-                                tmx
-                            ),
-                            getString(R.string.info_more_weather_info_message),
-                            WeatherUtils.getSkyIcon(today + time, pty, sky),
-                            PendingIntent.getActivity(
-                                applicationContext,
-                                0,
-                                Intent(applicationContext, SplashActivity::class.java).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                },
-                                0
-                            )
-                        )
-                    }
-                }
+            weatherRepository.getWeatherInfo()?.run {
+                Notificator.getInstance().showNotification(
+                    applicationContext,
+                    Notificator.ChannelType.TYPE_,
+                    String.format(
+                        getString(R.string.holder_weather_notify),
+                        tpr,
+                        wct,
+                        yesterdayWct,
+                        tmn,
+                        tmx,
+                        address
+                    ),
+                    getString(R.string.info_more_weather_info_message),
+                    WeatherUtils.getSkyIcon(dateTime, pty, sky),
+                    PendingIntent.getActivity(
+                        applicationContext,
+                        0,
+                        Intent(applicationContext, SplashActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        },
+                        0
+                    )
+                )
             }
         }
     }
@@ -107,8 +90,10 @@ class WeatherService : Service() {
                     when (responseCode) {
                         LocationManager.RESPONSE_NO_ERROR -> {
                             location?.let {
-                                val time = Utils.getCurrentTime("yyyy-MM-dd, HH:mm:ss", it.time)
-                                val address = LocationUtils.getAddressLine(context, location)
+                                val time =
+                                    Utils.getCurrentTime("yyyy-MM-dd, HH:mm:ss", it.time)
+                                val address =
+                                    LocationUtils.getAddressLine(context, location)
                                 val addrList = LocationUtils.splitAddressLine(address)
                                 weatherRepository.insertArea(
                                     context,
@@ -147,7 +132,11 @@ class WeatherService : Service() {
                         when (type) {
                             OfferType.CURRENT, OfferType.DAILY -> {
                                 weatherRepository.loadAllGridData().forEach { gridData ->
-                                    ApiRequestRepository.requestWeather(context, type, gridData)
+                                    ApiRequestRepository.requestWeather(
+                                        context,
+                                        type,
+                                        gridData
+                                    )
                                 }
                             }
                             OfferType.WEEKLY -> {
@@ -171,7 +160,10 @@ class WeatherService : Service() {
                             }
                             OfferType.AIR -> {
                                 weatherRepository.loadAllCityName().forEach { cityName ->
-                                    ApiRequestRepository.requestAirMeasure(context, cityName)
+                                    ApiRequestRepository.requestAirMeasure(
+                                        context,
+                                        cityName
+                                    )
                                 }
                             }
                             OfferType.BASE -> {
@@ -184,7 +176,11 @@ class WeatherService : Service() {
                                             gridData.y
                                         ) == null
                                     ) {
-                                        ApiRequestRepository.requestWeather(context, type, gridData)
+                                        ApiRequestRepository.requestWeather(
+                                            context,
+                                            type,
+                                            gridData
+                                        )
                                     }
                                 }
                             }
