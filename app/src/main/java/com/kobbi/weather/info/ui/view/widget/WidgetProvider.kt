@@ -24,7 +24,7 @@ class WidgetProvider : AppWidgetProvider() {
         thread {
             appWidgetIds.forEach { widgetId ->
                 WeatherRepository.getInstance(context).getWeatherInfo()?.run {
-                    Log.e("####", "weatherInfo : $this")
+                    Log.e("####", "WidgetProvider.weatherInfo : $this")
                     val remoteView =
                         RemoteViews(context.packageName, R.layout.widget_weather).apply {
                             setImageViewResource(

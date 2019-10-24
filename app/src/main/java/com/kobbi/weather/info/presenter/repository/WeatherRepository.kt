@@ -1,6 +1,7 @@
 package com.kobbi.weather.info.presenter.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.data.database.WeatherDatabase
@@ -344,11 +345,19 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadPlaceAddressLive() = mWeatherDB.favoritePlaceDao().loadAddressLive()
 
-    fun getNotificateData(date: Long, yesterday: Long, time: Long, x: Int, y: Int) =
-        mWeatherDB.weatherInfoDao().getWeatherInfo(date, yesterday, time, x, y)
+    fun getNotificateData(
+        address: String,
+        date: Long,
+        yesterday: Long,
+        time: Long,
+        x: Int,
+        y: Int
+    ) =
+        mWeatherDB.weatherInfoDao().getWeatherInfo(address, date, yesterday, time, x, y)
 
     fun getWeatherInfo(): WeatherInfo? {
         loadLocatedArea()?.let { area ->
+            Log.e("####", "loadLocatedArea() --> area : $area")
             GregorianCalendar().apply {
                 val today = (Utils.getCurrentTime() + "0000").toLong()
                 this.add(Calendar.DATE, -1)
@@ -357,6 +366,7 @@ class WeatherRepository private constructor(context: Context) {
                 this.add(Calendar.HOUR, 1)
                 val time = (Utils.getCurrentTime("HH", this.timeInMillis) + "00").toLong()
                 return getNotificateData(
+                    area.address,
                     today,
                     yesterday,
                     time,

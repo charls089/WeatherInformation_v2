@@ -28,7 +28,7 @@ interface WeatherInfoDAO {
                 "minTpr.gridX = today.gridX AND minTpr.gridY = today.gridY AND minTpr.dateTime = :today+0600\n" +
                 "inner join ForecastArea as area on\n" +
                 "area.gridX = today.gridX AND area.gridY = today.gridY \n" +
-                "where today.gridX = :x AND today.gridY = :y AND today.dateTime = (:today + :time)"
+                "where today.gridX = :x AND today.gridY = :y AND today.dateTime = (:today + :time) AND area.address = :address"
     )
-    fun getWeatherInfo(today: Long, yesterday: Long, time: Long, x: Int, y: Int): WeatherInfo?
+    fun getWeatherInfo(address:String, today: Long, yesterday: Long, time: Long, x: Int, y: Int): WeatherInfo?
 }
