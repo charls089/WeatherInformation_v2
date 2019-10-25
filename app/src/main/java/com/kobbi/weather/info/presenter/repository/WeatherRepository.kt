@@ -417,6 +417,9 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadAirMeasureLive() = mWeatherDB.airMeasureDao().loadLive()
 
+    fun findAirMeasureData(sidoName: String, cityName: String) =
+        mWeatherDB.airMeasureDao().findData(sidoName, cityName)
+
     fun loadSpecialNewsLive() = mWeatherDB.specialNewsDao().loadLastDataLive()
 
     fun deletePlace(list: List<String>) {
