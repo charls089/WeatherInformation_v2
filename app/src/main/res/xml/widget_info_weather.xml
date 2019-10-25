@@ -4,5 +4,5 @@
     android:minWidth="320dp"
     android:minHeight="160dp"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="0"
+    android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen" />

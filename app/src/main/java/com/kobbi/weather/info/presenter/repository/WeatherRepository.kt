@@ -1,7 +1,6 @@
 package com.kobbi.weather.info.presenter.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.data.database.WeatherDatabase
@@ -357,7 +356,6 @@ class WeatherRepository private constructor(context: Context) {
 
     fun getWeatherInfo(): WeatherInfo? {
         loadLocatedArea()?.let { area ->
-            Log.e("####", "loadLocatedArea() --> area : $area")
             GregorianCalendar().apply {
                 val today = (Utils.getCurrentTime() + "0000").toLong()
                 this.add(Calendar.DATE, -1)
