@@ -11,13 +11,11 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
-import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.*
-import java.util.*
 import kotlin.concurrent.thread
 
 class WeatherService : Service() {

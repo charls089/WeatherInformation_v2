@@ -499,7 +499,8 @@ object BindingAdapter {
                     }
                     val level = AirCode.getAirLevel(code.codeNo, value)
                     view.run {
-                        text = if (TextUtils.isEmpty(value)) "점검중" else value
+                        text =
+                            if (TextUtils.isEmpty(value)) context.getString(R.string.text_checking_data) else value
                         setBackgroundResource(getLevelColor(level))
                     }
                 }

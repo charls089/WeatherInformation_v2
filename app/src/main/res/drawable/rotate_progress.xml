@@ -16,7 +16,7 @@
                 android:type="sweep"
                 android:useLevel="false"
                 android:startColor="@color/colorWhite"
-                android:endColor="#00ffffff"
+                android:endColor="@color/colorAlpha"
                 android:angle="0"/>
     </shape>
 </rotate>

@@ -6,7 +6,7 @@ enum class LifeCode(
     val codeName: String,
     val codeNo: String,
     val type: String = Constants.TYPE_3HOUR,
-    val range: Array<Pair<Int, String>>
+    val range: Array<Pair<IntRange, String>>
 ) {
     FSN("식중독지수", "A01_2", Constants.TYPE_DAY, Constants.VALUE_RANGE_FSN),
     ULTRA_V("자외선지수", "A07_1", Constants.TYPE_DAY, Constants.VALUE_RANGE_ULTRA_V),
@@ -29,23 +29,13 @@ enum class LifeCode(
         }
 
         fun getLifeLevel(code: String, value: Int): String? {
-            try {
-                var result = ""
-                findLifeCode(code)
-                    ?.range?.let { range ->
-                    for (i in 0 until range.size - 1) {
-                        if (value >= range[i].first && value < range[i + 1].first) {
-                            result = range[i].second
-                            break
-                        } else {
-                            result = range[i + 1].second
-                        }
-                    }
+            var result: String? = null
+            findLifeCode(code)?.range?.forEach { intRange ->
+                if (value in intRange.first) {
+                    result = intRange.second
                 }
-                return result
-            } catch (e: NoSuchElementException) {
-                return null
             }
+            return result
         }
     }
 }

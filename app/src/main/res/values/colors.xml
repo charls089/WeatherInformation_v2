@@ -5,6 +5,7 @@
     <color name="colorAccent">#e5e5e5</color>
 
     <color name="colorSelected">#888888</color>
+    <color name="colorAlpha">#00ffffff</color>
 
     <color name="colorBlue">#235dc0</color>
     <color name="colorGreen">#17b472</color>

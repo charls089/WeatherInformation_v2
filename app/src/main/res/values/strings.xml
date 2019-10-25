@@ -47,6 +47,7 @@
     <string name="text_air_pollution_index">대기오염확산지수</string>
     <string name="text_uv_index">자외선지수</string>
     <string name="text_winter_index">동파가능지수</string>
+    <string name="text_checking_data">점검중</string>
 
     <string name="text_on_time_rain_gauge">시간당 강수량</string>
     <string name="text_agree_my_location">내위치 날씨 보기 사용</string>

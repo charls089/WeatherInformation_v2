@@ -18,7 +18,9 @@ import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 @Dao
 interface WeatherInfoDAO {
     @Query(
-        "SELECT area.address as address, today.dateTime as today_dateTime, today.t1h as today_tpr, today.rn1 as today_rn, today.pty as today_pty, today.sky as today_sky, today.wct as today_wct, yesterday.wct as yesterday_wct , minTpr.tmn as tmn, maxTpr.tmx as tmx\n" +
+        "SELECT area.address as address, today.dateTime as today_dateTime, today.t1h as today_tpr, " +
+                "today.rn1 as today_rn, today.pty as today_pty, today.sky as today_sky, today.wct as today_wct, " +
+                "yesterday.wct as yesterday_wct , minTpr.tmn as tmn, maxTpr.tmx as tmx\n" +
                 "from CurrentWeather as today\n" +
                 "inner join CurrentWeather as yesterday on\n" +
                 "yesterday.gridX = today.gridX AND yesterday.gridY = today.gridY AND yesterday.dateTime = :yesterday+:time\n" +
@@ -30,5 +32,5 @@ interface WeatherInfoDAO {
                 "area.gridX = today.gridX AND area.gridY = today.gridY \n" +
                 "where today.gridX = :x AND today.gridY = :y AND today.dateTime = (:today + :time) AND area.address = :address"
     )
-    fun getWeatherInfo(address:String, today: Long, yesterday: Long, time: Long, x: Int, y: Int): WeatherInfo?
+    fun getWeatherInfo(address: String, today: Long, yesterday: Long, time: Long, x: Int, y: Int): WeatherInfo?
 }
