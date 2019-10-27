@@ -56,9 +56,11 @@ class WidgetService : Service() {
                                 )
                             )
                             setViewVisibility(R.id.pb_widget, View.VISIBLE)
+                            setViewVisibility(R.id.iv_widget_refresh, View.GONE)
                             setViewVisibility(R.id.lo_widget_container, View.GONE)
                             Handler(Looper.getMainLooper()).postDelayed(500) {
                                 setViewVisibility(R.id.pb_widget, View.GONE)
+                                setViewVisibility(R.id.iv_widget_refresh, View.VISIBLE)
                                 setViewVisibility(R.id.lo_widget_container, View.VISIBLE)
                                 updateAppWidget(this)
                             }

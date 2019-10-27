@@ -115,7 +115,7 @@
     <string name="holder_update_time">업데이트 : %1$s</string>
     <string name="holder_sensory_tpr">(체감 : %1$s℃)</string>
     <string name="holder_current_tpr">%1$s℃</string>
-    <string name="holder_dust_info">미세먼지 %2$s(%1$s) / 초미세먼지 %4$s(%3$s)</string>
+    <string name="holder_dust_info">미세먼지 : %2$s(%1$s) / 초미세먼지 : %4$s(%3$s)</string>
 
     <!-- 메뉴 제목-->
     <string name="favorite_place">즐겨찾는 장소</string>
