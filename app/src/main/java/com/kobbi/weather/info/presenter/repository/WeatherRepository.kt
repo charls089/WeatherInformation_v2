@@ -210,28 +210,34 @@ class WeatherRepository private constructor(context: Context) {
                 val lifeCode = LifeCode.findLifeCode(code)
                 when (lifeCode?.type) {
                     Constants.TYPE_DAY -> {
-                        val today = getMapData(it, "today").toInt()
-                        val todayData = LifeIndexDay(dateTime.toLong(), areaCode, code, today)
-                        mWeatherDB.lifeDayDao().insert(todayData)
-                        Utils.convertStringToDate(date = dateTime)?.let { tomorrowDate ->
-                            val tomorrow = getMapData(it, "tomorrow").toInt()
-                            Calendar.getInstance().run {
-                                time = tomorrowDate
-                                add(Calendar.DATE, 1)
-                                val tomorrowDateTime =
-                                    Utils.getCurrentTime(time = this.timeInMillis).toLong()
-                                val tomorrowData = LifeIndexDay(
-                                    tomorrowDateTime, areaCode, code, tomorrow
-                                )
-                                mWeatherDB.lifeDayDao().insert(tomorrowData)
+                        fun insertData(key: String, amount: Int) {
+                            Utils.convertStringToDate(date = dateTime)?.let { date ->
+                                val data = getMapData(it, key)
+                                if (data.isNotEmpty())
+                                    Calendar.getInstance().run {
+                                        time = date
+                                        add(Calendar.DATE, amount)
+                                        mWeatherDB.lifeDayDao().insert(
+                                            LifeIndexDay(
+                                                Utils.getCurrentTime(time = this.timeInMillis).toLong(),
+                                                areaCode,
+                                                code,
+                                                data.toInt()
+                                            )
+                                        )
+                                    }
                             }
                         }
+                        insertData("today", 0)
+                        insertData("tomorrow", 1)
+                        insertData("theDayAfterTomorrow", 2)
                     }
                     Constants.TYPE_3HOUR -> {
-                        val valueList = mutableListOf<String>()
+                        val valueList = mutableListOf<Int>()
                         for (i in 1..8) {
                             val h = getMapData(it, "h${3 * i}")
-                            valueList.add(h)
+                            if (h.isNotEmpty())
+                                valueList.add(h.toInt())
                         }
                         DLog.d(
                             javaClass, "valueList -> size : ${valueList.size}, data : $valueList"
@@ -242,14 +248,14 @@ class WeatherRepository private constructor(context: Context) {
                                 areaCode,
                                 code,
                                 baseTime,
-                                valueList[0].toInt(),
-                                valueList[1].toInt(),
-                                valueList[2].toInt(),
-                                valueList[3].toInt(),
-                                valueList[4].toInt(),
-                                valueList[5].toInt(),
-                                valueList[6].toInt(),
-                                valueList[7].toInt()
+                                valueList[0],
+                                valueList[1],
+                                valueList[2],
+                                valueList[3],
+                                valueList[4],
+                                valueList[5],
+                                valueList[6],
+                                valueList[7]
                             )
                             mWeatherDB.lifeHourDao().insert(data)
                         }
