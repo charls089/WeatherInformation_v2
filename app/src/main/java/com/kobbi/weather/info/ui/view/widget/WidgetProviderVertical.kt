@@ -9,10 +9,10 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
-import com.kobbi.weather.info.presenter.service.WidgetService
+import com.kobbi.weather.info.presenter.service.WidgetServiceVertical
 import com.kobbi.weather.info.util.DLog
 
-class WidgetProvider : AppWidgetProvider() {
+class WidgetProviderVertical : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -20,10 +20,10 @@ class WidgetProvider : AppWidgetProvider() {
     ) {
         DLog.writeLogFile(
             context,
-            "WigetProvider",
-            "WidgetProvider.onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+            "WidgetProviderVertical",
+            "WidgetProviderVertical.onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
-        val intent = Intent(context, WidgetService::class.java)
+        val intent = Intent(context, WidgetServiceVertical::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {
@@ -43,6 +43,9 @@ class WidgetProvider : AppWidgetProvider() {
         val metrics = DisplayMetrics()
         windowManager?.defaultDisplay?.getMetrics(metrics)
         Log.e("####", "${metrics.widthPixels}/${metrics.heightPixels}")
+        Log.e("####", "${metrics.widthPixels/(metrics.density)}DP")
+        Log.e("####","metrics : $metrics")
+        Log.e("####","densityDpi : ${metrics.densityDpi}")
 
 
         newOptions?.run {
@@ -51,11 +54,9 @@ class WidgetProvider : AppWidgetProvider() {
             val maxWidth = getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
             val maxHeight = getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
             Log.e(
-                "####",
+                "####_Vertical",
                 "minWidth : $minWidth, minHeight : $minHeight, maxWidth : $maxWidth, maxHeight : $maxHeight"
             )
-
-
         }
     }
 }

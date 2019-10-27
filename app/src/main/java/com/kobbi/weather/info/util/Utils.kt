@@ -49,7 +49,11 @@ class Utils private constructor() {
                 val hour = get(Calendar.HOUR)
                 val minute = get(Calendar.MINUTE)
 
-                return "${month + 1}월 ${date}일 ($dayOfWeek)${if (type == 1) "" else " $amPm ${if (hour == 0) 12 else hour}시 ${minute}분"}"
+                return if (type == 2) {
+                    "${month + 1}/${date} $amPm ${if (hour == 0) 12 else hour}:${minute}"
+                } else {
+                    "${month + 1}월 ${date}일 ($dayOfWeek)${if (type == 1) "" else " $amPm ${if (hour == 0) 12 else hour}시 ${minute}분"}"
+                }
             }
         }
 

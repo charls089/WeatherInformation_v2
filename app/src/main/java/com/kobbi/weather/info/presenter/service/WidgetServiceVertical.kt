@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.os.postDelayed
@@ -18,10 +19,11 @@ import com.kobbi.weather.info.presenter.model.type.AirCode
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.MainActivity
 import com.kobbi.weather.info.ui.view.widget.WidgetProvider
+import com.kobbi.weather.info.ui.view.widget.WidgetProviderVertical
 import com.kobbi.weather.info.util.*
 import kotlin.concurrent.thread
 
-class WidgetService : Service() {
+class WidgetServiceVertical : Service() {
     companion object {
         private const val TAG = "WidgetService"
     }
@@ -33,7 +35,7 @@ class WidgetService : Service() {
                 val weatherRepository = WeatherRepository.getInstance(context)
                 weatherRepository.getWeatherInfo()?.run {
                     val remoteViews =
-                        RemoteViews(context.packageName, R.layout.widget_weather).apply {
+                        RemoteViews(context.packageName, R.layout.widget_weather_vertical).apply {
                             setImageViewResource(
                                 R.id.iv_widget_sky, WeatherUtils.getSkyIcon(dateTime, pty, sky)
                             )
@@ -52,7 +54,7 @@ class WidgetService : Service() {
                                 R.id.tv_widget_update_time,
                                 String.format(
                                     context.getString(R.string.holder_update_time),
-                                    Utils.convertDateTime()
+                                    Utils.convertDateTime(type = 2)
                                 )
                             )
                             if (splitAddress.size >= 2) {
@@ -89,7 +91,7 @@ class WidgetService : Service() {
                                     0
                                 )
                             )
-                            val serviceIntent = Intent(context, WidgetService::class.java)
+                            val serviceIntent = Intent(context, WidgetServiceVertical::class.java)
                             setOnClickPendingIntent(
                                 R.id.tv_widget_update_time,
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -127,7 +129,7 @@ class WidgetService : Service() {
         applicationContext?.let { context ->
             AppWidgetManager.getInstance(context).run {
                 updateAppWidget(
-                    ComponentName(context, WidgetProvider::class.java),
+                    ComponentName(context, WidgetProviderVertical::class.java),
                     remoteViews
                 )
             }
