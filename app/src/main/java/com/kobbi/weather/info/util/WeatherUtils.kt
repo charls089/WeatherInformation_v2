@@ -3,6 +3,10 @@ package com.kobbi.weather.info.util
 import com.kobbi.weather.info.R
 
 class WeatherUtils private constructor() {
+    enum class Type {
+        DAY, NIGHT
+    }
+
     companion object {
         @JvmStatic
         fun getRainGauge(value: String): String {
@@ -41,10 +45,10 @@ class WeatherUtils private constructor() {
         }
 
         @JvmStatic
-        fun getSkyResId(sky: String, dayOrNight: Int): Int {
+        fun getSkyResId(sky: String, dayOrNight: Type): Int {
             return when {
-                sky.contains("맑음") -> if (dayOrNight == 0) R.drawable.icons8_sun_96 else R.drawable.icons8_moon_100
-                sky.contains("구름많음") -> if (dayOrNight == 0) R.drawable.icons8_partly_cloudy_day_90 else R.drawable.icons8_partly_cloudy_night_100
+                sky.contains("맑음") -> if (dayOrNight == Type.DAY) R.drawable.icons8_sun_96 else R.drawable.icons8_moon_100
+                sky.contains("구름많음") -> if (dayOrNight == Type.DAY) R.drawable.icons8_partly_cloudy_day_90 else R.drawable.icons8_partly_cloudy_night_100
                 sky.contains("비/눈") || sky.contains("눈/비") -> R.drawable.icons8_sleet_96
                 sky.contains("비") || sky.contains("소나기") -> R.drawable.icons8_rain_96
                 sky.contains("눈") -> R.drawable.icons8_snow_96
@@ -53,14 +57,14 @@ class WeatherUtils private constructor() {
         }
 
         @JvmStatic
-        fun getDayOrNight(dateTime: Long?): Int {
+        fun getDayOrNight(dateTime: Long?): Type {
             if (dateTime == 0L) {
-                return 0
+                return Type.DAY
             }
             val hour = dateTime?.toString()?.substring(8..9)?.toInt()
             return hour?.let {
-                if (hour > 19 || hour < 7) 1 else 0
-            } ?: 0
+                if (hour > 19 || hour < 7) Type.NIGHT else Type.DAY
+            } ?: Type.DAY
         }
 
         @JvmStatic

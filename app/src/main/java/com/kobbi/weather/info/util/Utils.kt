@@ -7,8 +7,17 @@ import com.kobbi.weather.info.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.min
 
 class Utils private constructor() {
+    enum class DateType(
+        val dateFormat: String
+    ) {
+        DEFAULT("%d월 %d일 (%s)"),
+        ALL("%d월 %d일 (%s) %s %s시 %s분"),
+        SHORT("%d/%d %s %s:%s")
+    }
+
     companion object {
         const val VALUE_TIME_FORMAT = "HH:mm:ss"
         const val VALUE_DATE_FORMAT = "yyyyMMdd"
@@ -24,7 +33,7 @@ class Utils private constructor() {
         @JvmStatic
         fun convertDateTime(
             time: Long = System.currentTimeMillis(),
-            type: Int = 0
+            type: DateType = DateType.DEFAULT
         ): String {
             GregorianCalendar().run {
                 timeInMillis = time
@@ -46,10 +55,24 @@ class Utils private constructor() {
                     else -> "오후"
                 }
 
-                val hour = get(Calendar.HOUR)
-                val minute = get(Calendar.MINUTE)
-
-                return "${month + 1}월 ${date}일 ($dayOfWeek)${if (type == 1) "" else " $amPm ${if (hour == 0) 12 else hour}시 ${minute}분"}"
+                val hour =
+                    convertTimeToString(if (get(Calendar.HOUR) == 0) 12 else get(Calendar.HOUR))
+                val minute = convertTimeToString(get(Calendar.MINUTE))
+                return when (type) {
+                    DateType.DEFAULT -> {
+                        String.format(type.dateFormat, month + 1, date, dayOfWeek)
+                    }
+                    DateType.ALL -> {
+                        String.format(
+                            type.dateFormat, month + 1, date, dayOfWeek, amPm, hour, minute
+                        )
+                    }
+                    DateType.SHORT -> {
+                        String.format(
+                            type.dateFormat, month + 1, date, amPm, hour, minute
+                        )
+                    }
+                }
             }
         }
 
@@ -84,7 +107,11 @@ class Utils private constructor() {
             }
         }
 
-        @JvmStatic
-        fun combineDate(today: Long, time: Long) = String.format("%d%d", today, time)
+        private fun convertTimeToString(time: Int): String {
+            return when (time) {
+                in 0..9 -> "0$time"
+                else -> time.toString()
+            }
+        }
     }
 }

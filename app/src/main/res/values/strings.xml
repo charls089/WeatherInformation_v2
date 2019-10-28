@@ -68,7 +68,8 @@
     <string name="guide_today_max_tpr">최고기온</string>
     <string name="guide_on_time_wc_tpr">현재 체감온도</string>
     <string name="guide_yesterday_wc_tpr">어제 체감온도</string>
-    <string name="guide_on_time_dust">현재 미세먼지/초미세먼지</string>
+    <string name="guide_on_time_dust_pm10">현재 미세먼지</string>
+    <string name="guide_on_time_dust_pm25">현재 초미세먼지</string>
     <string name="guide_favorite_place">즐겨찾는 장소</string>
     <string name="guide_district">시/도/군/구/읍/면/동</string>
 
@@ -115,7 +116,8 @@
     <string name="holder_update_time">업데이트 : %1$s</string>
     <string name="holder_sensory_tpr">(체감 : %1$s℃)</string>
     <string name="holder_current_tpr">%1$s℃</string>
-    <string name="holder_dust_info">미세먼지 : %2$s(%1$s) / 초미세먼지 : %4$s(%3$s)</string>
+    <string name="holder_dust_value">%1$s : %2$s(%3$s)</string>
+    <string name="holder_dust_value_empty">%1$s : %2$s</string>
 
     <!-- 메뉴 제목-->
     <string name="favorite_place">즐겨찾는 장소</string>

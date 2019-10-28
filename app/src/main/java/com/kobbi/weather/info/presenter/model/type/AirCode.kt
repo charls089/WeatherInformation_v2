@@ -8,8 +8,8 @@ enum class AirCode(
     val codeNo: String,
     val range: Array<Pair<IntRange, String>>
 ) {
-    PM10("미세먼지농도", "pm10", Constants.VALUE_RANGE_PM10_LEVEL),
-    PM25("초미세먼지농도", "pm2.5", Constants.VALUE_RANGE_PM25_LEVEL);
+    PM10("미세먼지", "pm10", Constants.VALUE_RANGE_PM10_LEVEL),
+    PM25("초미세먼지", "pm2.5", Constants.VALUE_RANGE_PM25_LEVEL);
 
     companion object {
         fun findAirCode(code: String): AirCode? {

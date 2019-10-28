@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/lo_widget_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
@@ -17,61 +17,46 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="6dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_widget_sky"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_gravity="center"
-                tools:ignore="ContentDescription" />
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_widget_tpr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="15dp"
-                android:orientation="vertical">
+                android:text="@string/guide_on_time_tpr"
+                android:textColor="@color/colorWhite"
+                android:textSize="48dp"
+                tools:ignore="SpUsage" />
 
-                <TextView
-                    android:id="@+id/tv_widget_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="43dp"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/baseline_location_on_white_24"
-                    android:gravity="center"
-                    android:text="@string/guide_place_name"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="24dp"
-                    tools:ignore="SpUsage" />
+            <TextView
+                android:id="@+id/tv_widget_wct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/guide_on_time_wc_tpr"
+                android:textColor="@color/colorWhite"
+                android:textSize="21dp"
+                tools:ignore="SpUsage" />
 
-                <TextView
-                    android:id="@+id/tv_widget_tpr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/guide_on_time_tpr"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="48dp"
-                    tools:ignore="SpUsage" />
+            <ImageView
+                android:id="@+id/iv_widget_sky"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                tools:ignore="ContentDescription" />
 
-                <TextView
-                    android:id="@+id/tv_widget_wct"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/guide_on_time_wc_tpr"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="21dp"
-                    tools:ignore="SpUsage" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="6dp">
+            <TextView
+                android:id="@+id/tv_widget_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableTop="@drawable/baseline_location_on_white_24"
+                android:gravity="center"
+                android:text="@string/guide_place_name"
+                android:textColor="@color/colorWhite"
+                android:textSize="24dp"
+                tools:ignore="SpUsage" />
 
             <TextView
                 android:id="@+id/tv_widget_dust_pm10"
@@ -79,17 +64,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/guide_on_time_dust_pm10"
-                android:textColor="@color/colorWhite"
-                android:textSize="16dp"
-                tools:ignore="SpUsage" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/symbol_slash"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
                 android:textColor="@color/colorWhite"
                 android:textSize="16dp"
                 tools:ignore="SpUsage" />
