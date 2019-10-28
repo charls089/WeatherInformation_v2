@@ -32,6 +32,10 @@ class WidgetProvider : AppWidgetProvider() {
         private const val REFRESH_WIDGET_ACTION = ".action.refresh.widget.data"
     }
 
+    override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
+        super.onDeleted(context, appWidgetIds)
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -42,7 +46,7 @@ class WidgetProvider : AppWidgetProvider() {
             "WidgetProvider.onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
         val options = appWidgetManager.getAppWidgetOptions(appWidgetIds[0])
-        getViewLayoutResId(context, options)?.let { resId ->
+        getWidgetWidth(context, options)?.let { resId ->
             thread {
                 getRemoteViews(context, resId, appWidgetIds[0])?.run {
                     updateAppWidget(context, this)
@@ -60,7 +64,7 @@ class WidgetProvider : AppWidgetProvider() {
         newOptions: Bundle?
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        getViewLayoutResId(context, newOptions)?.let { resId ->
+        getWidgetWidth(context, newOptions)?.let { resId ->
             thread {
                 getRemoteViews(context, resId, appWidgetId)?.run {
                     updateAppWidget(context, this)
@@ -77,7 +81,7 @@ class WidgetProvider : AppWidgetProvider() {
             id?.let {
                 val options =
                     AppWidgetManager.getInstance(context).getAppWidgetOptions(id)
-                getViewLayoutResId(context, options)?.let { resId ->
+                getWidgetWidth(context, options)?.let { resId ->
                     thread {
                         getRemoteViews(context, resId, id)?.run {
                             updateAppWidget(context, this)
@@ -85,7 +89,6 @@ class WidgetProvider : AppWidgetProvider() {
                     }
                 }
             }
-
         }
     }
 
@@ -99,13 +102,13 @@ class WidgetProvider : AppWidgetProvider() {
                 val cityName = splitAddress.lastOrNull()
                 R.id.tv_widget_address.let { id ->
                     setTextViewText(id, cityName)
-                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 8))
+                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 6))
                 }
                 R.id.tv_widget_tpr.let { id ->
                     setTextViewText(
                         id, String.format(context.getString(R.string.holder_current_tpr), tpr)
                     )
-                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 12))
+                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 13))
                 }
                 R.id.tv_widget_wct.let { id ->
                     setTextViewText(
@@ -175,7 +178,7 @@ class WidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private fun getViewLayoutResId(context: Context?, options: Bundle?): Int? {
+    private fun getWidgetWidth(context: Context?, options: Bundle?): Int? {
         options?.run {
             val maxWidth = getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
             val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
@@ -189,7 +192,7 @@ class WidgetProvider : AppWidgetProvider() {
                     val gap = (maxWidth - xdpi * i).absoluteValue
                     if (gap < tmp) {
                         tmp = gap
-                        count = i
+                        count++
                     }
                 }
                 return count
@@ -230,6 +233,6 @@ class WidgetProvider : AppWidgetProvider() {
     }
 
     private fun getDip(widthSize: Int, value: Int): Float {
-        return widthSize * value.toFloat()
+        return if (widthSize <= 3) 2 * value * 1.5f else 3 * value * 1.5f
     }
 }

@@ -7,7 +7,6 @@ import com.kobbi.weather.info.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.min
 
 class Utils private constructor() {
     enum class DateType(

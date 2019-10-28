@@ -21,7 +21,7 @@ interface AreaDAO {
     @Query("SELECT * FROM ForecastArea")
     fun loadAllLive(): LiveData<List<Area>>
 
-    @Query("SELECT address FROM ForecastArea")
+    @Query("SELECT address FROM ForecastArea WHERE stateCode != ${Constants.STATE_CODE_INACTIVE}")
     fun loadAllAddress(): List<String>
 
     @Query("SELECT * FROM ForecastArea WHERE stateCode != ${Constants.STATE_CODE_INACTIVE} ORDER BY stateCode DESC")
@@ -36,13 +36,13 @@ interface AreaDAO {
     @Query("SELECT * FROM ForecastArea WHERE address = :address")
     fun findArea(address: String): Area?
 
-    @Query("select DISTINCT gridX, gridY from ForecastArea")
+    @Query("select DISTINCT gridX, gridY from ForecastArea WHERE stateCode != ${Constants.STATE_CODE_INACTIVE}")
     fun loadAllGridData() : List<GridData>
 
-    @Query("select DISTINCT areaCode from ForecastArea")
+    @Query("select DISTINCT areaCode from ForecastArea WHERE stateCode != ${Constants.STATE_CODE_INACTIVE}")
     fun loadAllAreaNo() : List<String>
 
-    @Query("select DISTINCT prvnCode, cityCode from ForecastArea")
+    @Query("select DISTINCT prvnCode, cityCode from ForecastArea WHERE stateCode != ${Constants.STATE_CODE_INACTIVE}")
     fun loadAllAreaCode() : List<AreaCode>
 
     @Query("UPDATE ForecastArea SET stateCode = :stateCode WHERE address = :address")
