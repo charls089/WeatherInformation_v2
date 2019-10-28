@@ -314,11 +314,11 @@ object BindingAdapter {
         view.setImageResource(WeatherUtils.getSkyIcon(dateTime, pty, sky))
     }
 
-    @BindingAdapter("setSky", "setDayOrNight")
+    @BindingAdapter("setSky")
     @JvmStatic
-    fun setWeeklyCloud(view: ImageView, sky: String?, dayOrNight: Int) {
+    fun setWeeklyCloud(view: ImageView, sky: String?) {
         sky?.let {
-            view.setImageResource(WeatherUtils.getSkyResId(sky, dayOrNight))
+            view.setImageResource(WeatherUtils.getSkyResId(sky, WeatherUtils.Type.DAY))
         }
     }
 
@@ -363,12 +363,12 @@ object BindingAdapter {
 
     @BindingAdapter("setDate", "setType")
     @JvmStatic
-    fun setDate(textView: TextView, dateTime: Long?, type: Int = 0) {
+    fun setDate(textView: TextView, dateTime: Long?, type: Utils.DateType) {
         dateTime?.let {
             val time =
-                if (type == 1) Utils.convertStringToDate(date = it.toString())?.time else dateTime
+                if (type == Utils.DateType.DEFAULT) Utils.convertStringToDate(date = it.toString())?.time else it
             time?.let {
-                val date = Utils.convertDateTime(time = time, type = type)
+                val date = Utils.convertDateTime(time, type)
                 textView.text = date
             }
         }

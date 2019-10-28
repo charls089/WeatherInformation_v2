@@ -4,6 +4,7 @@
     <data>
 
         <import type="com.kobbi.weather.info.presenter.model.type.AirCode" />
+        <import type="com.kobbi.weather.info.util.Utils.DateType"/>
 
         <variable
             name="weatherVm"
@@ -44,7 +45,7 @@
             android:padding="5dp"
             android:textSize="15dp"
             app:setDate="@{weatherVm.updateTime}"
-            app:setType="@{0}"
+            app:setType="@{DateType.ALL}"
             tools:ignore="SpUsage" />
 
         <androidx.core.widget.NestedScrollView

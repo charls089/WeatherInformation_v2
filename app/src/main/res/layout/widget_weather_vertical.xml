@@ -6,69 +6,78 @@
 
     <LinearLayout
         android:id="@+id/lo_widget_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_widget_tpr"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/lo_widget_weather_info"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/guide_on_time_tpr"
-            android:textColor="@color/colorWhite"
-            android:textSize="36dp"
-            tools:ignore="SpUsage" />
+            android:layout_marginBottom="6dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_widget_wct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/guide_on_time_wc_tpr"
-            android:textColor="@color/colorWhite"
-            android:textSize="18dp"
-            tools:ignore="SpUsage" />
+            <TextView
+                android:id="@+id/tv_widget_tpr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/guide_on_time_tpr"
+                android:textColor="@color/colorWhite"
+                android:textSize="48dp"
+                tools:ignore="SpUsage" />
 
-        <ImageView
-            android:id="@+id/iv_widget_sky"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_gravity="center"
-            tools:ignore="ContentDescription" />
+            <TextView
+                android:id="@+id/tv_widget_wct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/guide_on_time_wc_tpr"
+                android:textColor="@color/colorWhite"
+                android:textSize="21dp"
+                tools:ignore="SpUsage" />
 
-        <TextView
-            android:id="@+id/tv_widget_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableTop="@drawable/baseline_location_on_white_18"
-            android:gravity="center"
-            android:text="@string/guide_place_name"
-            android:textColor="@color/colorWhite"
-            android:textSize="16dp"
-            tools:ignore="SpUsage" />
+            <ImageView
+                android:id="@+id/iv_widget_sky"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                tools:ignore="ContentDescription" />
 
-        <TextView
-            android:id="@+id/tv_widget_dust_info_pm10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/guide_on_time_dust_pm10"
-            android:textColor="@color/colorWhite"
-            android:textSize="13.5dp"
-            tools:ignore="SpUsage" />
+            <TextView
+                android:id="@+id/tv_widget_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableTop="@drawable/baseline_location_on_white_24"
+                android:gravity="center"
+                android:text="@string/guide_place_name"
+                android:textColor="@color/colorWhite"
+                android:textSize="24dp"
+                tools:ignore="SpUsage" />
 
-        <TextView
-            android:id="@+id/tv_widget_dust_info_pm25"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/guide_on_time_dust_pm25"
-            android:textColor="@color/colorWhite"
-            android:textSize="13.5dp"
-            tools:ignore="SpUsage" />
+            <TextView
+                android:id="@+id/tv_widget_dust_pm10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/guide_on_time_dust_pm10"
+                android:textColor="@color/colorWhite"
+                android:textSize="16dp"
+                tools:ignore="SpUsage" />
+
+            <TextView
+                android:id="@+id/tv_widget_dust_pm25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/guide_on_time_dust_pm25"
+                android:textColor="@color/colorWhite"
+                android:textSize="16dp"
+                tools:ignore="SpUsage" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_widget_update_time"
@@ -76,17 +85,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableEnd="@drawable/baseline_refresh_white_18"
-            android:gravity="center"
             android:text="@string/guide_update_time"
             android:textColor="@color/colorWhite"
-            android:textSize="13dp"
+            android:textSize="16dp"
             tools:ignore="SpUsage" />
     </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pb_widget"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/rotate_progress" />
 </FrameLayout>

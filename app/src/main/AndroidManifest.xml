@@ -62,21 +62,8 @@
                 android:resource="@xml/widget_info_weather" />
         </receiver>
 
-        <receiver android:name=".ui.view.widget.WidgetProviderVertical">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info_weather_vertical" />
-        </receiver>
-
         <service
             android:name=".presenter.service.WidgetService"
-            android:exported="false" />
-
-        <service
-            android:name=".presenter.service.WidgetServiceVertical"
             android:exported="false" />
     </application>
 

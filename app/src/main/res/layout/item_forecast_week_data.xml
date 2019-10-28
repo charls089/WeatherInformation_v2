@@ -5,6 +5,10 @@
 
     <data>
 
+        <import type="com.kobbi.weather.info.util.WeatherUtils.Type" />
+
+        <import type="com.kobbi.weather.info.util.Utils.DateType" />
+
         <variable
             name="weekly"
             type="com.kobbi.weather.info.data.database.entity.WeeklyWeather" />
@@ -19,7 +23,7 @@
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/tv_item_forecast_daily_time"
+            android:id="@+id/tv_item_forecast_weekly_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -27,7 +31,7 @@
             android:layout_marginBottom="8dp"
             android:textSize="18dp"
             app:setDate="@{weekly.dateTime}"
-            app:setType="@{1}"
+            app:setType="@{DateType.DEFAULT}"
             tools:ignore="SpUsage" />
 
         <LinearLayout
@@ -55,7 +59,6 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    app:setDayOrNight="@{0}"
                     app:setSky="@{weekly.wfAm}"
                     tools:ignore="ContentDescription" />
 
@@ -141,7 +144,6 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    app:setDayOrNight="@{0}"
                     app:setSky="@{weekly.wfPm}"
                     tools:ignore="ContentDescription" />
 
