@@ -31,7 +31,7 @@ class WidgetProvider : AppWidgetProvider() {
         val id: Int,
         val size: Int
     ) {
-        ADDRESS(R.id.tv_widget_address, 8),
+        ADDRESS(R.id.tv_widget_address, 7),
         TEMPERATURE(R.id.tv_widget_tpr, 12),
         SENSORY_TPR(R.id.tv_widget_wct, 5),
         UPDATE_TIME(R.id.tv_widget_update_time, 4),
