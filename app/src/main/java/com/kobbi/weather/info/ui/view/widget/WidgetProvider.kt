@@ -27,13 +27,22 @@ import kotlin.concurrent.thread
 import kotlin.math.absoluteValue
 
 class WidgetProvider : AppWidgetProvider() {
+    enum class ViewDip(
+        val id: Int,
+        val size: Int
+    ) {
+        ADDRESS(R.id.tv_widget_address, 8),
+        TEMPERATURE(R.id.tv_widget_tpr, 12),
+        SENSORY_TPR(R.id.tv_widget_wct, 5),
+        UPDATE_TIME(R.id.tv_widget_update_time, 4),
+        PM10(R.id.tv_widget_dust_pm10, 4),
+        PM25(R.id.tv_widget_dust_pm25, 4)
+
+    }
+
     companion object {
         private const val TAG = "WidgetProvider"
         private const val REFRESH_WIDGET_ACTION = ".action.refresh.widget.data"
-    }
-
-    override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
-        super.onDeleted(context, appWidgetIds)
     }
 
     override fun onUpdate(
@@ -100,56 +109,38 @@ class WidgetProvider : AppWidgetProvider() {
             RemoteViews(context.packageName, resId).apply {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
-                R.id.tv_widget_address.let { id ->
-                    setTextViewText(id, cityName)
-                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 6))
-                }
-                R.id.tv_widget_tpr.let { id ->
-                    setTextViewText(
-                        id, String.format(context.getString(R.string.holder_current_tpr), tpr)
-                    )
-                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 13))
-                }
-                R.id.tv_widget_wct.let { id ->
-                    setTextViewText(
-                        id, String.format(context.getString(R.string.holder_sensory_tpr), wct)
-                    )
-                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 5))
-                }
-                R.id.tv_widget_update_time.let { id ->
-                    setTextViewText(
-                        id,
-                        String.format(
-                            context.getString(R.string.holder_update_time),
-                            Utils.convertDateTime(type = Utils.DateType.SHORT)
+                fun setTextDynamic(viewDip: ViewDip, textValue: String?) {
+                    with(viewDip) {
+                        setTextViewText(id, textValue)
+                        setTextViewTextSize(
+                            id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, size)
                         )
+                    }
+                }
+                setTextDynamic(ViewDip.ADDRESS, cityName)
+                setTextDynamic(
+                    ViewDip.TEMPERATURE,
+                    String.format(context.getString(R.string.holder_current_tpr), tpr)
+                )
+                setTextDynamic(
+                    ViewDip.SENSORY_TPR,
+                    String.format(context.getString(R.string.holder_sensory_tpr), wct)
+                )
+                setTextDynamic(
+                    ViewDip.UPDATE_TIME, String.format(
+                        context.getString(R.string.holder_update_time),
+                        Utils.convertDateTime(type = Utils.DateType.SHORT)
                     )
-                    setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, 4))
-                }
-                R.id.iv_widget_sky.let { id ->
-                    setImageViewResource(id, WeatherUtils.getSkyIcon(dateTime, pty, sky))
-                    //resource 추가 후 아이콘으로 조절
-                }
+                )
+                setImageViewResource(
+                    R.id.iv_widget_sky, WeatherUtils.getSkyIcon(dateTime, pty, sky)
+                )
 
                 if (splitAddress.size >= 2) {
                     weatherRepository
                         .findAirMeasureData(splitAddress[0], splitAddress[1]).run {
-                            R.id.tv_widget_dust_pm10.let { id ->
-                                setTextViewText(id, getAirValue(context, AirCode.PM10, pm10))
-                                setTextViewTextSize(
-                                    id,
-                                    TypedValue.COMPLEX_UNIT_DIP,
-                                    getDip(widthSize, 4)
-                                )
-                            }
-                            R.id.tv_widget_dust_pm25.let { id ->
-                                setTextViewText(id, getAirValue(context, AirCode.PM25, pm25))
-                                setTextViewTextSize(
-                                    id,
-                                    TypedValue.COMPLEX_UNIT_DIP,
-                                    getDip(widthSize, 4)
-                                )
-                            }
+                            setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10))
+                            setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM10, pm25))
                         }
                 }
                 setOnClickPendingIntent(
