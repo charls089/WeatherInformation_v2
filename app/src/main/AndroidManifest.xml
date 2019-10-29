@@ -53,7 +53,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".ui.view.widget.WidgetProvider">
+        <receiver android:name=".ui.view.widget.WidgetProvider" android:label="@string/widget_default_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -62,7 +62,7 @@
                 android:resource="@xml/widget_info_weather" />
         </receiver>
 
-        <receiver android:name=".ui.view.widget.WidgetSimpleProvider">
+        <receiver android:name=".ui.view.widget.SimpleWidgetProvider" android:label="@string/widget_simple_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

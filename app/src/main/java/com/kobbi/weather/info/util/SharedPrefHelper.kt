@@ -11,12 +11,7 @@ class SharedPrefHelper private constructor() {
         const val KEY_LAST_UPDATE_CHECK_TIME = "last_update_check_time"
         const val KEY_AGREE_TO_USE_LOCATION = "agree_to_use_location"
 
-        @JvmStatic
-        private fun getPreference(context: Context): SharedPreferences {
-            return context.applicationContext.getSharedPreferences(
-                "${context.packageName}${KEY_PREFERENCE}", Context.MODE_PRIVATE
-            )
-        }
+        const val KEY_APP_WIDGET_ID = "app_widget_id"
 
         @JvmStatic
         fun setBool(context: Context, key: String, value: Boolean) {
@@ -30,25 +25,48 @@ class SharedPrefHelper private constructor() {
         fun getBool(context: Context, key: String, defValue: Boolean = false): Boolean {
             return getPreference(context).getBoolean(key, defValue)
         }
+        @JvmStatic
+        fun setInt(context: Context, key: String, value: Int) {
+            getPreference(context).edit().run {
+                putInt(key, value)
+                apply()
+            }
+        }
+        @JvmStatic
+        fun getInt(context: Context, key: String, defValue: Int = Int.MIN_VALUE): Int {
+            return getPreference(context).getInt(key, defValue)
+        }
 
+        @JvmStatic
         fun setLong(context: Context, key: String, value: Long) {
             getPreference(context).edit().run {
                 putLong(key, value)
                 apply()
             }
         }
-
+        @JvmStatic
         fun getLong(context: Context, key: String, defValue: Long = 0L): Long {
             return getPreference(context).getLong(key, defValue)
         }
-
-        fun registerPrefChangeListener(context: Context, listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        @JvmStatic
+        fun registerPrefChangeListener(
+            context: Context,
+            listener: SharedPreferences.OnSharedPreferenceChangeListener
+        ) {
             getPreference(context).registerOnSharedPreferenceChangeListener(listener)
         }
-
-        fun unregisterPrefChangeListener(context: Context, listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        @JvmStatic
+        fun unregisterPrefChangeListener(
+            context: Context,
+            listener: SharedPreferences.OnSharedPreferenceChangeListener
+        ) {
             getPreference(context).unregisterOnSharedPreferenceChangeListener(listener)
         }
 
+        private fun getPreference(context: Context): SharedPreferences {
+            return context.applicationContext.getSharedPreferences(
+                "${context.packageName}${KEY_PREFERENCE}", Context.MODE_PRIVATE
+            )
+        }
     }
 }
