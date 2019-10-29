@@ -46,8 +46,13 @@ enum class OfferType(
                     val hour = time[0]
                     val min = time[1]
                     val baseTimeList = type.baseTimeList
+                    val listIndices = baseTimeList.indices
                     val offerTime = type.offerTime
-                    for (i in baseTimeList.indices) {
+                    for (i in listIndices) {
+                        if (i == listIndices.last) {
+                            baseTime = baseTimeList[baseTimeList.size - 1]
+                            break
+                        }
                         if ((hour + min).toInt() < (baseTimeList[i].toInt() + offerTime)) {
                             baseTime = if (i == 0) {
                                 this.add(Calendar.DATE, -1)
@@ -61,7 +66,10 @@ enum class OfferType(
                 }
             }
             val baseDate = Utils.getCurrentTime(time = calendar.timeInMillis)
-            DLog.d(TAG, "getBaseDateTime() --> baseDate : $baseDate / baseTime : $baseTime")
+            DLog.d(
+                TAG,
+                "getBaseDateTime() -->type : $type, baseDate : $baseDate / baseTime : $baseTime"
+            )
             return Pair(baseDate, baseTime)
         }
     }

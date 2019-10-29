@@ -9,10 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import android.view.View
-import android.view.WindowManager
 import android.widget.RemoteViews
 import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
@@ -24,24 +21,10 @@ import com.kobbi.weather.info.util.LocationUtils
 import com.kobbi.weather.info.util.Utils
 import com.kobbi.weather.info.util.WeatherUtils
 import kotlin.concurrent.thread
-import kotlin.math.absoluteValue
 
-class WidgetProvider : AppWidgetProvider() {
-    enum class ViewDip(
-        val id: Int,
-        val size: Int
-    ) {
-        ADDRESS(R.id.tv_widget_address, 7),
-        TEMPERATURE(R.id.tv_widget_tpr, 12),
-        SENSORY_TPR(R.id.tv_widget_wct, 5),
-        UPDATE_TIME(R.id.tv_widget_update_time, 4),
-        PM10(R.id.tv_widget_dust_pm10, 4),
-        PM25(R.id.tv_widget_dust_pm25, 4)
-
-    }
-
+class WidgetSimpleProvider : AppWidgetProvider() {
     companion object {
-        private const val TAG = "WidgetProvider"
+        private const val TAG = "WidgetSimpleProvider"
         private const val REFRESH_WIDGET_ACTION = ".action.refresh.widget.data"
     }
 
@@ -52,14 +35,11 @@ class WidgetProvider : AppWidgetProvider() {
     ) {
         DLog.writeLogFile(
             context, TAG,
-            "WidgetProvider.onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+            "WidgetSimpleProvider.onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
-        val options = appWidgetManager.getAppWidgetOptions(appWidgetIds[0])
-        getWidgetWidth(context, options)?.let { resId ->
-            thread {
-                getRemoteViews(context, resId, appWidgetIds[0])?.run {
-                    updateAppWidget(context, this)
-                }
+        thread {
+            getRemoteViews(context, appWidgetIds[0])?.run {
+                updateAppWidget(context, this)
             }
         }
 
@@ -78,11 +58,9 @@ class WidgetProvider : AppWidgetProvider() {
         newOptions: Bundle?
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        getWidgetWidth(context, newOptions)?.let { resId ->
-            thread {
-                getRemoteViews(context, resId, appWidgetId)?.run {
-                    updateAppWidget(context, this)
-                }
+        thread {
+            getRemoteViews(context, appWidgetId)?.run {
+                updateAppWidget(context, this)
             }
         }
     }
@@ -93,46 +71,33 @@ class WidgetProvider : AppWidgetProvider() {
         if (action == getAction(context)) {
             val id = intent.extras?.getInt("id")
             id?.let {
-                val options =
-                    AppWidgetManager.getInstance(context).getAppWidgetOptions(id)
-                getWidgetWidth(context, options)?.let { resId ->
-                    thread {
-                        getRemoteViews(context, resId, id)?.run {
-                            updateAppWidget(context, this)
-                        }
+                thread {
+                    getRemoteViews(context, id)?.run {
+                        updateAppWidget(context, this)
                     }
                 }
             }
         }
     }
 
-    private fun getRemoteViews(context: Context, widthSize: Int, appWidgetId: Int): RemoteViews? {
+    private fun getRemoteViews(context: Context, appWidgetId: Int): RemoteViews? {
         val weatherRepository = WeatherRepository.getInstance(context)
         return weatherRepository.getWeatherInfo()?.run {
-            val resId =
-                if (widthSize > 3) R.layout.widget_weather else R.layout.widget_weather_vertical
-            RemoteViews(context.packageName, resId).apply {
+            RemoteViews(context.packageName, R.layout.widget_weather_simple).apply {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
-                fun setTextDynamic(viewDip: ViewDip, textValue: String?) {
-                    with(viewDip) {
-                        setTextViewText(id, textValue)
-                        setTextViewTextSize(
-                            id, TypedValue.COMPLEX_UNIT_DIP, getDip(widthSize, size)
-                        )
-                    }
-                }
-                setTextDynamic(ViewDip.ADDRESS, cityName)
-                setTextDynamic(
-                    ViewDip.TEMPERATURE,
+                setTextViewText(R.id.tv_widget_address, cityName)
+                setTextViewText(
+                    R.id.tv_widget_tpr,
                     String.format(context.getString(R.string.holder_current_tpr), tpr)
                 )
-                setTextDynamic(
-                    ViewDip.SENSORY_TPR,
+                setTextViewText(
+                    R.id.tv_widget_wct,
                     String.format(context.getString(R.string.holder_sensory_tpr), wct)
                 )
-                setTextDynamic(
-                    ViewDip.UPDATE_TIME, String.format(
+                setTextViewText(
+                    R.id.tv_widget_update_time,
+                    String.format(
                         context.getString(R.string.holder_update_time),
                         Utils.convertDateTime(type = Utils.DateType.SHORT)
                     )
@@ -144,8 +109,14 @@ class WidgetProvider : AppWidgetProvider() {
                 if (splitAddress.size >= 2) {
                     weatherRepository
                         .findAirMeasureData(splitAddress[0], splitAddress[1]).run {
-                            setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10))
-                            setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM25, pm25))
+                            setTextViewText(
+                                R.id.tv_widget_dust_pm10,
+                                getAirValue(context, AirCode.PM10, pm10)
+                            )
+                            setTextViewText(
+                                R.id.tv_widget_dust_pm25,
+                                getAirValue(context, AirCode.PM25, pm25)
+                            )
                         }
                 }
                 setOnClickPendingIntent(
@@ -174,40 +145,17 @@ class WidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private fun getWidgetWidth(context: Context?, options: Bundle?): Int? {
-        options?.run {
-            val maxWidth = getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
-            val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
-            windowManager?.run {
-                val metrics = DisplayMetrics()
-                defaultDisplay.getMetrics(metrics)
-                val xdpi = metrics.xdpi.toInt() / 5
-                var count = 0
-                var tmp = Int.MAX_VALUE
-                for (i in 1..5) {
-                    val gap = (maxWidth - xdpi * i).absoluteValue
-                    if (gap < tmp) {
-                        tmp = gap
-                        count++
-                    }
-                }
-                return count
-            }
-        }
-        return null
-    }
-
     private fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
         AppWidgetManager.getInstance(context).run {
             updateAppWidget(
-                ComponentName(context, WidgetProvider::class.java), remoteViews
+                ComponentName(context, WidgetSimpleProvider::class.java), remoteViews
             )
         }
     }
 
     private fun getPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
         context.applicationContext.let {
-            val intent = Intent(it, WidgetProvider::class.java).apply {
+            val intent = Intent(it, WidgetSimpleProvider::class.java).apply {
                 action = getAction(it)
                 this.putExtra("id", appWidgetId)
             }
@@ -226,9 +174,5 @@ class WidgetProvider : AppWidgetProvider() {
         val holder =
             if (dustValue.isEmpty()) R.string.holder_dust_value_empty else R.string.holder_dust_value
         return String.format(context.getString(holder), code.codeName, level, dustValue)
-    }
-
-    private fun getDip(widthSize: Int, value: Int): Float {
-        return if (widthSize <= 3) 2 * value * 1.5f else 3 * value * 1.5f
     }
 }
