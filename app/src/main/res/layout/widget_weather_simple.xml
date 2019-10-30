@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="3dp"
             android:orientation="vertical">
 
             <TextView
@@ -34,8 +34,8 @@
                 android:layout_width="81dp"
                 android:layout_height="81dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="13dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -47,7 +47,7 @@
                 android:gravity="center"
                 android:text="@string/guide_place_name"
                 android:textColor="@color/colorWhite"
-                android:textSize="21dp"
+                android:textSize="20dp"
                 tools:ignore="SpUsage" />
         </LinearLayout>
 
@@ -61,7 +61,7 @@
             android:drawableEnd="@drawable/baseline_refresh_white_18"
             android:text="@string/guide_update_time"
             android:textColor="@color/colorWhite"
-            android:textSize="16dp"
+            android:textSize="15dp"
             tools:ignore="SpUsage" />
     </LinearLayout>
 
