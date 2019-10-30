@@ -63,8 +63,7 @@ class SimpleWidgetProvider : BaseWidgetProvider() {
                 Handler(Looper.getMainLooper()).postDelayed(500) {
                     setViewVisibility(R.id.pb_widget, View.GONE)
                     setViewVisibility(R.id.lo_widget_container, View.VISIBLE)
-                    AppWidgetManager.getInstance(context)
-                        .updateAppWidget(getWidgetId(context), this)
+                    updateAppWidget(context, this)
                 }
             }
         }

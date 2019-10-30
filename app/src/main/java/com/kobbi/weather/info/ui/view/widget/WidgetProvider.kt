@@ -32,7 +32,7 @@ class WidgetProvider : BaseWidgetProvider() {
         val weatherRepository = WeatherRepository.getInstance(context)
         return weatherRepository.getWeatherInfo()?.run {
             val resId =
-                if (wigetWidth > 3) R.layout.widget_weather else R.layout.widget_weather_vertical
+                if (wigetWidth > 3) R.layout.widget_weather_horizontal else R.layout.widget_weather_vertical
             RemoteViews(context.packageName, resId).apply {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
@@ -82,7 +82,7 @@ class WidgetProvider : BaseWidgetProvider() {
                     )
                 )
                 setOnClickPendingIntent(
-                    R.id.tv_widget_update_time, getPendingIntent(context, this@WidgetProvider.javaClass)
+                    R.id.lo_refresh_container, getPendingIntent(context, this@WidgetProvider.javaClass)
                 )
 
                 setViewVisibility(R.id.pb_widget, View.VISIBLE)
@@ -90,8 +90,7 @@ class WidgetProvider : BaseWidgetProvider() {
                 Handler(Looper.getMainLooper()).postDelayed(500) {
                     setViewVisibility(R.id.pb_widget, View.GONE)
                     setViewVisibility(R.id.lo_widget_container, View.VISIBLE)
-                    AppWidgetManager.getInstance(context)
-                        .updateAppWidget(getWidgetId(context), this)
+                    updateAppWidget(context, this)
                 }
             }
         }

@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.RemoteViews
-import android.widget.Toast
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.SharedPrefHelper
@@ -21,7 +20,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         val id: Int,
         val size: Int
     ) {
-        ADDRESS(R.id.tv_widget_address, 7),
+        ADDRESS(R.id.tv_widget_address, 6),
         TEMPERATURE(R.id.tv_widget_tpr, 12),
         SENSORY_TPR(R.id.tv_widget_wct, 5),
         UPDATE_TIME(R.id.tv_widget_update_time, 4),
@@ -110,12 +109,28 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
+        AppWidgetManager.getInstance(context)
+            .updateAppWidget(getWidgetId(context), remoteViews)
+    }
+
     private fun updateAppWidget(context: Context) {
         thread {
-            createRemoteViews(context)?.let { remoteViews ->
-                AppWidgetManager.getInstance(context)
-                    .updateAppWidget(getWidgetId(context), remoteViews)
+            val remoteViews = createRemoteViews(context)
+                ?: RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
+                    setOnClickPendingIntent(
+                        R.id.tv_widget_error, getPendingIntent(context, getWidgetProvider(context))
+                    )
+                }
+            updateAppWidget(context, remoteViews)
+        }
+    }
 
+    private fun getWidgetProvider(context: Context): Class<out BaseWidgetProvider> {
+        return AppWidgetManager.getInstance(context).getAppWidgetInfo(getWidgetId(context)).run {
+            when (provider.className) {
+                WidgetProvider::class.java.name -> WidgetProvider::class.java
+                else -> SimpleWidgetProvider::class.java
             }
         }
     }

@@ -68,53 +68,60 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/lo_refresh_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="6dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_widget_dust_pm10"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/guide_on_time_dust_pm10"
-                android:textColor="@color/colorWhite"
-                android:textSize="16dp"
-                tools:ignore="SpUsage" />
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tv_widget_dust_pm10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/guide_on_time_dust_pm10"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="16dp"
+                    tools:ignore="SpUsage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:text="@string/symbol_slash"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="16dp"
+                    tools:ignore="SpUsage" />
+
+                <TextView
+                    android:id="@+id/tv_widget_dust_pm25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/guide_on_time_dust_pm25"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="16dp"
+                    tools:ignore="SpUsage" />
+            </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_widget_update_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/symbol_slash"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:textColor="@color/colorWhite"
-                android:textSize="16dp"
-                tools:ignore="SpUsage" />
-
-            <TextView
-                android:id="@+id/tv_widget_dust_pm25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/guide_on_time_dust_pm25"
+                android:drawableEnd="@drawable/baseline_refresh_white_18"
+                android:text="@string/guide_update_time"
                 android:textColor="@color/colorWhite"
                 android:textSize="16dp"
                 tools:ignore="SpUsage" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_widget_update_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableEnd="@drawable/baseline_refresh_white_18"
-            android:text="@string/guide_update_time"
-            android:textColor="@color/colorWhite"
-            android:textSize="16dp"
-            tools:ignore="SpUsage" />
     </LinearLayout>
 
     <ProgressBar

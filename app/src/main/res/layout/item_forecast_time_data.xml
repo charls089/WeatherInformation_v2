@@ -44,8 +44,9 @@
 
             <TextView
                 android:id="@+id/tv_item_forecast_daily_TPR"
-                android:layout_width="wrap_content"
+                android:layout_width="26dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_marginStart="14dp"
                 android:text="@{daily.t3h}"
@@ -56,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1.5dp"
+                android:layout_gravity="center"
                 android:text="@string/symbol_celsius"
                 android:textSize="15dp"
                 tools:ignore="SpUsage" />
@@ -75,9 +77,10 @@
 
             <TextView
                 android:id="@+id/tv_item_forecast_daily_POP"
-                android:layout_width="wrap_content"
+                android:layout_width="26dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_marginStart="14dp"
                 android:text="@{daily.pop}"
                 android:textSize="15dp"
@@ -107,9 +110,10 @@
 
             <TextView
                 android:id="@+id/tv_item_forecast_daily_REH"
-                android:layout_width="wrap_content"
+                android:layout_width="26dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_marginStart="14dp"
                 android:text="@{daily.reh}"
                 android:textSize="15dp"
