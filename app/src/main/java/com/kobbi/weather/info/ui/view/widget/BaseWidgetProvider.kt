@@ -17,8 +17,8 @@ import kotlin.math.absoluteValue
 
 abstract class BaseWidgetProvider : AppWidgetProvider() {
     enum class ViewDip(
-        val id: Int,
-        val size: Int
+            val id: Int,
+            val size: Int
     ) {
         ADDRESS(R.id.tv_widget_address, 6),
         TEMPERATURE(R.id.tv_widget_tpr, 12),
@@ -35,30 +35,26 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     abstract fun createRemoteViews(context: Context): RemoteViews?
 
-    override fun onDeleted(context: Context, appWidgetIds: IntArray?) {
-        super.onDeleted(context, appWidgetIds)
-        resetWidgetId(context)
-    }
-
     override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+            context: Context,
+            appWidgetManager: AppWidgetManager,
+            appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         DLog.writeLogFile(
-            context, TAG,
-            "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+                context, TAG,
+                "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
-        setWidgetId(context, appWidgetIds[0])
+        if (getWidgetId(context) == Int.MIN_VALUE)
+            setWidgetId(context, appWidgetIds[0])
         updateAppWidget(context)
     }
 
     override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: AppWidgetManager?,
-        appWidgetId: Int,
-        newOptions: Bundle?
+            context: Context,
+            appWidgetManager: AppWidgetManager?,
+            appWidgetId: Int,
+            newOptions: Bundle?
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         updateAppWidget(context)
@@ -72,6 +68,10 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    override fun onDeleted(context: Context, appWidgetIds: IntArray?) {
+        super.onDeleted(context, appWidgetIds)
+        resetWidgetId(context)
+    }
 
     open fun getWidgetWidth(context: Context?, options: Bundle?): Int? {
         options?.run {
@@ -111,17 +111,17 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
         AppWidgetManager.getInstance(context)
-            .updateAppWidget(getWidgetId(context), remoteViews)
+                .updateAppWidget(getWidgetId(context), remoteViews)
     }
 
     private fun updateAppWidget(context: Context) {
         thread {
             val remoteViews = createRemoteViews(context)
-                ?: RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
-                    setOnClickPendingIntent(
-                        R.id.tv_widget_error, getPendingIntent(context, getWidgetProvider(context))
-                    )
-                }
+                    ?: RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
+                        setOnClickPendingIntent(
+                                R.id.tv_widget_error, getPendingIntent(context, getWidgetProvider(context))
+                        )
+                    }
             updateAppWidget(context, remoteViews)
         }
     }
