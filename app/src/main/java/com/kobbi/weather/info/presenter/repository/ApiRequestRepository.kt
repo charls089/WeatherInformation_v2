@@ -234,28 +234,23 @@ class ApiRequestRepository private constructor() {
         }
 
         fun initBaseAreaData(context: Context, area: Area) {
-            val isNewArea =
-                WeatherRepository.getInstance(context).loadAreaFromAddress(area.address) == null
-            DLog.d(TAG, "initBaseAreaData() --> isNewArea : $isNewArea")
-            if (isNewArea) {
-                val sidoName = LocationUtils.splitAddressLine(area.address)
-                val areaCode = AreaCode(
-                    area.prvnCode,
-                    area.cityCode
-                )
-                val gridData =
-                    GridData(area.gridX, area.gridY)
-                val areaNo = area.areaCode
-                requestWeather(context, OfferType.CURRENT, gridData)
-                requestWeather(context, OfferType.YESTERDAY, gridData)
-                requestWeather(context, OfferType.DAILY, gridData)
-                requestWeather(context, OfferType.MINMAX, gridData)
-                requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
-                requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
-                requestLife(context, areaNo)
-                requestAirMeasure(context, sidoName[0])
-                requestNews(context)
-            }
+            val sidoName = LocationUtils.splitAddressLine(area.address)
+            val areaCode = AreaCode(
+                area.prvnCode,
+                area.cityCode
+            )
+            val gridData =
+                GridData(area.gridX, area.gridY)
+            val areaNo = area.areaCode
+            requestWeather(context, OfferType.CURRENT, gridData)
+            requestWeather(context, OfferType.YESTERDAY, gridData)
+            requestWeather(context, OfferType.DAILY, gridData)
+            requestWeather(context, OfferType.MINMAX, gridData)
+            requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
+            requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
+            requestLife(context, areaNo)
+            requestAirMeasure(context, sidoName[0])
+            requestNews(context)
         }
     }
 }

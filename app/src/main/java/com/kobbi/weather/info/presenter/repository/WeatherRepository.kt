@@ -94,10 +94,21 @@ class WeatherRepository private constructor(context: Context) {
                                 grid.y,
                                 stateCode
                             )
-                        ApiRequestRepository.initBaseAreaData(context, area)
                         if (stateCode == Constants.STATE_CODE_LOCATED)
                             changeStateBeforeArea()
                         mWeatherDB.areaDao().insert(area)
+
+                        //check current weather
+                        val isExistData = findCurrentWeather(area.gridX, area.gridY) != null
+                        val isNewArea = loadAreaFromAddress(area.address) != null
+                        DLog.writeLogFile(
+                            context,
+                            "AreaWeather",
+                            "insertArea() --> isExistData : $isExistData / isNewArea : $isNewArea"
+                        )
+                        if (isExistData || isNewArea) {
+                            ApiRequestRepository.initBaseAreaData(context, area)
+                        }
                     }
                 }
             }
