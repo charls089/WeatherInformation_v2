@@ -3,6 +3,7 @@ package com.kobbi.weather.info.ui.adapter
 import android.graphics.Color
 import android.os.Handler
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,6 +27,8 @@ import com.kobbi.weather.info.ui.view.LifeItemLayout
 import com.kobbi.weather.info.util.*
 import kotlinx.android.synthetic.main.item_life_list.view.*
 import java.util.*
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 object BindingAdapter {
     @BindingAdapter("setJusoText")
@@ -33,6 +36,59 @@ object BindingAdapter {
     fun setJusoText(textView: TextView, resId: Int?) {
         resId?.let {
             textView.setText(resId)
+        }
+    }
+
+    @BindingAdapter("setArea", "setCurrent", "setYesterday", "setPosition")
+    @JvmStatic
+    fun setDifferenceTpr(
+        view: TextView,
+        areas: List<Area>?,
+        today: List<CurrentWeather>?,
+        yesterday: List<CurrentWeather>?,
+        position: Int?
+    ) {
+        fun cal(front: String, end: String) {
+            if (front.isNotEmpty() && end.isNotEmpty()) {
+                val gap = front.toFloat() - end.toFloat()
+                val drawableId = if (gap > 0) {
+                    if (view.id == R.id.tv_gap_between_tpr)
+                        R.drawable.arrow_up_red_48
+                    else
+                        R.drawable.arrow_up_red_24
+                } else if (gap <0) {
+                    if (view.id == R.id.tv_gap_between_tpr)
+                        R.drawable.arrow_down_blue_48
+                    else
+                        R.drawable.arrow_down_blue_24
+                } else {
+                    null
+                }
+                Log.e("####", "setDiff() --> gap : $gap / drawableId : $drawableId")
+                view.run {
+                    text = gap.roundToInt().absoluteValue.toString()
+                    val drawable = drawableId?.let {
+                        context.getDrawable(drawableId)
+                    }
+                    Log.e("####", "setDiff() --> drawable : $drawable")
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        drawable, null, null, null
+                    )
+                }
+            }
+        }
+
+        val currentWeather = getCurrentWeather(areas, position, today)
+        val yesterdayWeather = getCurrentWeather(areas, position, yesterday)
+        if (currentWeather != null && yesterdayWeather != null) {
+            when (view.id) {
+                R.id.tv_gap_between_tpr -> {
+                    cal(currentWeather.t1h, yesterdayWeather.t1h)
+                }
+                R.id.tv_gap_between_wct -> {
+                    cal(currentWeather.wct, yesterdayWeather.wct)
+                }
+            }
         }
     }
 
@@ -535,7 +591,8 @@ object BindingAdapter {
         val currentWeather = getCurrentWeather(areas, position, items)
         val value = when (view.id) {
             R.id.ll_on_time_rain_gauge -> currentWeather?.rn1
-            R.id.ll_yesterday_wc_temp -> currentWeather?.wct
+            R.id.ll_yesterday_tpr -> currentWeather?.t1h
+            R.id.ll_yesterday_wct -> currentWeather?.wct
             else -> null
         }
         view.visibility =

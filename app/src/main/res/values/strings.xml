@@ -22,6 +22,8 @@
 
     <string name="symbol_colon">:</string>
     <string name="symbol_slash">/</string>
+    <string name="symbol_left_block">(</string>
+    <string name="symbol_right_block">)</string>
     <string name="symbol_celsius">℃</string>
     <string name="symbol_percent">%</string>
     <string name="symbol_mm">mm</string>
@@ -72,6 +74,7 @@
     <string name="guide_yesterday_wc_tpr">어제 체감온도</string>
     <string name="guide_on_time_dust_pm10">현재 미세먼지</string>
     <string name="guide_on_time_dust_pm25">현재 초미세먼지</string>
+    <string name="guide_tpr_difference">온도차이</string>
     <string name="guide_favorite_place">즐겨찾는 장소</string>
     <string name="guide_district">시/도/군/구/읍/면/동</string>
 

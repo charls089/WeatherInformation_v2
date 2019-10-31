@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <import type="com.kobbi.weather.info.presenter.model.type.AirCode" />
-        <import type="com.kobbi.weather.info.util.Utils.DateType"/>
+
+        <import type="com.kobbi.weather.info.util.Utils.DateType" />
 
         <variable
             name="weatherVm"
@@ -19,9 +22,7 @@
             type="Integer" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -121,6 +122,44 @@
                             android:text="@string/symbol_celsius"
                             android:textSize="36dp"
                             tools:ignore="SpUsage" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_yesterday_tpr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:setArea="@{areaVm.area}"
+                            app:setPosition="@{position}"
+                            app:setVisibility="@{weatherVm.yesterdayCurrent}">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="@string/symbol_left_block"
+                                android:textSize="28dp"
+                                tools:ignore="SpUsage" />
+
+                            <TextView
+                                android:id="@+id/tv_gap_between_tpr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textSize="32dp"
+                                app:setArea="@{areaVm.area}"
+                                app:setCurrent="@{weatherVm.currentWeather}"
+                                app:setPosition="@{position}"
+                                app:setYesterday="@{weatherVm.yesterdayCurrent}"
+                                tools:ignore="SpUsage" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="@string/symbol_right_block"
+                                android:textSize="28dp"
+                                tools:ignore="SpUsage" />
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -253,14 +292,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:text="@string/text_wind_chill"
-                            android:textSize="15dp"
+                            android:textSize="18dp"
                             tools:ignore="SpUsage" />
 
                         <TextView
                             android:id="@+id/tv_forecast_now_wc_tpr_info"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15dp"
+                            android:textSize="18dp"
                             app:setArea="@{areaVm.area}"
                             app:setPosition="@{position}"
                             app:setWct="@{weatherVm.currentWeather}"
@@ -271,13 +310,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:text="@string/symbol_celsius"
-                            android:textSize="15dp"
+                            android:textSize="18dp"
                             tools:ignore="SpUsage" />
 
                         <LinearLayout
-                            android:id="@+id/ll_yesterday_wc_temp"
+                            android:id="@+id/ll_yesterday_wct"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             app:setArea="@{areaVm.area}"
                             app:setPosition="@{position}"
                             app:setVisibility="@{weatherVm.yesterdayCurrent}">
@@ -285,35 +325,28 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:text="@string/symbol_slash"
+                                android:layout_gravity="center"
+                                android:text="@string/symbol_left_block"
                                 android:textSize="15dp"
                                 tools:ignore="SpUsage" />
 
                             <TextView
+                                android:id="@+id/tv_gap_between_wct"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="10dp"
-                                android:text="@string/text_yesterday"
-                                android:textSize="15dp"
-                                tools:ignore="SpUsage" />
-
-                            <TextView
-                                android:id="@+id/tv_forecast_yesterday_wc_tpr_info"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="15dp"
+                                android:layout_gravity="center"
+                                android:textSize="18dp"
                                 app:setArea="@{areaVm.area}"
+                                app:setCurrent="@{weatherVm.currentWeather}"
                                 app:setPosition="@{position}"
-                                app:setWct="@{weatherVm.yesterdayCurrent}"
+                                app:setYesterday="@{weatherVm.yesterdayCurrent}"
                                 tools:ignore="SpUsage" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:text="@string/symbol_celsius"
+                                android:layout_gravity="center"
+                                android:text="@string/symbol_right_block"
                                 android:textSize="15dp"
                                 tools:ignore="SpUsage" />
                         </LinearLayout>
