@@ -3,7 +3,6 @@ package com.kobbi.weather.info.ui.adapter
 import android.graphics.Color
 import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -64,13 +63,11 @@ object BindingAdapter {
                 } else {
                     null
                 }
-                Log.e("####", "setDiff() --> gap : $gap / drawableId : $drawableId")
                 view.run {
                     text = gap.roundToInt().absoluteValue.toString()
                     val drawable = drawableId?.let {
                         context.getDrawable(drawableId)
                     }
-                    Log.e("####", "setDiff() --> drawable : $drawable")
                     setCompoundDrawablesWithIntrinsicBounds(
                         drawable, null, null, null
                     )
