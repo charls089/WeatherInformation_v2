@@ -497,7 +497,7 @@ object BindingAdapter {
                         AirCode.PM10 -> it.pm10
                         AirCode.PM25 -> it.pm25
                     }
-                    val level = AirCode.getAirLevel(code.codeNo, value)
+                    val level = AirCode.getAirLevel(code, value)
                     view.run {
                         text =
                             if (TextUtils.isEmpty(value)) context.getString(R.string.text_checking_data) else value

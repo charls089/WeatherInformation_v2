@@ -103,7 +103,7 @@ class WidgetProvider : BaseWidgetProvider() {
         code: AirCode,
         dustValue: String
     ): String {
-        val level = AirCode.getAirLevel(code.codeNo, dustValue)
+        val level = AirCode.getAirLevel(code, dustValue)
         val holder =
             if (dustValue.isEmpty()) R.string.holder_dust_value_empty else R.string.holder_dust_value
         return String.format(context.getString(holder), code.codeName, level, dustValue)

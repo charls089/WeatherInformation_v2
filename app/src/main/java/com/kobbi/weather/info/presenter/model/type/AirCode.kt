@@ -22,11 +22,11 @@ enum class AirCode(
             }
         }
 
-        fun getAirLevel(code: String, valueStr: String): String {
+        fun getAirLevel(code: AirCode, valueStr: String): String {
             var result = "점검중"
             try {
                 val value = valueStr.toInt()
-                findAirCode(code)?.range?.let {
+                code.range.let {
                     for (level in it) {
                         if (value in level.first) {
                             result = level.second
