@@ -10,8 +10,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:textColor="@color/colorWhite"
         android:drawableEnd="@drawable/baseline_refresh_white_24"
         android:text="@string/info_widget_data_load_error"
         android:textSize="24dp"
         tools:ignore="SpUsage" />
+
+    <ProgressBar
+        android:id="@+id/pb_widget"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/rotate_progress" />
 </FrameLayout>

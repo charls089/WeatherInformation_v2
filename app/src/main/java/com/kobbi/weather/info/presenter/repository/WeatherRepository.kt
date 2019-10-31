@@ -107,7 +107,7 @@ class WeatherRepository private constructor(context: Context) {
     fun insertWeather(gridData: GridData, item: List<WeatherItem>?) {
         thread {
             val forecastDataList = getWeatherList(item)
-            DLog.d(javaClass, "forecastDataList : $forecastDataList")
+            DLog.d(javaClass, "insertWeather() --> forecastDataList : $forecastDataList")
             val currentList = mutableListOf<CurrentWeather>()
             val dailyList = mutableListOf<DailyWeather>()
             val gridX = gridData.x
@@ -350,33 +350,26 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadPlaceAddressLive() = mWeatherDB.favoritePlaceDao().loadAddressLive()
 
-    fun getNotificateData(
-        address: String,
-        date: Long,
-        yesterday: Long,
-        time: Long,
-        x: Int,
-        y: Int
-    ) =
-        mWeatherDB.weatherInfoDao().getWeatherInfo(address, date, yesterday, time, x, y)
-
     fun getWeatherInfo(): WeatherInfo? {
-        loadLocatedArea()?.let { area ->
+        val locatedArea = loadLocatedArea()
+        DLog.d(javaClass, "getWeatherInfo() --> locatedArea : $locatedArea")
+        locatedArea?.run {
             GregorianCalendar().apply {
                 val today = (Utils.getCurrentTime() + "0000").toLong()
-                this.add(Calendar.DATE, -1)
-                val yesterday =
-                    (Utils.getCurrentTime(time = this.timeInMillis) + "0000").toLong()
                 this.add(Calendar.HOUR, 1)
                 val time = (Utils.getCurrentTime("HH", this.timeInMillis) + "00").toLong()
-                return getNotificateData(
-                    area.address,
-                    today,
-                    yesterday,
-                    time,
-                    area.gridX,
-                    area.gridY
+                DLog.d(
+                    this@WeatherRepository.javaClass,
+                    "getWeatherInfo() --> today : $today, time : $time"
                 )
+                val notifyData =
+                    mWeatherDB.weatherInfoDao()
+                        .getWeatherInfo(address, today, time, gridX, gridY)
+                DLog.d(
+                    this@WeatherRepository.javaClass,
+                    "getWeatherInfo() --> notifyData : $notifyData"
+                )
+                return notifyData
             }
         }
         return null

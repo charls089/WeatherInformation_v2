@@ -6,10 +6,16 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
+import android.view.View
 import android.view.WindowManager
 import android.widget.RemoteViews
+import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.presenter.model.data.WeatherInfo
+import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.SharedPrefHelper
 import kotlin.concurrent.thread
@@ -42,9 +48,9 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         DLog.writeLogFile(
-                context, TAG,
-                "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+                context, TAG, "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
+        DLog.d(TAG, "onUpdate() --> getWidgetId : ${getWidgetId(context)}")
         if (getWidgetId(context) == Int.MIN_VALUE)
             setWidgetId(context, appWidgetIds[0])
         updateAppWidget(context)
@@ -63,14 +69,24 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent?) {
         super.onReceive(context, intent)
         val action = intent?.action
+        DLog.writeLogFile(context, TAG, "onReceive() --> action : $action")
         if (action == getAction(context)) {
             updateAppWidget(context)
         }
     }
 
-    override fun onDeleted(context: Context, appWidgetIds: IntArray?) {
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        DLog.writeLogFile(
+                context, TAG, "onDeleted() --> appWidgetIds : ${appWidgetIds.toList()}"
+        )
         super.onDeleted(context, appWidgetIds)
         resetWidgetId(context)
+    }
+
+    open fun getWeatherInfo(context: Context): WeatherInfo? {
+        val weatherInfo = WeatherRepository.getInstance(context.applicationContext).getWeatherInfo()
+        DLog.d(TAG, "weatherInfo : $weatherInfo")
+        return weatherInfo
     }
 
     open fun getWidgetWidth(context: Context?, options: Bundle?): Int? {
@@ -116,13 +132,25 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     private fun updateAppWidget(context: Context) {
         thread {
-            val remoteViews = createRemoteViews(context)
-                    ?: RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
-                        setOnClickPendingIntent(
-                                R.id.tv_widget_error, getPendingIntent(context, getWidgetProvider(context))
-                        )
-                    }
+            val remoteViews = createRemoteViews(context) ?: getErrPageView(context)
             updateAppWidget(context, remoteViews)
+        }
+    }
+
+    private fun getErrPageView(context: Context): RemoteViews {
+        DLog.d(TAG, "getErrPageView()")
+        return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
+            setOnClickPendingIntent(
+                    R.id.tv_widget_error, getPendingIntent(context, getWidgetProvider(context))
+            )
+
+            setViewVisibility(R.id.pb_widget, View.VISIBLE)
+            setViewVisibility(R.id.tv_widget_error, View.GONE)
+            Handler(Looper.getMainLooper()).postDelayed(500) {
+                setViewVisibility(R.id.pb_widget, View.GONE)
+                setViewVisibility(R.id.tv_widget_error, View.VISIBLE)
+                updateAppWidget(context, this)
+            }
         }
     }
 

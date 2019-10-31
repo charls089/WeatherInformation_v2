@@ -14,6 +14,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.model.type.AirCode
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.MainActivity
+import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.LocationUtils
 import com.kobbi.weather.info.util.Utils
 import com.kobbi.weather.info.util.WeatherUtils
@@ -21,6 +22,7 @@ import com.kobbi.weather.info.util.WeatherUtils
 class WidgetProvider : BaseWidgetProvider() {
 
     override fun createRemoteViews(context: Context): RemoteViews? {
+        DLog.d("WidgetProvider", "createRemoteViews()")
         val options =
             AppWidgetManager.getInstance(context).getAppWidgetOptions(getWidgetId(context))
         return getWidgetWidth(context, options)?.let { wigetWidth ->
@@ -28,11 +30,11 @@ class WidgetProvider : BaseWidgetProvider() {
         }
     }
 
-    private fun getRemoteViews(context: Context, wigetWidth: Int): RemoteViews? {
+    private fun getRemoteViews(context: Context, widgetWidth: Int): RemoteViews? {
         val weatherRepository = WeatherRepository.getInstance(context)
         return weatherRepository.getWeatherInfo()?.run {
             val resId =
-                if (wigetWidth > 3) R.layout.widget_weather_horizontal else R.layout.widget_weather_vertical
+                if (widgetWidth > 3) R.layout.widget_weather_horizontal else R.layout.widget_weather_vertical
             RemoteViews(context.packageName, resId).apply {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
@@ -40,7 +42,7 @@ class WidgetProvider : BaseWidgetProvider() {
                     with(viewDip) {
                         setTextViewText(id, textValue)
                         setTextViewTextSize(
-                            id, TypedValue.COMPLEX_UNIT_DIP, getDip(wigetWidth, size)
+                            id, TypedValue.COMPLEX_UNIT_DIP, getDip(widgetWidth, size)
                         )
                     }
                 }

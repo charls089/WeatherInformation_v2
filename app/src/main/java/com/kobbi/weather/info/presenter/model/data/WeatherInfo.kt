@@ -17,8 +17,6 @@ data class WeatherInfo(
     val sky: String,
     @ColumnInfo(name = "today_wct")
     val wct: String,
-    @ColumnInfo(name = "yesterday_wct")
-    val yesterdayWct: String,
     @ColumnInfo(name = "tmn")
     val tmn: String,
     @ColumnInfo(name = "tmx")

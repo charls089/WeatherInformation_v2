@@ -59,7 +59,6 @@ class WeatherService : Service() {
                         getString(R.string.holder_weather_notify),
                         tpr,
                         wct,
-                        yesterdayWct,
                         tmn,
                         tmx,
                         address

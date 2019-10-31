@@ -12,18 +12,19 @@ import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.MainActivity
+import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.LocationUtils
 import com.kobbi.weather.info.util.Utils
 import com.kobbi.weather.info.util.WeatherUtils
 
 class SimpleWidgetProvider : BaseWidgetProvider() {
     override fun createRemoteViews(context: Context): RemoteViews? {
+        DLog.d("SimpleWidgetProvider", "createRemoteViews()")
         return getRemoteViews(context)
     }
 
     private fun getRemoteViews(context: Context): RemoteViews? {
-        val weatherRepository = WeatherRepository.getInstance(context.applicationContext)
-        return weatherRepository.getWeatherInfo()?.run {
+        return getWeatherInfo(context)?.run {
             RemoteViews(context.packageName, R.layout.widget_weather_simple).apply {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
