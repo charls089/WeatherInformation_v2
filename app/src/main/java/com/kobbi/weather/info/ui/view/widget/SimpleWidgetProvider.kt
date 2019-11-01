@@ -29,14 +29,7 @@ class SimpleWidgetProvider : BaseWidgetProvider() {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
                 setTextViewText(R.id.tv_widget_address, cityName)
-                setTextViewText(
-                    R.id.tv_widget_tpr,
-                    String.format(context.getString(R.string.holder_current_tpr), tpr)
-                )
-                setTextViewText(
-                    R.id.tv_widget_wct,
-                    String.format(context.getString(R.string.holder_sensory_tpr), wct)
-                )
+                setTextViewText(R.id.tv_widget_tpr, tpr)
                 setTextViewText(
                     R.id.tv_widget_update_time, Utils.convertDateTime(type = Utils.DateType.SHORT)
                 )
