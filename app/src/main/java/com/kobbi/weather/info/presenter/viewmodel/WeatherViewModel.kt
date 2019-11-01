@@ -14,8 +14,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     val dailyWeather get() = _daily
     val weeklyWeather get() = _weekly
     val weekFromDaily get() = _weekFromDaily
-    val lifeIndexDay get() = _lifeDay
-    val lifeIndexHour get() = _lifeHour
+    val lifeIndex get() = _lifeIndex
     val minMaxTpr get() = _minMaxTpr
     val airMeasure get() = _air
     val special get() = _special
@@ -28,8 +27,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     private var _daily: LiveData<List<DailyWeather>>? = null
     private var _weekFromDaily: LiveData<List<DailyWeather>>? = null
     private var _weekly: LiveData<List<WeeklyWeather>>? = null
-    private var _lifeDay: LiveData<List<LifeIndexDay>>? = null
-    private var _lifeHour: LiveData<List<LifeIndexHour>>? = null
+    private var _lifeIndex: LiveData<List<LifeIndex>>? = null
     private var _minMaxTpr: LiveData<List<MinMaxTpr>>? = null
     private var _air: LiveData<List<AirMeasure>>? = null
     private var _special: LiveData<SpecialNews>? = null
@@ -41,8 +39,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         _daily = _weatherRepository.loadDailyWeatherLive()
         _weekFromDaily = _weatherRepository.loadWeekWeatherLive()
         _weekly = _weatherRepository.loadWeeklyWeatherLive()
-        _lifeDay = _weatherRepository.loadLifeIndexDayLive()
-        _lifeHour = _weatherRepository.loadLifeIndexHourLive()
+        _lifeIndex = _weatherRepository.loadLifeIndexLive()
         _minMaxTpr = _weatherRepository.loadMinMaxTprLive()
         _air = _weatherRepository.loadAirMeasureLive()
         _special = _weatherRepository.loadSpecialNewsLive()

@@ -13,7 +13,7 @@ import com.kobbi.weather.info.util.DLog
     entities = [
         Area::class, FavoritePlace::class, CurrentWeather::class,
         DailyWeather::class, WeeklyTpr::class, WeeklyLand::class,
-        AirMeasure::class, LifeIndexDay::class, LifeIndexHour::class, SpecialNews::class
+        AirMeasure::class, LifeIndex::class, SpecialNews::class
     ],
     views = [WeeklyWeather::class],
     version = 1
@@ -25,10 +25,9 @@ abstract class WeatherDatabase : RoomDatabase() {
     abstract fun dailyWeatherDao(): DailyWeatherDAO
     abstract fun weeklyWeatherDao(): WeeklyWeatherDAO
     abstract fun airMeasureDao(): AirMeasureDAO
-    abstract fun lifeDayDao(): LifeIndexDayDAO
-    abstract fun lifeHourDao(): LifeIndexHourDAO
+    abstract fun lifeIndexDao(): LifeIndexDAO
     abstract fun specialNewsDao(): SpecialNewsDAO
-    abstract fun weatherInfoDao():WeatherInfoDAO
+    abstract fun weatherInfoDao(): WeatherInfoDAO
 
     companion object {
         private const val TAG = "WeatherDatabase"

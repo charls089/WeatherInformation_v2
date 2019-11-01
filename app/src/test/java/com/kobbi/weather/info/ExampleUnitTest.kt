@@ -1,5 +1,6 @@
 package com.kobbi.weather.info
 
+import com.kobbi.weather.info.presenter.model.type.OfferType
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -27,5 +28,21 @@ class ExampleUnitTest {
         val string = "201909101600"
         val result = string.substring(0..5)
         assertEquals(result, "201909")
+    }
+
+    @Test
+    fun array_check() {
+        val array = Array(8) { i -> "${if (i * 3 < 10) "0" else ""}${i*3}" }
+        print("array : ${array.toList()}")
+    }
+
+    @Test
+    fun offerTypeCheck() {
+        val isNeedToUpdate = OfferType.isNeedToUpdate(OfferType.LIFE)
+        println("isNeedToUpdate : $isNeedToUpdate")
+
+        val time = OfferType.getBaseDateTime(OfferType.LIFE)
+        println("time : $time")
+        println(time.first+time.second.dropLast(2))
     }
 }

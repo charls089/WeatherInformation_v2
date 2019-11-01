@@ -35,11 +35,11 @@ class Constants private constructor() {
         val VALUE_RANGE_FSN =
             arrayOf(VALUE_FSN_NORMAL, VALUE_FSN_CAUTION, VALUE_FSN_WARNING, VALUE_FSN_DANGER)
 
-        private val VALUE_WC_TEM_NORMAL = Pair(10 until Int.MAX_VALUE, "관심")
+        private val VALUE_WC_TEM_NORMAL = Pair(-10 until Int.MAX_VALUE, "관심")
         private val VALUE_WC_TEM_CAUTION = Pair(-25 until -10, "주의")
         private val VALUE_WC_TEM_WARNING = Pair(-45 until -25, "경고")
         private val VALUE_WC_TEM_DANGER = Pair(Int.MIN_VALUE until -45, "위험")
-        val VALUE_RANGE_TEM =
+        val VALUE_RANGE_WC_TEM =
             arrayOf(
                 VALUE_WC_TEM_NORMAL,
                 VALUE_WC_TEM_CAUTION,

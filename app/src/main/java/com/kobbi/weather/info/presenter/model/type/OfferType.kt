@@ -12,7 +12,7 @@ enum class OfferType(
     CURRENT(Array(24) { i -> "${if (i < 10) "0" else ""}${i}30" }, 15),
     DAILY(arrayOf("0200", "0500", "0800", "1100", "1400", "1700", "2000", "2300"), 10),
     WEEKLY(arrayOf("0600", "1800"), 50),
-    LIFE(arrayOf("0900"), 10),
+    LIFE(arrayOf("0600"), 10),
     AIR(Array(24) { i -> "${if (i < 10) "0" else ""}${i}00" }, 15),
     MINMAX,
     YESTERDAY;

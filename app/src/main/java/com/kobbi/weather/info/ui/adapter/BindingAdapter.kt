@@ -55,7 +55,7 @@ object BindingAdapter {
                         R.drawable.arrow_up_red_48
                     else
                         R.drawable.arrow_up_red_24
-                } else if (gap <0) {
+                } else if (gap < 0) {
                     if (view.id == R.id.tv_gap_between_tpr)
                         R.drawable.arrow_down_blue_48
                     else
@@ -446,31 +446,26 @@ object BindingAdapter {
      * 03~06 : h21   >> idx : 6
      * 06~09 : h24   >> idx : 7
      */
-    @BindingAdapter("createLifeDay", "createLifeHour", "setArea", "setPosition")
+    @BindingAdapter("createLife", "setArea", "setPosition")
     @JvmStatic
     fun createLife(
         view: LinearLayout,
-        lifeDay: List<LifeIndexDay>?,
-        lifeHour: List<LifeIndexHour>?,
+        lifeIndex: List<LifeIndex>?,
         areas: List<Area>?,
         position: Int?
     ) {
         view.removeAllViews()
         getAreaFromViewModel(areas, position)?.run {
-            val filterDay = lifeDay?.filter {
+            val filteredIdxList = lifeIndex?.filter {
                 it.areaCode == areaCode
             }?.sortedBy {
                 it.codeNo
             }
-            val filterHour = lifeHour?.filter {
-                it.areaCode == areaCode
-            }?.sortedBy {
-                it.codeNo
-            }
-            filterDay?.let {
-                for (idxDay in filterDay) {
-                    val codeNo = idxDay.codeNo
-                    val value = idxDay.value
+
+            filteredIdxList?.let { indexList ->
+                for (index in indexList) {
+                    val codeNo = index.codeNo
+                    val value = index.value
                     val codeName = LifeCode.findLifeCode(codeNo)?.codeName
                     val level = LifeCode.getLifeLevel(codeNo, value)
                     view.context?.let { context ->
@@ -484,46 +479,9 @@ object BindingAdapter {
                                     setTextColor(if (level == "주의") Color.BLACK else Color.WHITE)
                                     setBackgroundResource(getLevelColor(level))
                                 }
+                                view.addView(itemView)
                             }
                         }
-                        view.addView(itemView)
-                    }
-                }
-            }
-            filterHour?.let {
-                for (idxLife in filterHour) {
-                    val codeNo = idxLife.codeNo
-                    val codeName = LifeCode.findLifeCode(codeNo)?.codeName
-                    val currentHour =
-                        Utils.getCurrentTime("HH", System.currentTimeMillis()).toIntOrNull()
-                    val value = currentHour?.let {
-                        when (currentHour / 3) {
-                            0 -> idxLife.h18
-                            1 -> idxLife.h21
-                            2 -> idxLife.h24
-                            3 -> idxLife.h3
-                            4 -> idxLife.h6
-                            5 -> idxLife.h9
-                            6 -> idxLife.h12
-                            7 -> idxLife.h15
-                            else -> idxLife.h3
-                        }
-                    } ?: idxLife.h3
-                    val level = LifeCode.getLifeLevel(codeNo, value)
-                    view.context?.let { context ->
-                        val itemView = LifeItemLayout(context)
-                        with(itemView) {
-                            tv_life_title.text = codeName
-                            level?.let {
-                                tv_life_data.run {
-                                    text =
-                                        context.getString(R.string.holder_level_value, level, value)
-                                    setTextColor(if (level == "주의") Color.BLACK else Color.WHITE)
-                                    setBackgroundResource(getLevelColor(level))
-                                }
-                            }
-                        }
-                        view.addView(itemView)
                     }
                 }
             }

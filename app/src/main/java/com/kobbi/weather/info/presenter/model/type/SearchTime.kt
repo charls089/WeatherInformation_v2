@@ -18,7 +18,7 @@ enum class SearchTime(
     WEEK_CHECK(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 3, "0000"),
     WEEKLY_CHECK(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 3, ""),
     WEEKLY_END(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 6, ""),
-    LIFE(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 0, "");
+    LIFE(Utils.VALUE_DATETIME_FORMAT, Calendar.DATE, 0, "");
 
     companion object {
         @JvmStatic
@@ -34,6 +34,13 @@ enum class SearchTime(
             val startDate = getDate(startType)
             val endDate = getDate(endType)
             return Pair(startDate, endDate)
+        }
+
+        @JvmStatic
+        fun getTime(type: SearchTime):Pair<Long,Int> {
+            val date = getDate(type)
+            val time = date.toString().takeLast(2).toInt()
+            return Pair(date.toString().dropLast(2).toLong(), time)
         }
     }
 }

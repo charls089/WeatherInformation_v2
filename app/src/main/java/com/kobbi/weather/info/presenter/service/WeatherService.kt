@@ -39,7 +39,7 @@ class WeatherService : Service() {
             WeatherApplication.setUpdateCheckTime(context)
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
                 requestLocation()
-            requestWeather(init)
+            requestAllWeather(init)
         }
     }
 
@@ -50,32 +50,28 @@ class WeatherService : Service() {
     }
 
     fun notifyMyLocation() {
-        thread {
-            weatherRepository.getWeatherInfo()?.run {
-                Notificator.getInstance().showNotification(
-                    applicationContext,
-                    Notificator.ChannelType.TYPE_,
-                    String.format(
-                        getString(R.string.holder_weather_notify),
-                        tpr,
-                        wct,
-                        tmn,
-                        tmx,
-                        address
-                    ),
-                    getString(R.string.info_more_weather_info_message),
-                    WeatherUtils.getSkyIcon(dateTime, pty, sky),
-                    PendingIntent.getActivity(
+        if (SharedPrefHelper.getBool(applicationContext, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION))
+            thread {
+                weatherRepository.getWeatherInfo()?.run {
+                    Notificator.getInstance().showNotification(
                         applicationContext,
-                        0,
-                        Intent(applicationContext, SplashActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        },
-                        0
+                        Notificator.ChannelType.TYPE_,
+                        String.format(
+                            getString(R.string.holder_weather_notify), tpr, wct, tmn, tmx
+                        ),
+                        getString(R.string.info_more_weather_info_message),
+                        WeatherUtils.getSkyIcon(dateTime, pty, sky),
+                        PendingIntent.getActivity(
+                            applicationContext,
+                            0,
+                            Intent(applicationContext, SplashActivity::class.java).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            },
+                            0
+                        )
                     )
-                )
+                }
             }
-        }
     }
 
     private fun requestLocation() {
@@ -121,7 +117,7 @@ class WeatherService : Service() {
         }
     }
 
-    private fun requestWeather(init: Boolean) {
+    private fun requestAllWeather(init: Boolean) {
         OfferType.values().forEach { type ->
             if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
                 applicationContext?.let { context ->

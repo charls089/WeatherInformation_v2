@@ -4,12 +4,13 @@ import androidx.room.Entity
 import androidx.room.Index
 
 @Entity(
-    tableName = "LifeIndexDay",
-    primaryKeys = ["areaCode", "dateTime", "codeNo"],
-    indices = [Index("areaCode", "dateTime", "codeNo")]
+    tableName = "LifeIndex",
+    primaryKeys = ["areaCode", "dateTime", "baseTime", "codeNo"],
+    indices = [Index("areaCode", "dateTime", "baseTime", "codeNo")]
 )
-data class LifeIndexDay(
+data class LifeIndex(
     val dateTime: Long,
+    val baseTime: Int,
     val areaCode: String,
     val codeNo: String,
     val value: Int

@@ -7,18 +7,16 @@ import com.kobbi.weather.info.data.network.client.JusoClient
 import com.kobbi.weather.info.data.network.client.WeatherClient
 import com.kobbi.weather.info.data.network.response.*
 import com.kobbi.weather.info.presenter.listener.CompleteListener
-import com.kobbi.weather.info.presenter.model.type.Address
 import com.kobbi.weather.info.presenter.model.data.AreaCode
 import com.kobbi.weather.info.presenter.model.data.GridData
+import com.kobbi.weather.info.presenter.model.type.Address
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.util.ApiConstants
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.LocationUtils
-import com.kobbi.weather.info.util.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.collections.LinkedHashMap
 
 class ApiRequestRepository private constructor() {
     companion object {
@@ -105,9 +103,10 @@ class ApiRequestRepository private constructor() {
 
         @JvmStatic
         fun requestLife(context: Context, areaNo: String) {
+            val time = OfferType.getBaseDateTime(OfferType.LIFE)
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("areaNo", areaNo)
-                put("time", Utils.getCurrentTime() + "06")
+                put("time", time.first + time.second.dropLast(2))
                 put("_type", "json")
             }
             val apiList = ApiConstants.LifeApi.checkRequestUrl()
