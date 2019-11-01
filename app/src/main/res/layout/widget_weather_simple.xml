@@ -16,18 +16,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="3dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_widget_tpr"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/guide_on_time_tpr"
-                android:textColor="@color/colorWhite"
-                android:textSize="48dp"
-                tools:ignore="SpUsage" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_widget_tpr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/guide_on_time_tpr"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="48dp"
+                    android:textStyle="bold"
+                    tools:ignore="SpUsage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="2dp"
+                    android:text="@string/symbol_celsius"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="44dp"
+                    android:textStyle="bold"
+                    tools:ignore="SpUsage" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/iv_widget_sky"
@@ -43,11 +61,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableTop="@drawable/baseline_location_on_24"
+                android:drawableTop="@drawable/baseline_location_on_white_18"
                 android:gravity="center"
                 android:text="@string/guide_place_name"
                 android:textColor="@color/colorWhite"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 tools:ignore="SpUsage" />
         </LinearLayout>
 
@@ -56,9 +74,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="5dp"
             android:drawableEnd="@drawable/baseline_refresh_white_18"
+            android:gravity="center"
+            android:paddingBottom="5dp"
             android:text="@string/guide_update_time"
             android:textColor="@color/colorWhite"
             android:textSize="15dp"
