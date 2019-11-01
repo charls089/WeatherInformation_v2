@@ -139,7 +139,6 @@
                                 android:text="@string/symbol_left_block"
                                 android:textSize="28dp"
                                 tools:ignore="SpUsage" />
-
                             <TextView
                                 android:id="@+id/tv_gap_between_tpr"
                                 android:layout_width="wrap_content"

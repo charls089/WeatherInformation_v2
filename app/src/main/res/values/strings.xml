@@ -10,6 +10,8 @@
     <string name="info_delete_message">선택하신 장소가 삭제됩니다.</string>
     <string name="info_use_location_service">위치 서비스를 사용합니다.</string>
     <string name="info_stop_use_location_service">위치 서비스 사용이 중지되었습니다.</string>
+    <string name="info_use_notification_service">알림 서비스를 사용합니다.</string>
+    <string name="info_stop_notification_service">알림 서비스 사용이 중지되었습니다.</string>
     <string name="info_location_permission_request_message">"위치 서비스를 사용하려면 위치 권한이 필요합니다. 해당 권한을 아래의 방법으로 허용해주세요.\n\n   앱 권한 → 위치 스위치 ON"</string>
     <string name="info_more_weather_info_message">더 자세한 내용을 보고 싶으시면 클릭해주세요.</string>
     <string name="info_favorite_place_is_empty">등록된 장소가 없습니다.\n우측 상단 버튼을 클릭하여 추가해주세요.</string>
@@ -61,6 +63,7 @@
 
     <string name="text_on_time_rain_gauge">시간당 강수량</string>
     <string name="text_agree_my_location">내위치 날씨 보기 사용</string>
+    <string name="text_agree_notification">알림 허용 (제공시간 : 06:00, 18:00)</string>
 
     <string name="guide_on_time_tpr">현재 기온</string>
     <string name="guide_on_time_humidity">현재 습도</string>
@@ -116,7 +119,7 @@
     <string name="mapping_sejong">세종</string>
 
     <string name="holder_level_value">%1$s (%2$d)</string>
-    <string name="holder_weather_notify">%1$s℃ (%4$s℃ / %5$s℃) 체감온도 : %2$s℃</string>
+    <string name="holder_weather_notify">%1$s℃ (%3$s℃ / %4$s℃) 체감온도 : %2$s℃</string>
     <string name="holder_special_value">$s 발효중</string>
     <string name="holder_update_time">업데이트 : %1$s</string>
     <string name="holder_sensory_tpr">(체감 : %1$s℃)</string>

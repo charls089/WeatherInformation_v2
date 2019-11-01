@@ -52,14 +52,14 @@ object BindingAdapter {
                 val gap = front.toFloat() - end.toFloat()
                 val drawableId = if (gap > 0) {
                     if (view.id == R.id.tv_gap_between_tpr)
-                        R.drawable.arrow_up_red_48
+                        R.drawable.icon_arrow_up_red_64
                     else
-                        R.drawable.arrow_up_red_24
+                        R.drawable.icon_arrow_up_red_32
                 } else if (gap < 0) {
                     if (view.id == R.id.tv_gap_between_tpr)
-                        R.drawable.arrow_down_blue_48
+                        R.drawable.icon_arrow_down_blue_64
                     else
-                        R.drawable.arrow_down_blue_24
+                        R.drawable.icon_arrow_down_blue_32
                 } else {
                     null
                 }
