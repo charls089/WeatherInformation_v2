@@ -234,8 +234,8 @@ class WeatherRepository private constructor(context: Context) {
                                         ).toInt()
                                     else
                                         24
-                                Log.e(
-                                    "####",
+                                DLog.d(
+                                    this@WeatherRepository.javaClass,
                                     "insertLife() --> key : $key, dateTime : $dateTime, baseTime : $baseTime"
                                 )
                                 mWeatherDB.lifeIndexDao().insert(
@@ -411,7 +411,7 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadLifeIndexLive(): LiveData<List<LifeIndex>> {
         val dateTime = SearchTime.getTime(SearchTime.LIFE)
-        Log.e("####", "loadLifeIndexLive() --> dateTime : $dateTime")
+        DLog.d(javaClass, "loadLifeIndexLive() --> dateTime : $dateTime")
         return mWeatherDB.lifeIndexDao().loadLive(dateTime.first, dateTime.second)
     }
 

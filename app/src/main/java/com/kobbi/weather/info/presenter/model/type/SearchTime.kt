@@ -37,9 +37,9 @@ enum class SearchTime(
         }
 
         @JvmStatic
-        fun getTime(type: SearchTime):Pair<Long,Int> {
+        fun getTime(type: SearchTime): Pair<Long, Int> {
             val date = getDate(type)
-            val time = date.toString().takeLast(2).toInt()
+            val time = date.toString().takeLast(2).toInt() / 3 * 3
             return Pair(date.toString().dropLast(2).toLong(), time)
         }
     }
