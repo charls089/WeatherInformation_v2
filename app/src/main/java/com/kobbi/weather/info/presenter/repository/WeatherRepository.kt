@@ -100,13 +100,13 @@ class WeatherRepository private constructor(context: Context) {
 
                         //check current weather
                         val isExistData = findCurrentWeather(area.gridX, area.gridY) != null
-                        val isNewArea = loadAreaFromAddress(area.address) != null
+                        val isNewArea = loadAreaFromAddress(area.address) == null
                         DLog.writeLogFile(
                             context,
                             "AreaWeather",
                             "insertArea() --> isExistData : $isExistData / isNewArea : $isNewArea"
                         )
-                        if (isExistData || isNewArea) {
+                        if (!isExistData || isNewArea) {
                             ApiRequestRepository.initBaseAreaData(context, area)
                         }
                     }
