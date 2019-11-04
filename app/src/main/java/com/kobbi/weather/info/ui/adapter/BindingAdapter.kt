@@ -64,7 +64,8 @@ object BindingAdapter {
                     null
                 }
                 view.run {
-                    text = gap.roundToInt().absoluteValue.toString()
+                    val gapAbs = gap.roundToInt().absoluteValue
+                    text = if (gapAbs == 0) "-" else gapAbs.toString()
                     val drawable = drawableId?.let {
                         context.getDrawable(drawableId)
                     }
