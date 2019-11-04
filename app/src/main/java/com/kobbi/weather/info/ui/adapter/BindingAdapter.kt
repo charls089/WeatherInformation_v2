@@ -3,7 +3,6 @@ package com.kobbi.weather.info.ui.adapter
 import android.graphics.Color
 import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -29,7 +28,6 @@ import kotlinx.android.synthetic.main.item_life_list.view.*
 import java.util.*
 import kotlin.math.absoluteValue
 import kotlin.math.floor
-import kotlin.math.nextDown
 import kotlin.math.roundToInt
 
 object BindingAdapter {
@@ -47,7 +45,6 @@ object BindingAdapter {
         val currentWeather = getCurrentWeather(areas, position, items)
         currentWeather?.run {
             val cardinalDirection = floor((vec.toFloat() + 22.5 * 0.5) / 22.5)
-            Log.e("####","vec : $vec, cardinalDirection : $cardinalDirection / toInt : ${cardinalDirection.toInt()}")
             view.rotation = cardinalDirection.toInt() * 22.5f
         }
     }
