@@ -28,6 +28,7 @@
     <string name="symbol_right_block">)</string>
     <string name="symbol_celsius">℃</string>
     <string name="symbol_percent">%</string>
+    <string name="symbol_m_per_s">m/s</string>
     <string name="symbol_mm">mm</string>
     <string name="symbol_cm">cm</string>
     <string name="symbol_air">ppm</string>

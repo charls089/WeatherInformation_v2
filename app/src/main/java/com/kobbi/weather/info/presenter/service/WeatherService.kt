@@ -52,7 +52,8 @@ class WeatherService : Service() {
     fun notifyMyLocation() {
         if (SharedPrefHelper.getBool(applicationContext, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION))
             thread {
-                weatherRepository.getWeatherInfo()?.run {
+                val locatedArea = weatherRepository.loadLocatedArea()
+                weatherRepository.getWeatherInfo(locatedArea)?.run {
                     Notificator.getInstance().showNotification(
                         applicationContext,
                         Notificator.ChannelType.TYPE_,

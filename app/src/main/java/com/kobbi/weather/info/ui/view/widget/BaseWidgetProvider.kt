@@ -84,9 +84,12 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     open fun getWeatherInfo(context: Context): WeatherInfo? {
-        val weatherInfo = WeatherRepository.getInstance(context.applicationContext).getWeatherInfo()
-        DLog.d(TAG, "weatherInfo : $weatherInfo")
-        return weatherInfo
+        WeatherRepository.getInstance(context.applicationContext).run {
+            val area = loadLocatedArea()
+            val weatherInfo = getWeatherInfo(area)
+            DLog.d(TAG, "area : $area, weatherInfo : $weatherInfo")
+            return weatherInfo
+        }
     }
 
     open fun getWidgetWidth(context: Context?, options: Bundle?): Int? {

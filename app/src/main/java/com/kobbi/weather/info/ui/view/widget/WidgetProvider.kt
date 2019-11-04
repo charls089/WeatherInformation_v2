@@ -32,7 +32,8 @@ class WidgetProvider : BaseWidgetProvider() {
 
     private fun getRemoteViews(context: Context, widgetWidth: Int): RemoteViews? {
         val weatherRepository = WeatherRepository.getInstance(context)
-        return weatherRepository.getWeatherInfo()?.run {
+        val locatedArea = weatherRepository.loadLocatedArea()
+        return weatherRepository.getWeatherInfo(locatedArea)?.run {
             val resId =
                 if (widgetWidth > 3) R.layout.widget_weather_horizontal else R.layout.widget_weather_vertical
             RemoteViews(context.packageName, resId).apply {

@@ -99,7 +99,7 @@ class WeatherRepository private constructor(context: Context) {
                         mWeatherDB.areaDao().insert(area)
 
                         //check current weather
-                        val isNotExistData = getWeatherInfo() == null
+                        val isNotExistData = getWeatherInfo(area) == null
                         val isNewArea = loadAreaFromAddress(area.address) == null
                         DLog.writeLogFile(
                                 context,
@@ -350,10 +350,9 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadPlaceAddressLive() = mWeatherDB.favoritePlaceDao().loadAddressLive()
 
-    fun getWeatherInfo(): WeatherInfo? {
-        val locatedArea = loadLocatedArea()
-        DLog.d(javaClass, "getWeatherInfo() --> locatedArea : $locatedArea")
-        locatedArea?.run {
+    fun getWeatherInfo(area:Area?): WeatherInfo? {
+        DLog.d(javaClass, "getWeatherInfo() --> area : $area")
+        area?.run {
             GregorianCalendar().apply {
                 val today = (Utils.getCurrentTime() + "0000").toLong()
                 this.add(Calendar.HOUR, 1)
