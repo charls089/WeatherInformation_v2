@@ -69,7 +69,7 @@ object BindingAdapter {
     ) {
         fun cal(front: String, end: String) {
             if (front.isNotEmpty() && end.isNotEmpty()) {
-                val gap = front.toFloat() - end.toFloat()
+                val gap = (front.toFloat() - end.toFloat()).roundToInt()
                 val drawableId = if (gap > 0) {
                     if (view.id == R.id.tv_gap_between_tpr)
                         R.drawable.icon_arrow_up_red_64
@@ -84,7 +84,7 @@ object BindingAdapter {
                     null
                 }
                 view.run {
-                    val gapAbs = gap.roundToInt().absoluteValue
+                    val gapAbs = gap.absoluteValue
                     text = if (gapAbs == 0) "-" else gapAbs.toString()
                     val drawable = drawableId?.let {
                         context.getDrawable(drawableId)

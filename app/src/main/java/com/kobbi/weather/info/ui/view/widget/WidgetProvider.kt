@@ -68,7 +68,7 @@ class WidgetProvider : BaseWidgetProvider() {
 
                 if (splitAddress.size >= 2) {
                     weatherRepository
-                        .findAirMeasureData(splitAddress[0], splitAddress[1]).run {
+                        .findAirMeasureData(splitAddress[0], splitAddress[1])?.run {
                             setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10))
                             setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM25, pm25))
                         }
