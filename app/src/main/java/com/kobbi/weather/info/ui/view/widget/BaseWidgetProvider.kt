@@ -141,14 +141,14 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         DLog.d(TAG, "getErrPageView()")
         return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
             setOnClickPendingIntent(
-                    R.id.tv_widget_error, getPendingIntent(context, getWidgetProvider(context))
+                    R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))
             )
 
             setViewVisibility(R.id.pb_widget, View.VISIBLE)
-            setViewVisibility(R.id.tv_widget_error, View.GONE)
+            setViewVisibility(R.id.lo_widget_error_info, View.GONE)
             Handler(Looper.getMainLooper()).postDelayed(500) {
                 setViewVisibility(R.id.pb_widget, View.GONE)
-                setViewVisibility(R.id.tv_widget_error, View.VISIBLE)
+                setViewVisibility(R.id.lo_widget_error_info, View.VISIBLE)
                 updateAppWidget(context, this)
             }
         }

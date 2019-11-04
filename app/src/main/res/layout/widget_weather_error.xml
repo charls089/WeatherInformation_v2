@@ -4,17 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_widget_error"
+    <LinearLayout
+        android:id="@+id/lo_widget_error_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textColor="@color/colorWhite"
-        android:drawableEnd="@drawable/baseline_refresh_white_24"
-        android:text="@string/info_widget_data_load_error"
-        android:textSize="24dp"
-        tools:ignore="SpUsage" />
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/tv_widget_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="20dp"
+            android:text="@string/info_widget_data_load_error"
+            android:textColor="@color/colorWhite"
+            android:textSize="24dp"
+            tools:ignore="SpUsage" />
+
+        <ImageView
+            android:id="@+id/iv_error_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="20dp"
+            android:src="@drawable/baseline_refresh_white_36" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pb_widget"
