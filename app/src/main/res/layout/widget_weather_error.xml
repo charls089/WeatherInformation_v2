@@ -8,7 +8,8 @@
         android:id="@+id/lo_widget_error_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_widget_error"
@@ -16,22 +17,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:paddingTop="20dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="0dp"
-            android:paddingBottom="20dp"
             android:text="@string/info_widget_data_load_error"
             android:textColor="@color/colorWhite"
-            android:textSize="24dp"
+            android:textSize="20dp"
             tools:ignore="SpUsage" />
 
         <ImageView
             android:id="@+id/iv_error_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:layout_gravity="center"
-            android:padding="20dp"
-            android:src="@drawable/baseline_refresh_white_36" />
+            android:src="@drawable/baseline_refresh_white_36"
+            tools:ignore="ContentDescription" />
     </LinearLayout>
 
     <ProgressBar

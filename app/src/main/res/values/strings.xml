@@ -21,6 +21,7 @@
     <string name="info_add_place_complete">장소 추가 완료</string>
     <string name="info_data_is_empty">데이터를 가져오는데 실패하였습니다.\n다시 시도해주세요.</string>
     <string name="info_widget_data_load_error">데이터가 없습니다.</string>
+    <string name="info_widget_permission_not_checked">설정에서 위치권한을 허용해주세요.</string>
 
     <string name="symbol_colon">:</string>
     <string name="symbol_slash">/</string>

@@ -16,15 +16,18 @@ import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
+import com.kobbi.weather.info.ui.view.activity.MainActivity
+import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.SharedPrefHelper
+import com.kobbi.weather.info.util.Utils
 import kotlin.concurrent.thread
 import kotlin.math.absoluteValue
 
 abstract class BaseWidgetProvider : AppWidgetProvider() {
     enum class ViewDip(
-            val id: Int,
-            val size: Int
+        val id: Int,
+        val size: Int
     ) {
         ADDRESS(R.id.tv_widget_address, 6),
         TEMPERATURE(R.id.tv_widget_tpr, 12),
@@ -42,13 +45,13 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     abstract fun createRemoteViews(context: Context): RemoteViews?
 
     override fun onUpdate(
-            context: Context,
-            appWidgetManager: AppWidgetManager,
-            appWidgetIds: IntArray
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         DLog.writeLogFile(
-                context, TAG, "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+            context, TAG, "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
         DLog.d(TAG, "onUpdate() --> getWidgetId : ${getWidgetId(context)}")
         if (getWidgetId(context) == Int.MIN_VALUE)
@@ -57,10 +60,10 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onAppWidgetOptionsChanged(
-            context: Context,
-            appWidgetManager: AppWidgetManager?,
-            appWidgetId: Int,
-            newOptions: Bundle?
+        context: Context,
+        appWidgetManager: AppWidgetManager?,
+        appWidgetId: Int,
+        newOptions: Bundle?
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
         updateAppWidget(context)
@@ -77,7 +80,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         DLog.writeLogFile(
-                context, TAG, "onDeleted() --> appWidgetIds : ${appWidgetIds.toList()}"
+            context, TAG, "onDeleted() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
         super.onDeleted(context, appWidgetIds)
         resetWidgetId(context)
@@ -130,7 +133,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
         AppWidgetManager.getInstance(context)
-                .updateAppWidget(getWidgetId(context), remoteViews)
+            .updateAppWidget(getWidgetId(context), remoteViews)
     }
 
     private fun updateAppWidget(context: Context) {
@@ -144,9 +147,25 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         DLog.d(TAG, "getErrPageView()")
         return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
             setOnClickPendingIntent(
-                    R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))
+                R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))
             )
-
+            setOnClickPendingIntent(
+                R.id.tv_widget_error, PendingIntent.getActivity(
+                    context,
+                    0,
+                    Intent(context, SplashActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    },
+                    0
+                )
+            )
+            setTextViewText(
+                R.id.tv_widget_error,
+                context.getString(
+                    if (Utils.getNeedToRequestPermissions(context).isEmpty())
+                        R.string.info_widget_data_load_error else R.string.info_widget_permission_not_checked
+                )
+            )
             setViewVisibility(R.id.pb_widget, View.VISIBLE)
             setViewVisibility(R.id.lo_widget_error_info, View.GONE)
             Handler(Looper.getMainLooper()).postDelayed(500) {
@@ -159,7 +178,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     private fun getWidgetProvider(context: Context): Class<out BaseWidgetProvider> {
         return AppWidgetManager.getInstance(context).getAppWidgetInfo(getWidgetId(context)).run {
-            when (provider.className) {
+            when (provider?.className) {
                 WidgetProvider::class.java.name -> WidgetProvider::class.java
                 else -> SimpleWidgetProvider::class.java
             }

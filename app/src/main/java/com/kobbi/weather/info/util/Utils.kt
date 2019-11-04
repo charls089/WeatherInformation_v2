@@ -1,8 +1,12 @@
 package com.kobbi.weather.info.util
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.kobbi.weather.info.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -21,6 +25,9 @@ class Utils private constructor() {
         const val VALUE_TIME_FORMAT = "HH:mm:ss"
         const val VALUE_DATE_FORMAT = "yyyyMMdd"
         const val VALUE_DATETIME_FORMAT = "yyyyMMddHH"
+
+        private val NEED_PERMISSIONS =
+            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
         @JvmStatic
         fun getCurrentTime(
@@ -111,6 +118,21 @@ class Utils private constructor() {
                 in 0..9 -> "0$time"
                 else -> time.toString()
             }
+        }
+
+        fun getNeedToRequestPermissions(context: Context): Array<String> {
+            val results = mutableListOf<String>()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                results.run {
+                    NEED_PERMISSIONS.forEach {
+                        val result = context.applicationContext.checkSelfPermission(it)
+                        if (result != PackageManager.PERMISSION_GRANTED) {
+                            this.add(it)
+                        }
+                    }
+                }
+            }
+            return results.toTypedArray()
         }
     }
 }
