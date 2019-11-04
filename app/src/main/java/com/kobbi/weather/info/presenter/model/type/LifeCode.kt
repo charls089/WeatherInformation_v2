@@ -19,12 +19,8 @@ enum class LifeCode(
 
     companion object {
         fun findLifeCode(codeNo: String): LifeCode? {
-            return try {
-                values().first {
-                    it.codeNo == codeNo
-                }
-            } catch (e: NoSuchElementException) {
-                null
+            return values().firstOrNull {
+                it.codeNo == codeNo
             }
         }
 
