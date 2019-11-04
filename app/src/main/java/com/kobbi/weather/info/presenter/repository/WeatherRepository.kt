@@ -9,6 +9,7 @@ import com.kobbi.weather.info.data.network.domain.news.NewsItem
 import com.kobbi.weather.info.data.network.domain.weather.WeatherItem
 import com.kobbi.weather.info.presenter.model.data.*
 import com.kobbi.weather.info.presenter.model.type.LifeCode
+import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.model.type.SearchTime
 import com.kobbi.weather.info.util.Constants
 import com.kobbi.weather.info.util.DLog
@@ -181,8 +182,10 @@ class WeatherRepository private constructor(context: Context) {
 
                 val tprList = mutableListOf<WeeklyTpr>()
                 val landList = mutableListOf<WeeklyLand>()
+                val baseDate = OfferType.getBaseDateTime(OfferType.WEEKLY).first
                 for (i in 3..7) {
                     val cal = GregorianCalendar().apply {
+                        time = Utils.convertStringToDate(date=baseDate)
                         add(Calendar.DATE, i)
                     }
                     val dateTime = Utils.getCurrentTime(time = cal.timeInMillis).toLong()

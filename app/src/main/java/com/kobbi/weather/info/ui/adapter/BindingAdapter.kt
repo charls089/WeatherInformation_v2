@@ -667,11 +667,9 @@ object BindingAdapter {
             )
         }
         val result = mutableListOf<WeeklyWeather>()
-        if (list.size == 4) {
+        if (list.size >= 2) {
             val firstDayAm = list[0]
             val firstDayPm = list[1]
-            val secondDayAm = list[2]
-            val secondDayPm = list[3]
             result.add(
                 WeeklyWeather(
                     firstDayAm.dateTime, "", "",
@@ -680,14 +678,18 @@ object BindingAdapter {
                     firstDayAm.rnSt, firstDayPm.rnSt
                 )
             )
-            result.add(
-                WeeklyWeather(
-                    secondDayAm.dateTime, "", "",
-                    secondDayAm.tpr, secondDayPm.tpr,
-                    secondDayAm.wf, secondDayPm.wf,
-                    secondDayAm.rnSt, secondDayPm.rnSt
+            if (list.size == 4) {
+                val secondDayAm = list[2]
+                val secondDayPm = list[3]
+                result.add(
+                    WeeklyWeather(
+                        secondDayAm.dateTime, "", "",
+                        secondDayAm.tpr, secondDayPm.tpr,
+                        secondDayAm.wf, secondDayPm.wf,
+                        secondDayAm.rnSt, secondDayPm.rnSt
+                    )
                 )
-            )
+            }
         }
         return result
     }

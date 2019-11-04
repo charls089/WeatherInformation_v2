@@ -24,8 +24,16 @@ enum class SearchTime(
         @JvmStatic
         fun getDate(type: SearchTime) = GregorianCalendar().run {
             add(type.field, type.amount)
-            if (type == CURRENT || type == YESTERDAY)
-                add(Calendar.HOUR, 1)
+            when (type) {
+                CURRENT, YESTERDAY -> add(Calendar.HOUR, 1)
+                WEEK_CHECK, WEEKLY_CHECK -> {
+                    if (get(Calendar.HOUR_OF_DAY) in 0..6)
+                        add(type.field, -1)
+                }
+                else -> {
+                    //Nothing
+                }
+            }
             (Utils.getCurrentTime(type.format, this.timeInMillis) + type.suffix).toLong()
         }
 
