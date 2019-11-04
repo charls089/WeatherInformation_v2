@@ -483,7 +483,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
                         android:textSize="21dp"
                         app:setArea="@{areaVm.area}"
                         app:setPosition="@{position}"
@@ -524,9 +523,9 @@
                         tools:ignore="SpUsage" />
 
                     <TextView
+                        android:id="@+id/tv_forecast_now_wsd_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
                         android:gravity="center"
                         android:textSize="21dp"
                         app:setArea="@{areaVm.area}"
@@ -553,6 +552,7 @@
                         tools:ignore="SpUsage" />
 
                     <ImageView
+                        android:id="@+id/iv_now_vec_info"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
