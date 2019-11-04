@@ -41,6 +41,7 @@
     <string name="title_daily_temperature">일일 날씨</string>
     <string name="title_weekly_temperature">주간 날씨</string>
     <string name="title_life_list">생활 지수</string>
+    <string name="title_on_time_description">세부 정보</string>
     <string name="title_dialog_delete">즐겨찾는 장소 삭제</string>
     <string name="title_add_place_maximum">즐겨찾는 장소 개수 초과</string>
     <string name="title_dialog_location_permission">위치 권한이 필요함</string>
@@ -50,6 +51,8 @@
     <string name="text_yesterday">어제</string>
     <string name="text_am">오전</string>
     <string name="text_pm">오후</string>
+    <string name="text_hygrometer">습도</string>
+    <string name="text_wind">바람</string>
     <string name="text_dust_pm_10">미세먼지</string>
     <string name="text_dust_pm_25">초미세먼지</string>
     <string name="text_dust_index_info">(미세먼지 단위 : ㎍/㎥)</string>

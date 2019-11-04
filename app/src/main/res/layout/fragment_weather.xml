@@ -163,94 +163,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/icons8_hygrometer_24"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:id="@+id/tv_forecast_now_reh_info"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:textSize="24dp"
-                            app:setArea="@{areaVm.area}"
-                            app:setPosition="@{position}"
-                            app:setReh="@{weatherVm.currentWeather}"
-                            tools:ignore="SpUsage" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginStart="2dp"
-                            android:text="@string/symbol_percent"
-                            android:textSize="22dp"
-                            tools:ignore="SpUsage" />
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/icon_wind_48"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:gravity="center"
-                            android:textSize="24dp"
-                            app:setArea="@{areaVm.area}"
-                            app:setPosition="@{position}"
-                            app:setWsd="@{weatherVm.currentWeather}"
-                            tools:ignore="SpUsage" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginStart="2dp"
-                            android:text="@string/symbol_m_per_s"
-                            android:textSize="22dp"
-                            tools:ignore="SpUsage" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="@string/symbol_left_block"
-                            android:textSize="20dp"
-                            tools:ignore="SpUsage" />
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/icon_wind_point_48"
-                            app:setArea="@{areaVm.area}"
-                            app:setPosition="@{position}"
-                            app:setVec="@{weatherVm.currentWeather}" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/symbol_right_block"
-                            android:textSize="20dp"
-                            tools:ignore="SpUsage" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:id="@+id/ll_on_time_rain_gauge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -321,8 +233,8 @@
                             android:id="@+id/tv_forecast_now_tpr_max_info"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="21dp"
                             android:drawableStart="@drawable/icon_arrow_long_up_red_48"
+                            android:textSize="21dp"
                             app:setArea="@{areaVm.area}"
                             app:setMinMax="@{weatherVm.minMaxTpr}"
                             app:setPosition="@{position}"
@@ -537,6 +449,133 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:padding="5dp"
+                    android:text="@string/title_on_time_description"
+                    android:textSize="28dp"
+                    android:textStyle="bold"
+                    tools:ignore="SpUsage" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/icons8_hygrometer_24"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/text_hygrometer"
+                        android:textSize="21dp"
+                        tools:ignore="SpUsage" />
+
+                    <TextView
+                        android:id="@+id/tv_forecast_now_reh_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:textSize="21dp"
+                        app:setArea="@{areaVm.area}"
+                        app:setPosition="@{position}"
+                        app:setReh="@{weatherVm.currentWeather}"
+                        tools:ignore="SpUsage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="2dp"
+                        android:text="@string/symbol_percent"
+                        android:textSize="20dp"
+                        tools:ignore="SpUsage" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/icon_wind_48"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/text_wind"
+                        android:textSize="21dp"
+                        tools:ignore="SpUsage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:gravity="center"
+                        android:textSize="21dp"
+                        app:setArea="@{areaVm.area}"
+                        app:setPosition="@{position}"
+                        app:setWsd="@{weatherVm.currentWeather}"
+                        tools:ignore="SpUsage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="2dp"
+                        android:text="@string/symbol_m_per_s"
+                        android:textSize="20dp"
+                        tools:ignore="SpUsage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/symbol_left_block"
+                        android:textSize="20dp"
+                        tools:ignore="SpUsage" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/icon_wind_point_48"
+                        app:setArea="@{areaVm.area}"
+                        app:setPosition="@{position}"
+                        app:setVec="@{weatherVm.currentWeather}"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/symbol_right_block"
+                        android:textSize="20dp"
+                        tools:ignore="SpUsage" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:padding="5dp"
                     android:text="@string/title_life_list"
                     android:textSize="28dp"
                     android:textStyle="bold"
@@ -546,10 +585,7 @@
                     android:id="@+id/ll_life_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="15dp"
                     android:orientation="vertical"
-                    android:padding="5dp"
                     app:createLife="@{weatherVm.lifeIndex}"
                     app:setArea="@{areaVm.area}"
                     app:setPosition="@{position}">
