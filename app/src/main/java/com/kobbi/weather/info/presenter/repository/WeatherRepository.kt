@@ -1,7 +1,6 @@
 package com.kobbi.weather.info.presenter.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.data.database.WeatherDatabase
@@ -100,14 +99,14 @@ class WeatherRepository private constructor(context: Context) {
                         mWeatherDB.areaDao().insert(area)
 
                         //check current weather
-                        val isNotExistData = findCurrentWeather(area.gridX, area.gridY) == null
+                        val isExistData = findCurrentWeather(area.gridX, area.gridY) != null
                         val isNewArea = loadAreaFromAddress(area.address) == null
                         DLog.writeLogFile(
                             context,
                             "AreaWeather",
-                            "insertArea() --> isExistData : $isNotExistData / isNewArea : $isNewArea"
+                            "insertArea() --> isExistData : $isExistData / isNewArea : $isNewArea"
                         )
-                        if (isNotExistData || isNewArea) {
+                        if (!isExistData || isNewArea) {
                             ApiRequestRepository.initBaseAreaData(context, area)
                         }
                     }
@@ -217,48 +216,59 @@ class WeatherRepository private constructor(context: Context) {
             thread {
                 val code = getMapData(it, "code")
                 val date = getMapData(it, "date")
+                val dateTime = date.dropLast(2)
+                val baseTime = date.takeLast(2)
                 val lifeCode = LifeCode.findLifeCode(code)
-                fun insertData(key: String, field: Int, amount: Int) {
-                    Utils.convertStringToDate(Utils.VALUE_DATETIME_FORMAT, date)?.let { date ->
-                        val data = getMapData(it, key)
-                        if (data.isNotEmpty())
-                            Calendar.getInstance().run {
-                                time = date
-                                add(field, amount)
-                                val dateTime =
-                                    Utils.getCurrentTime(time = this.timeInMillis).toLong()
-                                val baseTime =
-                                    if (lifeCode!!.type == Constants.TYPE_3HOUR)
-                                        Utils.getCurrentTime(
-                                            "HH", this.timeInMillis
-                                        ).toInt()
-                                    else
-                                        24
-                                DLog.d(
-                                    this@WeatherRepository.javaClass,
-                                    "insertLife() --> key : $key, dateTime : $dateTime, baseTime : $baseTime"
-                                )
-                                mWeatherDB.lifeIndexDao().insert(
-                                    LifeIndex(
-                                        dateTime,
-                                        baseTime,
-                                        areaCode,
-                                        code,
-                                        data.toInt()
-                                    )
-                                )
-                            }
-                    }
-                }
                 when (lifeCode?.type) {
                     Constants.TYPE_DAY -> {
-                        insertData("today", Calendar.DATE, 0)
-                        insertData("tomorrow", Calendar.DATE, 1)
-                        insertData("theDayAfterTomorrow", Calendar.DATE, 2)
+                        fun insertData(key: String, amount: Int) {
+                            Utils.convertStringToDate(date = dateTime)?.let { date ->
+                                val data = getMapData(it, key)
+                                if (data.isNotEmpty())
+                                    Calendar.getInstance().run {
+                                        time = date
+                                        add(Calendar.DATE, amount)
+                                        mWeatherDB.lifeDayDao().insert(
+                                            LifeIndexDay(
+                                                Utils.getCurrentTime(time = this.timeInMillis).toLong(),
+                                                areaCode,
+                                                code,
+                                                data.toInt()
+                                            )
+                                        )
+                                    }
+                            }
+                        }
+                        insertData("today", 0)
+                        insertData("tomorrow", 1)
+                        insertData("theDayAfterTomorrow", 2)
                     }
                     Constants.TYPE_3HOUR -> {
-                        for (i in 1..22) {
-                            insertData("h${3 * i}", Calendar.HOUR, 3 * i)
+                        val valueList = mutableListOf<Int>()
+                        for (i in 1..8) {
+                            val h = getMapData(it, "h${3 * i}")
+                            if (h.isNotEmpty())
+                                valueList.add(h.toInt())
+                        }
+                        DLog.d(
+                            javaClass, "valueList -> size : ${valueList.size}, data : $valueList"
+                        )
+                        if (valueList.size >= 8) {
+                            val data = LifeIndexHour(
+                                dateTime.toLong(),
+                                areaCode,
+                                code,
+                                baseTime,
+                                valueList[0],
+                                valueList[1],
+                                valueList[2],
+                                valueList[3],
+                                valueList[4],
+                                valueList[5],
+                                valueList[6],
+                                valueList[7]
+                            )
+                            mWeatherDB.lifeHourDao().insert(data)
                         }
                     }
                 }
@@ -409,11 +419,11 @@ class WeatherRepository private constructor(context: Context) {
         return mWeatherDB.weeklyWeatherDao().loadLive(weeklyTerm.first, weeklyTerm.second)
     }
 
-    fun loadLifeIndexLive(): LiveData<List<LifeIndex>> {
-        val dateTime = SearchTime.getTime(SearchTime.LIFE)
-        DLog.d(javaClass, "loadLifeIndexLive() --> dateTime : $dateTime")
-        return mWeatherDB.lifeIndexDao().loadLive(dateTime.first, dateTime.second)
-    }
+    fun loadLifeIndexDayLive() =
+        mWeatherDB.lifeDayDao().loadLive(SearchTime.getDate(SearchTime.LIFE))
+
+    fun loadLifeIndexHourLive() =
+        mWeatherDB.lifeHourDao().loadLive(SearchTime.getDate(SearchTime.LIFE))
 
     fun loadAirMeasureLive() = mWeatherDB.airMeasureDao().loadLive()
 
