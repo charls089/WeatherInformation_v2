@@ -26,6 +26,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
+        <TextView
+            android:id="@+id/tv_empty_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/info_favorite_place_is_empty"
+            android:textSize="17dp"
+            app:setGuideVisibility="@{areaVm.area}"
+            tools:ignore="SpUsage" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_view_container"
             android:layout_width="match_parent"

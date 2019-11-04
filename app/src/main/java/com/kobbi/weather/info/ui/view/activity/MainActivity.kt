@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -29,9 +30,11 @@ class MainActivity : AppCompatActivity() {
                 area.observe(this@MainActivity, Observer {
                     DLog.d("AreaViewModel", "area.observe() --> Area Change")
                     weatherVm.refreshData()
-                    clViewContainer.startAnimation(
-                        AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in)
-                    )
+                    if (it.isNotEmpty()) {
+                        clViewContainer.startAnimation(
+                            AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in)
+                        )
+                    }
                     pbDialog.startAnimation(
                         AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out)
                     )

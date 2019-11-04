@@ -2,6 +2,7 @@ package com.kobbi.weather.info.ui.view.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -19,16 +20,38 @@ class SettingsActivity : BaseActivity() {
                     applicationContext, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION, it
                 )
             })
+            useNotify.observe(this@SettingsActivity, Observer {
+                SharedPrefHelper.setBool(
+                    applicationContext, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION, it
+                )
+            })
         }
     }
     private val mListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION) {
-                val isAgree = sharedPreferences.getBoolean(key, false)
-                if (isAgree) {
-                    checkPermission()
+            when (key) {
+                SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION -> {
+                    val isAgree = sharedPreferences.getBoolean(key, false)
+                    if (isAgree) {
+                        checkPermission()
+                    }
+                    mSettingVm.onAgreeChangedResults(isAgree)
+                    val messageId = if (isAgree) {
+                        R.string.info_use_location_service
+                    } else {
+                        R.string.info_stop_use_location_service
+                    }
+                    Toast.makeText(applicationContext, messageId,Toast.LENGTH_SHORT).show()
                 }
-                mSettingVm.onAgreeChangedResults(isAgree)
+                SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION -> {
+                    val isAgree = sharedPreferences.getBoolean(key, false)
+                    val messageId = if (isAgree) {
+                        R.string.info_use_notification_service
+                    } else {
+                        R.string.info_stop_notification_service
+                    }
+                    Toast.makeText(applicationContext, messageId,Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

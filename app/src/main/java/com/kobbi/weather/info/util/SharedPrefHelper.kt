@@ -10,6 +10,7 @@ class SharedPrefHelper private constructor() {
         const val KEY_AREA_CODE_DATA_INITIALIZED = "area_code_db_init"
         const val KEY_LAST_UPDATE_CHECK_TIME = "last_update_check_time"
         const val KEY_AGREE_TO_USE_LOCATION = "agree_to_use_location"
+        const val KEY_AGREE_TO_USE_NOTIFICATION = "agree_to_use_notify"
 
         const val KEY_APP_WIDGET_ID = "app_widget_id"
 

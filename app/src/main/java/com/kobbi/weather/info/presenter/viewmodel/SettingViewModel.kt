@@ -10,13 +10,21 @@ import kotlin.concurrent.thread
 
 class SettingViewModel(application: Application) : AndroidViewModel(application) {
     val useLocation: MutableLiveData<Boolean> = MutableLiveData()
+    val useNotify: MutableLiveData<Boolean> = MutableLiveData()
 
     private val _weatherRepository = WeatherRepository.getInstance(application)
 
     init {
-        val isAgree =
-            SharedPrefHelper.getBool(application, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION)
-        useLocation.postValue(isAgree)
+        useLocation.postValue(
+            SharedPrefHelper.getBool(
+                application, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION
+            )
+        )
+        useNotify.postValue(
+            SharedPrefHelper.getBool(
+                application, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION
+            )
+        )
     }
 
     fun onAgreeChangedResults(isAgree: Boolean) {
