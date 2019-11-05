@@ -384,14 +384,34 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_marginEnd="25dp">
+                        android:layout_marginEnd="25dp"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
                             android:text="@string/text_dust_index_info"
                             android:textSize="15dp"
                             tools:ignore="SpUsage" />
+
+                        <TextView
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:text="@string/info_air_korea_guide"
+                            android:textSize="10dp"
+                            tools:ignore="SpUsage" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:text="@string/info_air_korea"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -458,7 +478,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="40dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginBottom="5dp"
                     android:padding="5dp">
 
@@ -470,12 +490,12 @@
                         tools:ignore="ContentDescription" />
 
                     <TextView
-                        android:layout_width="160dp"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="5dp"
                         android:text="@string/text_hygrometer"
-                        android:textSize="21dp"
+                        android:textSize="19dp"
                         tools:ignore="SpUsage" />
 
                     <TextView
@@ -483,7 +503,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textSize="21dp"
+                        android:textSize="19dp"
                         app:setArea="@{areaVm.area}"
                         app:setPosition="@{position}"
                         app:setReh="@{weatherVm.currentWeather}"
@@ -495,7 +515,7 @@
                         android:layout_gravity="bottom"
                         android:layout_marginStart="2dp"
                         android:text="@string/symbol_percent"
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         tools:ignore="SpUsage" />
                 </LinearLayout>
 
@@ -503,7 +523,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="40dp"
+                    android:layout_marginStart="30dp"
                     android:padding="5dp">
 
                     <ImageView
@@ -514,12 +534,12 @@
                         tools:ignore="ContentDescription" />
 
                     <TextView
-                        android:layout_width="160dp"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="5dp"
                         android:text="@string/text_wind"
-                        android:textSize="21dp"
+                        android:textSize="19dp"
                         tools:ignore="SpUsage" />
 
                     <TextView
@@ -527,7 +547,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="21dp"
+                        android:textSize="19dp"
                         app:setArea="@{areaVm.area}"
                         app:setPosition="@{position}"
                         app:setWsd="@{weatherVm.currentWeather}"
@@ -539,22 +559,23 @@
                         android:layout_gravity="bottom"
                         android:layout_marginStart="2dp"
                         android:text="@string/symbol_m_per_s"
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         tools:ignore="SpUsage" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginStart="3dp"
                         android:gravity="center"
                         android:text="@string/symbol_left_block"
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         tools:ignore="SpUsage" />
 
                     <ImageView
                         android:id="@+id/iv_now_vec_info"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:src="@drawable/icon_wind_point_48"
                         app:setArea="@{areaVm.area}"
@@ -567,7 +588,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/symbol_right_block"
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         tools:ignore="SpUsage" />
                 </LinearLayout>
 

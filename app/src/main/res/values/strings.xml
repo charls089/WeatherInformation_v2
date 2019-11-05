@@ -22,6 +22,8 @@
     <string name="info_data_is_empty">데이터를 가져오는데 실패하였습니다.\n다시 시도해주세요.</string>
     <string name="info_widget_data_load_error">데이터가 없습니다.</string>
     <string name="info_widget_permission_not_checked">설정에서 위치권한을 허용해주세요.</string>
+    <string name="info_air_korea_guide">데이터는 실시간 관측된 자료이며 측정소 현지 사정이나\n데이터의 수신상태에 따라 미수신될 수 있습니다.</string>
+    <string name="info_air_korea">제공 : 한국환경공단</string>
 
     <string name="symbol_colon">:</string>
     <string name="symbol_slash">/</string>
