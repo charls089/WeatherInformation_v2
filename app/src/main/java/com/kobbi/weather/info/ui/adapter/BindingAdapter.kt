@@ -697,7 +697,11 @@ object BindingAdapter {
     @JvmStatic
     private fun getAreaFromViewModel(areas: List<Area>?, position: Int?): Area? {
         return position?.run {
-            areas?.get(position)
+            try {
+                areas?.get(position)
+            } catch (e: IndexOutOfBoundsException) {
+                null
+            }
         }
     }
 
