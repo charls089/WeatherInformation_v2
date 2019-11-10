@@ -13,8 +13,7 @@ class WeatherUtils private constructor() {
             if (value.isEmpty())
                 return ""
             return when (value.toFloat()) {
-                in 0.0f..0.1f -> ""
-                in 0.1f..1.0f -> "1mm 미만"
+                in 0.0f..1.0f -> "1mm 미만"
                 in 1.0f..5.0f -> "1~4mm"
                 in 5.0f..10.0f -> "5~9mm"
                 in 10.0f..20.0f -> "10~20mm"
