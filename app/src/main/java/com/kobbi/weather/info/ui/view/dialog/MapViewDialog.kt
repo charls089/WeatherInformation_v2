@@ -1,6 +1,7 @@
 package com.kobbi.weather.info.ui.view.dialog
 
 import android.os.Bundle
+import android.view.InflateException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.util.DLog
 
 class MapViewDialog(private val latLng: LatLng?) : DialogFragment(), OnMapReadyCallback {
     companion object {
@@ -22,7 +24,14 @@ class MapViewDialog(private val latLng: LatLng?) : DialogFragment(), OnMapReadyC
     private var mGoogleMap: GoogleMap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dialog_map_vew, container, false)
+        return try {
+            inflater.inflate(R.layout.dialog_map_vew, container, false)
+        } catch (e:InflateException) {
+            context?.let {
+               DLog.writeLogFile(it, TAG, "MapView is already created")
+            }
+            null
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
