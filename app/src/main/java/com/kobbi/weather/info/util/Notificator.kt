@@ -13,16 +13,16 @@ import androidx.core.app.NotificationCompat
 
 
 class Notificator private constructor() {
-    enum class ChannelType constructor(
+    enum class ChannelType (
         val channelId: String,
         val channelName: String,
         val importance: Int = NotificationManager.IMPORTANCE_DEFAULT,
         val isRepeat: Boolean = true,
         val id: Int = -1
     ) {
-        TYPE_DEFAULT("NotificationChannel", "NotificationService"),
-        TYPE_("_Channel", "Service", isRepeat = false, id = 703),
-        TYPE_POLARIS("PolarisChannel", "Polaris", NotificationManager.IMPORTANCE_LOW)
+        DEFAULT("NotificationChannel", "NotificationService"),
+        WEATHER("WeatherChannel", "Weather", isRepeat = false, id = 703),
+        POLARIS("PolarisChannel", "Polaris", NotificationManager.IMPORTANCE_LOW)
     }
 
     companion object {

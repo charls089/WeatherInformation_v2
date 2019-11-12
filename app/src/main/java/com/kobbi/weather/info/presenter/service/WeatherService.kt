@@ -56,7 +56,7 @@ class WeatherService : Service() {
                 weatherRepository.getWeatherInfo(locatedArea)?.run {
                     Notificator.getInstance().showNotification(
                         applicationContext,
-                        Notificator.ChannelType.TYPE_,
+                        Notificator.ChannelType.WEATHER,
                         String.format(
                             getString(R.string.holder_weather_notify), tpr, wct, tmn, tmx
                         ),
@@ -192,7 +192,7 @@ class WeatherService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DLog.d(TAG, "startForeground")
             val notificator = Notificator.getInstance()
-            val type = Notificator.ChannelType.TYPE_POLARIS
+            val type = Notificator.ChannelType.POLARIS
             val notification = notificator.getNotification(applicationContext, type)
             startForeground(notificator.getNotificationId(type), notification)
         }
