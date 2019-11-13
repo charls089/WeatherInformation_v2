@@ -30,8 +30,7 @@ class WeatherService : Service() {
         override fun onComplete(code: ErrorCode, data: Any) {
             when (code) {
                 ErrorCode.SOCKET_TIMEOUT -> {
-                    val message =
-                        String.format(getString(R.string.info_network_timeout), data.toString())
+                    val message = getString(R.string.info_network_timeout)
                     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                     Notificator.getInstance().showNotification(
                         applicationContext, Notificator.ChannelType.DEFAULT, "네트워크 연결 실패", message
@@ -58,9 +57,11 @@ class WeatherService : Service() {
         DLog.d(TAG, "runService() - init : $init")
         applicationContext?.let { context ->
             WeatherApplication.setUpdateCheckTime(context)
+            startF()
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
                 requestLocation()
             requestAllWeather(init)
+            stopF()
         }
     }
 
@@ -102,7 +103,6 @@ class WeatherService : Service() {
 
     private fun requestLocation() {
         applicationContext?.let { context ->
-            startF()
             LocationManager.getLocation(context, object : LocationListener {
                 override fun onComplete(responseCode: Int, location: Location?) {
                     var message = ""
@@ -139,12 +139,10 @@ class WeatherService : Service() {
                     )
                 }
             })
-            stopF()
         }
     }
 
     private fun requestAllWeather(init: Boolean) {
-        startF()
         OfferType.values().forEach { type ->
             if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
                 applicationContext?.let { context ->
@@ -203,7 +201,6 @@ class WeatherService : Service() {
                 }
             }
         }
-        stopF()
     }
 
     private fun startF() {

@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 
 
 class Notificator private constructor() {
-    enum class ChannelType (
+    enum class ChannelType(
         val channelId: String,
         val channelName: String,
         val importance: Int = NotificationManager.IMPORTANCE_DEFAULT,
@@ -89,7 +89,7 @@ class Notificator private constructor() {
     }
 
     fun getNotificationId(type: ChannelType) =
-        if (type.isRepeat) SystemClock.elapsedRealtime().toInt() else type.id
+        if (type.isRepeat) SystemClock.elapsedRealtime().toInt() + 1 else type.id
 
 
     @TargetApi(Build.VERSION_CODES.O)
