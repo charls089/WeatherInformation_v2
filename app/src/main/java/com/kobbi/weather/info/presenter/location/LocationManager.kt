@@ -8,6 +8,7 @@ import android.location.LocationManager.NETWORK_PROVIDER
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
+import com.kobbi.weather.info.presenter.service.ServiceManager
 import com.kobbi.weather.info.util.DLog
 import java.util.*
 import kotlin.concurrent.schedule
@@ -65,9 +66,11 @@ object LocationManager {
             }
         }
         try {
+            ServiceManager.startF()
             locationManager.requestLocationUpdates(
                 NETWORK_PROVIDER, 0L, 0F, locationListener, Looper.getMainLooper()
             )
+            ServiceManager.stopF()
             timer.schedule(DEFAULT_WAIT_TIME) {
                 locationManager.removeUpdates(locationListener)
                 sendCallbackComplete(RESPONSE_LOCATION_TIMEOUT, null)

@@ -25,6 +25,7 @@ object ServiceManager {
     private const val TAG = "ServiceManager"
 
     private var mWeatherService: WeatherService? = null
+    private var mPolarisService: UpDownService? = null
 
     private val mWeatherServiceConnection = object : ServiceConnection {
 
@@ -40,6 +41,20 @@ object ServiceManager {
         }
     }
 
+    private val mPolarisServiceConnection = object : ServiceConnection {
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            DLog.i(TAG, "UpDownService was disconnected.")
+        }
+
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            DLog.i(TAG, "UpDownService was connected.")
+            val binder = service as UpDownService.LocalBinder
+            mPolarisService = binder.service
+            getWeatherInfo()
+        }
+    }
+
     fun restartService(context: Context, init: Boolean) {
         DLog.writeLogFile(context, TAG, "ServiceManager.restartService($init)")
         context.applicationContext?.let {
@@ -49,18 +64,27 @@ object ServiceManager {
             }
 
             bindService(it, WeatherService::class.java, mWeatherServiceConnection)
+            bindService(it, UpDownService::class.java, mPolarisServiceConnection)
 
             val beforeCheckTime = WeatherApplication.getUpdateCheckTime(it)
             if (System.currentTimeMillis() - beforeCheckTime > CHECK_WEATHER_INFO_INTERVAL)
                 getWeatherInfo()
         }
-//        echoService()
+        mPolarisService?.echo()
     }
 
     @Synchronized
     fun getWeatherInfo(init: Boolean = false) {
         DLog.d(TAG, "ServiceManager.getWeatherInfo($init)")
         mWeatherService?.runService(init)
+    }
+
+    fun startF() {
+        mPolarisService?.upPolaris()
+    }
+
+    fun stopF() {
+        mPolarisService?.downPolaris()
     }
 
     fun notifyWeather() {
@@ -138,9 +162,5 @@ object ServiceManager {
         Intent(context, clazz).run {
             context.bindService(this, serviceConnection, Context.BIND_AUTO_CREATE)
         }
-    }
-
-    private fun echoService() {
-        mWeatherService?.echoService()
     }
 }

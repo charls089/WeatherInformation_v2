@@ -5,7 +5,6 @@ import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import com.kobbi.weather.info.R
@@ -64,12 +63,6 @@ class WeatherService : Service() {
         }
     }
 
-    fun echoService() {
-        DLog.writeLogFile(applicationContext, TAG, "echoService")
-        startF()
-        stopF()
-    }
-
     fun notifyMyLocation() {
         if (SharedPrefHelper.getBool(
                 applicationContext,
@@ -102,7 +95,6 @@ class WeatherService : Service() {
 
     private fun requestLocation() {
         applicationContext?.let { context ->
-            startF()
             LocationManager.getLocation(context, object : LocationListener {
                 override fun onComplete(responseCode: Int, location: Location?) {
                     var message = ""
@@ -139,12 +131,10 @@ class WeatherService : Service() {
                     )
                 }
             })
-            stopF()
         }
     }
 
     private fun requestAllWeather(init: Boolean) {
-        startF()
         OfferType.values().forEach { type ->
             if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
                 applicationContext?.let { context ->
@@ -202,24 +192,6 @@ class WeatherService : Service() {
                     }
                 }
             }
-        }
-        stopF()
-    }
-
-    private fun startF() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DLog.d(TAG, "startForeground")
-            val notificator = Notificator.getInstance()
-            val type = Notificator.ChannelType.POLARIS
-            val notification = notificator.getNotification(applicationContext, type)
-            startForeground(notificator.getNotificationId(type), notification)
-        }
-    }
-
-    private fun stopF() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DLog.d(TAG, "stopForeground")
-            stopForeground(true)
         }
     }
 }
