@@ -185,7 +185,7 @@ class WeatherRepository private constructor(context: Context) {
                 val baseDate = OfferType.getBaseDateTime(OfferType.WEEKLY).first
                 for (i in 3..7) {
                     val cal = GregorianCalendar().apply {
-                        time = Utils.convertStringToDate(date=baseDate)
+                        time = Utils.convertStringToDate(date = baseDate)
                         add(Calendar.DATE, i)
                     }
                     val dateTime = Utils.getCurrentTime(time = cal.timeInMillis).toLong()
@@ -439,7 +439,8 @@ class WeatherRepository private constructor(context: Context) {
     fun findAirMeasureData(sidoName: String, cityName: String) =
         mWeatherDB.airMeasureDao().findData(sidoName, cityName)
 
-    fun loadSpecialNewsLive() = mWeatherDB.specialNewsDao().loadLastDataLive()
+    fun loadSpecialNewsLive() =
+        mWeatherDB.specialNewsDao().loadLastDataLive(SearchTime.getDate(SearchTime.SPECIAL))
 
     fun deletePlace(list: List<String>) {
         val deleteList = mutableListOf<FavoritePlace>()

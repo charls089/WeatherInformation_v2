@@ -7,10 +7,13 @@ import android.location.Location
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
+import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
+import com.kobbi.weather.info.presenter.model.type.ErrorCode
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
@@ -21,6 +24,24 @@ import kotlin.concurrent.thread
 class WeatherService : Service() {
     companion object {
         private const val TAG = "WeatherService"
+    }
+
+    private val mListener = object : CompleteListener {
+        override fun onComplete(code: ErrorCode, data: Any) {
+            when (code) {
+                ErrorCode.SOCKET_TIMEOUT -> {
+                    val message =
+                        String.format(getString(R.string.info_network_timeout), data.toString())
+                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    Notificator.getInstance().showNotification(
+                        applicationContext, Notificator.ChannelType.DEFAULT, "네트워크 연결 실패", message
+                    )
+                }
+                else -> {
+                    //Nothing
+                }
+            }
+        }
     }
 
     private val weatherRepository by lazy { WeatherRepository.getInstance(applicationContext) }
@@ -50,7 +71,11 @@ class WeatherService : Service() {
     }
 
     fun notifyMyLocation() {
-        if (SharedPrefHelper.getBool(applicationContext, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION))
+        if (SharedPrefHelper.getBool(
+                applicationContext,
+                SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION
+            )
+        )
             thread {
                 val locatedArea = weatherRepository.loadLocatedArea()
                 weatherRepository.getWeatherInfo(locatedArea)?.run {
@@ -119,6 +144,7 @@ class WeatherService : Service() {
     }
 
     private fun requestAllWeather(init: Boolean) {
+        startF()
         OfferType.values().forEach { type ->
             if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
                 applicationContext?.let { context ->
@@ -127,53 +153,44 @@ class WeatherService : Service() {
                             OfferType.CURRENT, OfferType.DAILY -> {
                                 weatherRepository.loadAllGridData().forEach { gridData ->
                                     ApiRequestRepository.requestWeather(
-                                        context,
-                                        type,
-                                        gridData
+                                        context, type, gridData, mListener
                                     )
                                 }
                             }
                             OfferType.WEEKLY -> {
                                 weatherRepository.loadAllAreaCode().forEach { areaCode ->
                                     ApiRequestRepository.requestMiddle(
-                                        context,
-                                        ApiConstants.API_MIDDLE_LAND_WEATHER,
-                                        areaCode
+                                        context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, mListener
                                     )
                                     ApiRequestRepository.requestMiddle(
-                                        context,
-                                        ApiConstants.API_MIDDLE_TEMPERATURE,
-                                        areaCode
+                                        context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, mListener
                                     )
                                 }
                             }
                             OfferType.LIFE -> {
                                 weatherRepository.loadAllAreaNo().forEach { areaNo ->
-                                    ApiRequestRepository.requestLife(context, areaNo)
+                                    ApiRequestRepository.requestLife(
+                                        context, areaNo, mListener
+                                    )
                                 }
                             }
                             OfferType.AIR -> {
                                 weatherRepository.loadAllCityName().forEach { cityName ->
                                     ApiRequestRepository.requestAirMeasure(
-                                        context,
-                                        cityName
+                                        context, cityName, mListener
                                     )
                                 }
                             }
                             OfferType.BASE -> {
-                                ApiRequestRepository.requestNews(context)
+                                ApiRequestRepository.requestNews(context, mListener)
                             }
                             OfferType.YESTERDAY -> {
                                 weatherRepository.loadAllGridData().forEach { gridData ->
-                                    if (weatherRepository.findYesterdayWeather(
-                                            gridData.x,
-                                            gridData.y
-                                        ) == null
+                                    if (
+                                        weatherRepository.findYesterdayWeather(gridData.x, gridData.y) == null
                                     ) {
                                         ApiRequestRepository.requestWeather(
-                                            context,
-                                            type,
-                                            gridData
+                                            context, type, gridData, mListener
                                         )
                                     }
                                 }
@@ -186,6 +203,7 @@ class WeatherService : Service() {
                 }
             }
         }
+        stopF()
     }
 
     private fun startF() {

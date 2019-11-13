@@ -13,6 +13,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.data.network.domain.juso.JusoItem
 import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.type.Address
+import com.kobbi.weather.info.presenter.model.type.ErrorCode
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.util.ApiConstants
@@ -57,9 +58,9 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
     private var mIsLocked = false
 
     private val listener = object : CompleteListener {
-        override fun onComplete(code: Int, data: Any) {
+        override fun onComplete(code: ErrorCode, data: Any) {
             when (code) {
-                0 -> {
+                ErrorCode.NO_ERROR -> {
                     if (data is List<*>) {
                         val jusoItems = mutableListOf<String>()
                         data.forEach {
@@ -74,6 +75,9 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
                         }
                         _jusoList.postValue(jusoItems)
                     }
+                }
+                else -> {
+                    //Nothing
                 }
             }
         }

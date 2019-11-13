@@ -24,9 +24,9 @@ interface SpecialNewsDAO {
     @Query("SELECT * FROM SpecialNews WHERE tmFc = :time")
     fun loadLive(time: Long): LiveData<SpecialNews>
 
-    @Query("SELECT * FROM SpecialNews ORDER BY tmFc LIMIT 1")
-    fun loadLastData() : SpecialNews
+    @Query("SELECT * FROM SpecialNews WHERE tmEf <= :time ORDER BY tmFc DESC LIMIT 1")
+    fun loadLastData(time: Long) : SpecialNews
 
-    @Query("SELECT * FROM SpecialNews ORDER BY tmFc LIMIT 1")
-    fun loadLastDataLive() : LiveData<SpecialNews>
+    @Query("SELECT * FROM SpecialNews WHERE tmEf <= :time ORDER BY tmFc DESC LIMIT 1")
+    fun loadLastDataLive(time: Long) : LiveData<SpecialNews>
 }

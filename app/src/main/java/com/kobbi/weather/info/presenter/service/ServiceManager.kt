@@ -54,7 +54,7 @@ object ServiceManager {
             if (System.currentTimeMillis() - beforeCheckTime > CHECK_WEATHER_INFO_INTERVAL)
                 getWeatherInfo()
         }
-        echoService()
+//        echoService()
     }
 
     @Synchronized

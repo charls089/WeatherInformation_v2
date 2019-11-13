@@ -18,7 +18,8 @@ enum class SearchTime(
     WEEK_CHECK(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 3, "0000"),
     WEEKLY_CHECK(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 3, ""),
     WEEKLY_END(Utils.VALUE_DATE_FORMAT, Calendar.DATE, 6, ""),
-    LIFE(Utils.VALUE_DATETIME_FORMAT, Calendar.DATE, 0, "");
+    LIFE(Utils.VALUE_DATETIME_FORMAT, Calendar.DATE, 0, ""),
+    SPECIAL(Utils.VALUE_DATETIME_FORMAT, Calendar.HOUR, 0, "00");
 
     companion object {
         @JvmStatic

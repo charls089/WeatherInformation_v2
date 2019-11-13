@@ -10,6 +10,7 @@ import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.AreaCode
 import com.kobbi.weather.info.presenter.model.data.GridData
 import com.kobbi.weather.info.presenter.model.type.Address
+import com.kobbi.weather.info.presenter.model.type.ErrorCode
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.util.ApiConstants
 import com.kobbi.weather.info.util.DLog
@@ -17,13 +18,19 @@ import com.kobbi.weather.info.util.LocationUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.SocketTimeoutException
 
 class ApiRequestRepository private constructor() {
     companion object {
         private const val TAG = "ApiRequestRepository"
 
         @JvmStatic
-        fun requestWeather(context: Context, type: OfferType, gridData: GridData) {
+        fun requestWeather(
+            context: Context,
+            type: OfferType,
+            gridData: GridData,
+            listener: CompleteListener? = null
+        ) {
             val apiUrl = when (type) {
                 OfferType.CURRENT, OfferType.YESTERDAY -> ApiConstants.API_FORECAST_TIME_DATA
                 OfferType.MINMAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
@@ -61,13 +68,23 @@ class ApiRequestRepository private constructor() {
                             TAG,
                             "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
                         )
+                        listener?.run {
+                            if (t is SocketTimeoutException) {
+                                listener.onComplete(ErrorCode.SOCKET_TIMEOUT, apiUrl)
+                            }
+                        }
                     }
                 })
             }
         }
 
         @JvmStatic
-        fun requestMiddle(context: Context, apiUrl: String, areaCode: AreaCode) {
+        fun requestMiddle(
+            context: Context,
+            apiUrl: String,
+            areaCode: AreaCode,
+            listener: CompleteListener? = null
+        ) {
             val id =
                 if (apiUrl == ApiConstants.API_MIDDLE_TEMPERATURE) areaCode.cityCode else areaCode.prvnCode
             val tmFc = OfferType.getBaseDateTime(OfferType.WEEKLY)
@@ -97,12 +114,17 @@ class ApiRequestRepository private constructor() {
                         TAG,
                         "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
                     )
+                    listener?.run {
+                        if (t is SocketTimeoutException) {
+                            listener.onComplete(ErrorCode.SOCKET_TIMEOUT, apiUrl)
+                        }
+                    }
                 }
             })
         }
 
         @JvmStatic
-        fun requestLife(context: Context, areaNo: String) {
+        fun requestLife(context: Context, areaNo: String, listener: CompleteListener? = null) {
             val time = OfferType.getBaseDateTime(OfferType.LIFE)
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("areaNo", areaNo)
@@ -129,12 +151,17 @@ class ApiRequestRepository private constructor() {
                         DLog.writeLogFile(
                             context, TAG, "requestLife.onFailure() -> <$apiUrl>call : $call, t : $t"
                         )
+                        listener?.run {
+                            if (t is SocketTimeoutException) {
+                                listener.onComplete(ErrorCode.SOCKET_TIMEOUT, apiUrl)
+                            }
+                        }
                     }
                 })
             }
         }
 
-        fun requestNews(context: Context) {
+        fun requestNews(context: Context, listener: CompleteListener? = null) {
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("numOfRows", 100)
                 put("_type", "json")
@@ -160,12 +187,17 @@ class ApiRequestRepository private constructor() {
                         TAG,
                         "requestNews.onFailure() -> call : $call, t : $t"
                     )
+                    listener?.run {
+                        if (t is SocketTimeoutException) {
+                            listener.onComplete(ErrorCode.SOCKET_TIMEOUT, ApiConstants.API_SPECIAL_STATUS)
+                        }
+                    }
                 }
             })
         }
 
         @JvmStatic
-        fun requestAirMeasure(context: Context, sidoName: String) {
+        fun requestAirMeasure(context: Context, sidoName: String, listener: CompleteListener? = null) {
             val addressCode = Address.getSidoCode(sidoName)
             addressCode?.let {
                 val params = java.util.LinkedHashMap<String, Any>().apply {
@@ -194,6 +226,11 @@ class ApiRequestRepository private constructor() {
                         DLog.writeLogFile(
                             context, TAG, "requestAirMeasure.onFailure() -> call : $call, t : $t"
                         )
+                        listener?.run {
+                            if (t is SocketTimeoutException) {
+                                listener.onComplete(ErrorCode.SOCKET_TIMEOUT, ApiConstants.API_DISTRICT_AVG_LIST)
+                            }
+                        }
                     }
 
                 })
@@ -220,14 +257,14 @@ class ApiRequestRepository private constructor() {
                     val items = response.body()?.response?.body
                     DLog.d(TAG, "requestJuso.items : $items")
                     if (items != null)
-                        listener.onComplete(0, items)
+                        listener.onComplete(ErrorCode.NO_ERROR, items)
                     else
-                        listener.onComplete(1, Any())
+                        listener.onComplete(ErrorCode.DATA_IS_NULL, Any())
                 }
 
                 override fun onFailure(call: Call<JusoResponse>, t: Throwable) {
                     val message = "onFailure() -> call : $call, t : $t"
-                    listener.onComplete(2, message)
+                    listener.onComplete(ErrorCode.UNKNOWN_ERROR, message)
                 }
             })
         }
