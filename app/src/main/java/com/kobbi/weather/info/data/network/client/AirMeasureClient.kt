@@ -2,7 +2,6 @@ package com.kobbi.weather.info.data.network.client
 
 import com.kobbi.weather.info.data.network.api.AirMeasureApi
 import com.kobbi.weather.info.util.ApiConstants
-import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
