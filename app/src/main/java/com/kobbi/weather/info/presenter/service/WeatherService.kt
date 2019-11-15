@@ -57,18 +57,10 @@ class WeatherService : Service() {
         DLog.d(TAG, "runService() - init : $init")
         applicationContext?.let { context ->
             WeatherApplication.setUpdateCheckTime(context)
-            startF()
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
                 requestLocation()
             requestAllWeather(init)
-            stopF()
         }
-    }
-
-    fun echoService() {
-        DLog.writeLogFile(applicationContext, TAG, "echoService")
-        startF()
-        stopF()
     }
 
     fun notifyMyLocation() {
@@ -200,23 +192,6 @@ class WeatherService : Service() {
                     }
                 }
             }
-        }
-    }
-
-    private fun startF() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DLog.d(TAG, "startForeground")
-            val notificator = Notificator.getInstance()
-            val type = Notificator.ChannelType.POLARIS
-            val notification = notificator.getNotification(applicationContext, type)
-            startForeground(notificator.getNotificationId(type), notification)
-        }
-    }
-
-    private fun stopF() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DLog.d(TAG, "stopForeground")
-            stopForeground(true)
         }
     }
 }
