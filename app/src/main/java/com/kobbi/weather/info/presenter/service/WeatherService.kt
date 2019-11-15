@@ -29,8 +29,9 @@ class WeatherService : Service() {
             when (code) {
                 ReturnCode.SOCKET_TIMEOUT -> {
                     val message = getString(R.string.info_network_timeout)
+                    val title = getString(R.string.title_notify_network_timeout)
                     Notificator.getInstance().showNotification(
-                        applicationContext, Notificator.ChannelType.DEFAULT, "네트워크 연결 실패", message
+                        applicationContext, Notificator.ChannelType.DEFAULT, title, message
                     )
                     if (data is OfferType)
                         requestWeather(true, data)
