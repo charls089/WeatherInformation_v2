@@ -1,7 +1,7 @@
 package com.kobbi.weather.info.presenter.listener
 
-import com.kobbi.weather.info.presenter.model.type.ErrorCode
+import com.kobbi.weather.info.presenter.model.type.ReturnCode
 
 interface CompleteListener {
-    fun onComplete(code: ErrorCode, data: Any = Any())
+    fun onComplete(code: ReturnCode, data: Any = Any())
 }

@@ -5,16 +5,14 @@ import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
-import android.widget.Toast
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.listener.LocationListener
 import com.kobbi.weather.info.presenter.location.LocationManager
-import com.kobbi.weather.info.presenter.model.type.ErrorCode
 import com.kobbi.weather.info.presenter.model.type.OfferType
+import com.kobbi.weather.info.presenter.model.type.ReturnCode
 import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.SplashActivity
@@ -27,14 +25,15 @@ class WeatherService : Service() {
     }
 
     private val mListener = object : CompleteListener {
-        override fun onComplete(code: ErrorCode, data: Any) {
+        override fun onComplete(code: ReturnCode, data: Any) {
             when (code) {
-                ErrorCode.SOCKET_TIMEOUT -> {
+                ReturnCode.SOCKET_TIMEOUT -> {
                     val message = getString(R.string.info_network_timeout)
-                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                     Notificator.getInstance().showNotification(
                         applicationContext, Notificator.ChannelType.DEFAULT, "네트워크 연결 실패", message
                     )
+                    if (data is OfferType)
+                        requestWeather(true, data)
                 }
                 else -> {
                     //Nothing
@@ -136,58 +135,62 @@ class WeatherService : Service() {
 
     private fun requestAllWeather(init: Boolean) {
         OfferType.values().forEach { type ->
-            if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
-                applicationContext?.let { context ->
-                    thread {
-                        when (type) {
-                            OfferType.CURRENT, OfferType.DAILY -> {
-                                weatherRepository.loadAllGridData().forEach { gridData ->
+            requestWeather(init, type)
+        }
+    }
+
+    private fun requestWeather(init: Boolean, type: OfferType) {
+        if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
+            applicationContext?.let { context ->
+                thread {
+                    when (type) {
+                        OfferType.CURRENT, OfferType.DAILY -> {
+                            weatherRepository.loadAllGridData().forEach { gridData ->
+                                ApiRequestRepository.requestWeather(
+                                    context, type, gridData, mListener
+                                )
+                            }
+                        }
+                        OfferType.WEEKLY -> {
+                            weatherRepository.loadAllAreaCode().forEach { areaCode ->
+                                ApiRequestRepository.requestMiddle(
+                                    context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, mListener
+                                )
+                                ApiRequestRepository.requestMiddle(
+                                    context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, mListener
+                                )
+                            }
+                        }
+                        OfferType.LIFE -> {
+                            weatherRepository.loadAllAreaNo().forEach { areaNo ->
+                                ApiRequestRepository.requestLife(
+                                    context, areaNo, mListener
+                                )
+                            }
+                        }
+                        OfferType.AIR -> {
+                            weatherRepository.loadAllCityName().forEach { cityName ->
+                                ApiRequestRepository.requestAirMeasure(
+                                    context, cityName, mListener
+                                )
+                            }
+                        }
+                        OfferType.BASE -> {
+                            ApiRequestRepository.requestNews(context, mListener)
+                        }
+                        OfferType.YESTERDAY -> {
+                            weatherRepository.loadAllGridData().forEach { gridData ->
+                                if (
+                                    weatherRepository.findYesterdayWeather(gridData.x, gridData.y) == null
+                                ) {
                                     ApiRequestRepository.requestWeather(
                                         context, type, gridData, mListener
                                     )
                                 }
                             }
-                            OfferType.WEEKLY -> {
-                                weatherRepository.loadAllAreaCode().forEach { areaCode ->
-                                    ApiRequestRepository.requestMiddle(
-                                        context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, mListener
-                                    )
-                                    ApiRequestRepository.requestMiddle(
-                                        context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, mListener
-                                    )
-                                }
-                            }
-                            OfferType.LIFE -> {
-                                weatherRepository.loadAllAreaNo().forEach { areaNo ->
-                                    ApiRequestRepository.requestLife(
-                                        context, areaNo, mListener
-                                    )
-                                }
-                            }
-                            OfferType.AIR -> {
-                                weatherRepository.loadAllCityName().forEach { cityName ->
-                                    ApiRequestRepository.requestAirMeasure(
-                                        context, cityName, mListener
-                                    )
-                                }
-                            }
-                            OfferType.BASE -> {
-                                ApiRequestRepository.requestNews(context, mListener)
-                            }
-                            OfferType.YESTERDAY -> {
-                                weatherRepository.loadAllGridData().forEach { gridData ->
-                                    if (
-                                        weatherRepository.findYesterdayWeather(gridData.x, gridData.y) == null
-                                    ) {
-                                        ApiRequestRepository.requestWeather(
-                                            context, type, gridData, mListener
-                                        )
-                                    }
-                                }
-                            }
-                            OfferType.MINMAX -> {
-                                //Nothing
-                            }
+                        }
+                        OfferType.MINMAX -> {
+                            //Nothing
                         }
                     }
                 }

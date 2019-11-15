@@ -10,7 +10,7 @@ import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.AreaCode
 import com.kobbi.weather.info.presenter.model.data.GridData
 import com.kobbi.weather.info.presenter.model.type.Address
-import com.kobbi.weather.info.presenter.model.type.ErrorCode
+import com.kobbi.weather.info.presenter.model.type.ReturnCode
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.util.ApiConstants
 import com.kobbi.weather.info.util.DLog
@@ -70,7 +70,7 @@ class ApiRequestRepository private constructor() {
                         )
                         listener?.run {
                             if (t is SocketTimeoutException) {
-                                listener.onComplete(ErrorCode.SOCKET_TIMEOUT, apiUrl)
+                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
                             }
                         }
                     }
@@ -116,7 +116,7 @@ class ApiRequestRepository private constructor() {
                     )
                     listener?.run {
                         if (t is SocketTimeoutException) {
-                            listener.onComplete(ErrorCode.SOCKET_TIMEOUT, apiUrl)
+                            listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
                         }
                     }
                 }
@@ -153,7 +153,7 @@ class ApiRequestRepository private constructor() {
                         )
                         listener?.run {
                             if (t is SocketTimeoutException) {
-                                listener.onComplete(ErrorCode.SOCKET_TIMEOUT, apiUrl)
+                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.LIFE)
                             }
                         }
                     }
@@ -189,7 +189,7 @@ class ApiRequestRepository private constructor() {
                     )
                     listener?.run {
                         if (t is SocketTimeoutException) {
-                            listener.onComplete(ErrorCode.SOCKET_TIMEOUT, ApiConstants.API_SPECIAL_STATUS)
+                            listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.BASE)
                         }
                     }
                 }
@@ -228,7 +228,7 @@ class ApiRequestRepository private constructor() {
                         )
                         listener?.run {
                             if (t is SocketTimeoutException) {
-                                listener.onComplete(ErrorCode.SOCKET_TIMEOUT, ApiConstants.API_DISTRICT_AVG_LIST)
+                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.AIR)
                             }
                         }
                     }
@@ -257,14 +257,14 @@ class ApiRequestRepository private constructor() {
                     val items = response.body()?.response?.body
                     DLog.d(TAG, "requestJuso.items : $items")
                     if (items != null)
-                        listener.onComplete(ErrorCode.NO_ERROR, items)
+                        listener.onComplete(ReturnCode.NO_ERROR, items)
                     else
-                        listener.onComplete(ErrorCode.DATA_IS_NULL, Any())
+                        listener.onComplete(ReturnCode.DATA_IS_NULL, Any())
                 }
 
                 override fun onFailure(call: Call<JusoResponse>, t: Throwable) {
                     val message = "onFailure() -> call : $call, t : $t"
-                    listener.onComplete(ErrorCode.UNKNOWN_ERROR, message)
+                    listener.onComplete(ReturnCode.UNKNOWN_ERROR, message)
                 }
             })
         }
