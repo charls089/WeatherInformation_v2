@@ -17,9 +17,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.ReturnCode
-import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.presenter.viewmodel.WidgetViewModel
-import com.kobbi.weather.info.ui.view.activity.MainActivity
 import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.SharedPrefHelper
@@ -89,15 +87,6 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         resetWidgetId(context)
     }
 
-    open fun getWeatherInfo(context: Context): WeatherInfo? {
-        WeatherRepository.getInstance(context.applicationContext).run {
-            val area = loadLocatedArea()
-            val weatherInfo = getWeatherInfo(area)
-            DLog.d(TAG, "area : $area, weatherInfo : $weatherInfo")
-            return weatherInfo
-        }
-    }
-
     private fun setRemoteViews(context: Context) {
         WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
             override fun onComplete(code: ReturnCode, data: Any) {
@@ -116,7 +105,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                     ReturnCode.SOCKET_TIMEOUT -> {
                         getErrPageView(context, R.string.info_network_timeout)
                     }
-                    ReturnCode.DATA_IS_NULL, ReturnCode.UNKNOWN_ERROR -> {
+                    else -> {
                         getErrPageView(context, R.string.info_widget_data_load_error)
                     }
                 }

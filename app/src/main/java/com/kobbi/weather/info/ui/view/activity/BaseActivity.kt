@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.GoogleClient
 import com.kobbi.weather.info.util.SharedPrefHelper
 
@@ -24,7 +25,13 @@ abstract class BaseActivity : AppCompatActivity() {
     abstract fun doSomething()
 
     fun init() {
-        checkPermission()
+        val isAgree =
+            SharedPrefHelper.getBool(
+                applicationContext, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION, true
+            )
+        DLog.d(message = "BaseActivity.init() --> isAgree : $isAgree")
+        if (isAgree)
+            checkPermission()
     }
 
     override fun onRequestPermissionsResult(

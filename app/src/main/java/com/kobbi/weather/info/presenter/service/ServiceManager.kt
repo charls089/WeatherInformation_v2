@@ -55,13 +55,11 @@ object ServiceManager {
         }
     }
 
-    fun restartService(context: Context, init: Boolean) {
-        DLog.writeLogFile(context, TAG, "ServiceManager.restartService($init)")
+    fun restartService(context: Context) {
+        DLog.writeLogFile(context, TAG, "ServiceManager.restartService()")
         context.applicationContext?.let {
-            if (init) {
-                registerRestartReceiver(it)
-                registerNotifyReceiver(it)
-            }
+            registerRestartReceiver(it)
+            registerNotifyReceiver(it)
 
             bindService(it, WeatherService::class.java, mWeatherServiceConnection)
             bindService(it, UpDownService::class.java, mPolarisServiceConnection)
@@ -73,7 +71,6 @@ object ServiceManager {
         mPolarisService?.echo()
     }
 
-    @Synchronized
     fun getWeatherInfo(init: Boolean = false) {
         DLog.d(TAG, "ServiceManager.getWeatherInfo($init)")
         mWeatherService?.runService(init)

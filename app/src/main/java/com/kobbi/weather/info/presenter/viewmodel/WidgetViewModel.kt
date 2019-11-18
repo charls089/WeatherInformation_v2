@@ -13,7 +13,7 @@ class WidgetViewModel(private val context: Context) {
     private val weatherRepository = WeatherRepository.getInstance(context.applicationContext)
 
     private val locatedArea: Area? get() = weatherRepository.loadLocatedArea()
-    private val weatherInfo: WeatherInfo? get() = weatherRepository.getWeatherInfo(locatedArea)
+    private val weatherInfo: WeatherInfo? get() = weatherRepository.loadWeatherInfo(locatedArea)
 
     fun getWeatherInfo(listener: CompleteListener) {
         locatedArea?.run {

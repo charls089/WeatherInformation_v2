@@ -23,6 +23,8 @@ import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.*
+import java.util.*
+import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 class WeatherService : Service() {
@@ -56,11 +58,15 @@ class WeatherService : Service() {
                     //Nothing
                 }
             }
+            Timer().schedule(1000) {
+                mIsRunning = false
+            }
         }
     }
 
     private val weatherRepository by lazy { WeatherRepository.getInstance(applicationContext) }
     private val mBinder = LocalBinder()
+    private var mIsRunning = false
 
     inner class LocalBinder : Binder() {
         internal val service: WeatherService get() = this@WeatherService
@@ -68,8 +74,10 @@ class WeatherService : Service() {
 
     override fun onBind(intent: Intent): IBinder = mBinder
 
-    @Synchronized
     fun runService(init: Boolean) {
+        if (mIsRunning)
+            return
+        mIsRunning = true
         DLog.d(TAG, "runService() - init : $init")
         applicationContext?.let { context ->
             WeatherApplication.setUpdateCheckTime(context)
@@ -87,7 +95,7 @@ class WeatherService : Service() {
         )
             thread {
                 val locatedArea = weatherRepository.loadLocatedArea()
-                weatherRepository.getWeatherInfo(locatedArea)?.run {
+                weatherRepository.loadWeatherInfo(locatedArea)?.run {
                     Notificator.getInstance().showNotification(
                         applicationContext,
                         Notificator.ChannelType.WEATHER,
@@ -172,10 +180,16 @@ class WeatherService : Service() {
                         OfferType.WEEKLY -> {
                             weatherRepository.loadAllAreaCode().forEach { areaCode ->
                                 ApiRequestRepository.requestMiddle(
-                                    context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, mListener
+                                    context,
+                                    ApiConstants.API_MIDDLE_LAND_WEATHER,
+                                    areaCode,
+                                    mListener
                                 )
                                 ApiRequestRepository.requestMiddle(
-                                    context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, mListener
+                                    context,
+                                    ApiConstants.API_MIDDLE_TEMPERATURE,
+                                    areaCode,
+                                    mListener
                                 )
                             }
                         }
@@ -187,9 +201,9 @@ class WeatherService : Service() {
                             }
                         }
                         OfferType.AIR -> {
-                            weatherRepository.loadAllCityName().forEach { cityName ->
+                            weatherRepository.loadAllSidoName().forEach { sidoName ->
                                 ApiRequestRepository.requestAirMeasure(
-                                    context, cityName, mListener
+                                    context, sidoName, mListener
                                 )
                             }
                         }
@@ -199,7 +213,10 @@ class WeatherService : Service() {
                         OfferType.YESTERDAY -> {
                             weatherRepository.loadAllGridData().forEach { gridData ->
                                 if (
-                                    weatherRepository.findYesterdayWeather(gridData.x, gridData.y) == null
+                                    weatherRepository.findYesterdayWeather(
+                                        gridData.x,
+                                        gridData.y
+                                    ) == null
                                 ) {
                                     ApiRequestRepository.requestWeather(
                                         context, type, gridData, mListener
@@ -209,16 +226,24 @@ class WeatherService : Service() {
                         }
                         OfferType.MIN_MAX -> {
                             weatherRepository.loadAllGridData().forEach { gridData ->
-                                val minMaxTpr = weatherRepository.findMinMaxTpr(gridData.x, gridData.y)
+                                val minMaxTpr =
+                                    weatherRepository.findMinMaxTpr(gridData.x, gridData.y)
                                 Log.e("####", "minMaxTpr : $minMaxTpr")
                                 if (minMaxTpr.size != 2) {
-                                    ApiRequestRepository.requestWeather(context, type, gridData, mListener)
+                                    ApiRequestRepository.requestWeather(
+                                        context,
+                                        type,
+                                        gridData,
+                                        mListener
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
+        } else {
+            mListener.onComplete(ReturnCode.NOT_UPDATE_TIME)
         }
     }
 

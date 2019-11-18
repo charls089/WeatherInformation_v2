@@ -22,6 +22,6 @@ interface AirMeasureDAO {
     @Query("SELECT * FROM AirMeasure WHERE dateTime = (SELECT MAX(dateTime) FROM AirMeasure)")
     fun load(): List<AirMeasure>
 
-    @Query("SELECT * FROM AirMeasure WHERE sidoName = :sidoName AND cityName = :cityName AND dateTime = (SELECT MAX(dateTime) FROM AirMeasure)")
-    fun findData(sidoName: String, cityName: String): AirMeasure?
+    @Query("SELECT * FROM AirMeasure WHERE sidoName = :sidoName AND dateTime = :dateTime")
+    fun findData(sidoName: String, dateTime:Long): List<AirMeasure>
 }

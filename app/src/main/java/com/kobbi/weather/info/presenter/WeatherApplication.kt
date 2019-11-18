@@ -21,7 +21,7 @@ class WeatherApplication : Application() {
             DLog.writeLogFile(context, TAG, "Start WeatherApplication")
             setUpdateCheckTime(context, 0)
             AreaCodeDatabase.initializeDB(context)
-            ServiceManager.restartService(context, true)
+            ServiceManager.restartService(context)
         }
 
         fun setUpdateCheckTime(context: Context, time: Long = System.currentTimeMillis()) {
