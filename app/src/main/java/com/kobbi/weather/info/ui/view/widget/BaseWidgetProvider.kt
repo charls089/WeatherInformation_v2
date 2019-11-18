@@ -14,8 +14,11 @@ import android.view.WindowManager
 import android.widget.RemoteViews
 import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
+import com.kobbi.weather.info.presenter.model.type.ReturnCode
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
+import com.kobbi.weather.info.presenter.viewmodel.WidgetViewModel
 import com.kobbi.weather.info.ui.view.activity.MainActivity
 import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.DLog
@@ -42,7 +45,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         private const val REFRESH_WIDGET_ACTION = ".action.refresh.widget.data"
     }
 
-    abstract fun createRemoteViews(context: Context): RemoteViews?
+    abstract fun createRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews
 
     override fun onUpdate(
         context: Context,
@@ -95,7 +98,37 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    open fun getWidgetWidth(context: Context?, options: Bundle?): Int? {
+    private fun setRemoteViews(context: Context) {
+        WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
+            override fun onComplete(code: ReturnCode, data: Any) {
+                DLog.writeLogFile(context, TAG, "setRemoteViews.omComplete() --> code : $code, data : $data")
+                val remoteViews = when (code) {
+                    ReturnCode.NO_ERROR -> {
+                        if (data is WeatherInfo) {
+                            createRemoteViews(context, data)
+                        } else {
+                            getErrPageView(context, R.string.info_widget_data_load_error)
+                        }
+                    }
+                    ReturnCode.NETWORK_DISABLED -> {
+                        getErrPageView(context, R.string.info_network_disabled)
+                    }
+                    ReturnCode.SOCKET_TIMEOUT -> {
+                        getErrPageView(context, R.string.info_network_timeout)
+                    }
+                    ReturnCode.DATA_IS_NULL, ReturnCode.UNKNOWN_ERROR -> {
+                        getErrPageView(context, R.string.info_widget_data_load_error)
+                    }
+                }
+                if (Utils.getNeedToRequestPermissions(context).isEmpty())
+                    R.string.info_widget_data_load_error else R.string.info_widget_permission_not_checked
+
+                updateAppWidget(context, remoteViews)
+            }
+        })
+    }
+
+    open fun getWidgetWidth(context: Context?, options: Bundle?): Int {
         options?.run {
             val maxWidth = getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
             val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
@@ -115,7 +148,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                 return count
             }
         }
-        return null
+        return 2
     }
 
     open fun getDip(widthSize: Int, value: Int): Float {
@@ -138,12 +171,11 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 
     private fun updateAppWidget(context: Context) {
         thread {
-            val remoteViews = createRemoteViews(context) ?: getErrPageView(context)
-            updateAppWidget(context, remoteViews)
+            setRemoteViews(context)
         }
     }
 
-    private fun getErrPageView(context: Context): RemoteViews {
+    private fun getErrPageView(context: Context, resId: Int): RemoteViews {
         DLog.d(TAG, "getErrPageView()")
         return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
             setOnClickPendingIntent(
@@ -159,13 +191,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                     0
                 )
             )
-            setTextViewText(
-                R.id.tv_widget_error,
-                context.getString(
-                    if (Utils.getNeedToRequestPermissions(context).isEmpty())
-                        R.string.info_widget_data_load_error else R.string.info_widget_permission_not_checked
-                )
-            )
+            setTextViewText(R.id.tv_widget_error, context.getString(resId))
             setViewVisibility(R.id.pb_widget, View.VISIBLE)
             setViewVisibility(R.id.lo_widget_error_info, View.GONE)
             Handler(Looper.getMainLooper()).postDelayed(500) {

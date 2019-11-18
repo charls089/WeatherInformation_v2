@@ -1,6 +1,9 @@
 package com.kobbi.weather.info.presenter.repository
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import com.kobbi.weather.info.data.database.entity.Area
 import com.kobbi.weather.info.data.network.client.AirMeasureClient
 import com.kobbi.weather.info.data.network.client.JusoClient
@@ -31,9 +34,13 @@ class ApiRequestRepository private constructor() {
             gridData: GridData,
             listener: CompleteListener? = null
         ) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val apiUrl = when (type) {
                 OfferType.CURRENT, OfferType.YESTERDAY -> ApiConstants.API_FORECAST_TIME_DATA
-                OfferType.MINMAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
+                OfferType.MIN_MAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
                 else -> ""
             }
             if (apiUrl.isNotEmpty()) {
@@ -60,6 +67,7 @@ class ApiRequestRepository private constructor() {
                         val item = response.body()?.response?.body?.items?.item
                         DLog.d(TAG, "requestWeather.item : $item")
                         WeatherRepository.getInstance(context).insertWeather(gridData, item)
+                        listener?.onComplete(ReturnCode.NO_ERROR, type)
                     }
 
                     override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
@@ -85,6 +93,10 @@ class ApiRequestRepository private constructor() {
             areaCode: AreaCode,
             listener: CompleteListener? = null
         ) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val id =
                 if (apiUrl == ApiConstants.API_MIDDLE_TEMPERATURE) areaCode.cityCode else areaCode.prvnCode
             val tmFc = OfferType.getBaseDateTime(OfferType.WEEKLY)
@@ -106,6 +118,7 @@ class ApiRequestRepository private constructor() {
                     val item = response.body()?.response?.body?.items?.item
                     DLog.d(TAG, "requestMiddle.item : $item")
                     WeatherRepository.getInstance(context).insertMiddle(areaCode, item)
+                    listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
                 }
 
                 override fun onFailure(call: Call<MiddleResponse>, t: Throwable) {
@@ -125,6 +138,10 @@ class ApiRequestRepository private constructor() {
 
         @JvmStatic
         fun requestLife(context: Context, areaNo: String, listener: CompleteListener? = null) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val time = OfferType.getBaseDateTime(OfferType.LIFE)
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("areaNo", areaNo)
@@ -145,6 +162,7 @@ class ApiRequestRepository private constructor() {
                         val indexModel = response.body()?.response?.body?.indexModel
                         DLog.d(TAG, "<$apiUrl>indexModel : $indexModel")
                         WeatherRepository.getInstance(context).insertLife(areaNo, indexModel)
+                        listener?.onComplete(ReturnCode.NO_ERROR, OfferType.LIFE)
                     }
 
                     override fun onFailure(call: Call<LifeResponse>, t: Throwable) {
@@ -161,7 +179,12 @@ class ApiRequestRepository private constructor() {
             }
         }
 
+        @JvmStatic
         fun requestNews(context: Context, listener: CompleteListener? = null) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("numOfRows", 100)
                 put("_type", "json")
@@ -179,6 +202,7 @@ class ApiRequestRepository private constructor() {
                     val item = response.body()?.response?.body?.items?.item
                     DLog.d(TAG, "requestNews.item : $item")
                     WeatherRepository.getInstance(context).insertSpecialNews(item)
+                    listener?.onComplete(ReturnCode.NO_ERROR, OfferType.BASE)
                 }
 
                 override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
@@ -198,6 +222,10 @@ class ApiRequestRepository private constructor() {
 
         @JvmStatic
         fun requestAirMeasure(context: Context, sidoName: String, listener: CompleteListener? = null) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val addressCode = Address.getSidoCode(sidoName)
             addressCode?.let {
                 val params = java.util.LinkedHashMap<String, Any>().apply {
@@ -220,6 +248,7 @@ class ApiRequestRepository private constructor() {
                         DLog.d(TAG, "requestAirMeasure.list : $list")
                         WeatherRepository.getInstance(context)
                             .insertAirMeasure(addressCode.fullName, list)
+                        listener?.onComplete(ReturnCode.NO_ERROR, OfferType.AIR)
                     }
 
                     override fun onFailure(call: Call<AirResponse>, t: Throwable) {
@@ -237,6 +266,7 @@ class ApiRequestRepository private constructor() {
             }
         }
 
+        @JvmStatic
         fun requestJuso(apiUrl: String, code: List<String>, listener: CompleteListener) {
             val params = LinkedHashMap<String, Any>().apply {
                 if (code.isNotEmpty()) {
@@ -269,7 +299,8 @@ class ApiRequestRepository private constructor() {
             })
         }
 
-        fun initBaseAreaData(context: Context, area: Area) {
+        @JvmStatic
+        fun initBaseAreaData(context: Context, area: Area, listener: CompleteListener? = null) {
             val sidoName = LocationUtils.splitAddressLine(area.address)
             val areaCode = AreaCode(
                 area.prvnCode,
@@ -278,15 +309,35 @@ class ApiRequestRepository private constructor() {
             val gridData =
                 GridData(area.gridX, area.gridY)
             val areaNo = area.areaCode
-            requestWeather(context, OfferType.CURRENT, gridData)
-            requestWeather(context, OfferType.YESTERDAY, gridData)
-            requestWeather(context, OfferType.DAILY, gridData)
-            requestWeather(context, OfferType.MINMAX, gridData)
-            requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
-            requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
+            requestWeather(context, OfferType.CURRENT, gridData, listener)
+            requestWeather(context, OfferType.YESTERDAY, gridData, listener)
+            requestWeather(context, OfferType.DAILY, gridData, listener)
+            requestWeather(context, OfferType.MIN_MAX, gridData, listener)
+            requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, listener)
+            requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, listener)
             requestLife(context, areaNo)
             requestAirMeasure(context, sidoName[0])
             requestNews(context)
+        }
+
+        private fun isNetworkConnected(context: Context): Boolean {
+            val conn = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            return conn?.run {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    getNetworkCapabilities(this.activeNetwork)?.let { capabilities ->
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                    } ?: false
+                } else {
+                    val activeNetwork = activeNetworkInfo
+                    @Suppress("DEPRECATION")
+                    when (activeNetwork?.type) {
+                        ConnectivityManager.TYPE_WIFI, ConnectivityManager.TYPE_MOBILE -> true
+                        else -> false
+                    }
+                }
+            } ?: false
         }
     }
 }

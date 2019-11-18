@@ -126,7 +126,7 @@ object ServiceManager {
         setAlarmRepeat(
             context,
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
-            SystemClock.elapsedRealtime(),
+            SystemClock.elapsedRealtime() + RESTART_SERVICE_INTERVAL,
             RESTART_SERVICE_INTERVAL,
             pendingIntent
         )

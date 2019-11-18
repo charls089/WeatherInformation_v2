@@ -14,7 +14,7 @@ enum class OfferType(
     WEEKLY(arrayOf("0600", "1800"), 50),
     LIFE(arrayOf("0600"), 10),
     AIR(Array(24) { i -> "${if (i < 10) "0" else ""}${i}00" }, 15),
-    MINMAX,
+    MIN_MAX,
     YESTERDAY;
 
     companion object {
@@ -22,6 +22,8 @@ enum class OfferType(
         private val DEFAULT_OFFER_TIME_RANGE = 0..10
 
         fun isNeedToUpdate(type: OfferType): Boolean {
+            if (type == YESTERDAY || type == MIN_MAX)
+                return true
             val currentTime = Utils.getCurrentTime("HHmm", System.currentTimeMillis()).toInt()
             return type.baseTimeList.any {
                 val offerTime = it.toInt() + type.offerTime
@@ -39,7 +41,7 @@ enum class OfferType(
                         this.add(Calendar.HOUR, 1)
                     }
                     baseTime = Utils.getCurrentTime("HH", this.timeInMillis) + 30
-                } else if (type == MINMAX) {
+                } else if (type == MIN_MAX) {
                     baseTime = "0200"
                 } else {
                     val time = Utils.getCurrentTime("HH:mm", this.timeInMillis).split(":")

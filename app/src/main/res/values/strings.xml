@@ -6,6 +6,7 @@
     <string name="info_progress">데이터 로딩중…</string>
     <string name="info_location_timeout">위치 정보를 가져오는데 실패했습니다.(시간초과) 잠시 후 다시 진행합니다.</string>
     <string name="info_network_timeout">네트워크 연결 시간초과</string>
+    <string name="info_network_disabled">네트워크 연결이 정상적이지 않습니다.</string>
     <string name="info_deny_permission">"일부 기능이 제한될 수 있습니다."</string>
     <string name="info_exit_message">\'뒤로\'버튼 한번 더 누르시면 종료됩니다.</string>
     <string name="info_delete_message">선택하신 장소가 삭제됩니다.</string>
@@ -50,6 +51,7 @@
     <string name="title_add_place_maximum">즐겨찾는 장소 개수 초과</string>
     <string name="title_dialog_location_permission">위치 권한이 필요함</string>
     <string name="title_notify_network_timeout">네트워크 연결 실패</string>
+    <string name="title_notify_network_disabled">네트워크 연결 불량</string>
     <string name="title_default_setting">기본 설정</string>
 
     <string name="text_wind_chill">체감온도</string>

@@ -1,11 +1,17 @@
 package com.kobbi.weather.info.presenter.service
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import android.os.Binder
 import android.os.IBinder
+import android.os.SystemClock
+import android.util.Log
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.CompleteListener
@@ -22,11 +28,21 @@ import kotlin.concurrent.thread
 class WeatherService : Service() {
     companion object {
         private const val TAG = "WeatherService"
+        private const val ACTION_RETRY = "com.kobbi.weather.info.action.retry"
     }
 
     private val mListener = object : CompleteListener {
         override fun onComplete(code: ReturnCode, data: Any) {
             when (code) {
+                ReturnCode.NETWORK_DISABLED -> {
+                    val message = getString(R.string.info_network_disabled)
+                    val title = getString(R.string.title_notify_network_disabled)
+                    Notificator.getInstance().showNotification(
+                        applicationContext, Notificator.ChannelType.DEFAULT, title, message
+                    )
+                    if (data is OfferType)
+                        registerRetryReceiver(data)
+                }
                 ReturnCode.SOCKET_TIMEOUT -> {
                     val message = getString(R.string.info_network_timeout)
                     val title = getString(R.string.title_notify_network_timeout)
@@ -136,12 +152,13 @@ class WeatherService : Service() {
 
     private fun requestAllWeather(init: Boolean) {
         OfferType.values().forEach { type ->
+            Log.e("####", "requestAllWeather() --> OfferType : $type")
             requestWeather(init, type)
         }
     }
 
     private fun requestWeather(init: Boolean, type: OfferType) {
-        if (init || OfferType.isNeedToUpdate(type) || type == OfferType.YESTERDAY) {
+        if (init || OfferType.isNeedToUpdate(type)) {
             applicationContext?.let { context ->
                 thread {
                     when (type) {
@@ -190,12 +207,42 @@ class WeatherService : Service() {
                                 }
                             }
                         }
-                        OfferType.MINMAX -> {
-                            //Nothing
+                        OfferType.MIN_MAX -> {
+                            weatherRepository.loadAllGridData().forEach { gridData ->
+                                val minMaxTpr = weatherRepository.findMinMaxTpr(gridData.x, gridData.y)
+                                Log.e("####", "minMaxTpr : $minMaxTpr")
+                                if (minMaxTpr.size != 2) {
+                                    ApiRequestRepository.requestWeather(context, type, gridData, mListener)
+                                }
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun registerRetryReceiver(type: OfferType) {
+        (getSystemService(Context.ALARM_SERVICE) as? AlarmManager)?.run {
+            this.setInexactRepeating(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + 60 * 1000L,
+                60 * 1000L,
+                PendingIntent.getBroadcast(
+                    applicationContext, 10101, Intent(ACTION_RETRY).apply {
+                        putExtra("offer_type", type)
+                    }, 0
+                )
+            )
+            registerReceiver(object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    intent?.extras?.get("offer_type").let { type ->
+                        if (type is OfferType) {
+                            requestWeather(true, type)
+                        }
+                    }
+                }
+            }, IntentFilter(ACTION_RETRY))
         }
     }
 }
