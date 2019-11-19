@@ -66,8 +66,11 @@ class WidgetProvider : BaseWidgetProvider() {
                     R.id.iv_widget_sky, WeatherUtils.getSkyIcon(dateTime, pty, sky)
                 )
 
-                setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10))
-                setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM25, pm25))
+                if (!pm10.isNullOrEmpty() && !pm25.isNullOrEmpty()) {
+                    setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10!!))
+                    setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM25, pm25!!))
+                }
+
                 setOnClickPendingIntent(
                     R.id.lo_widget_weather_info,
                     PendingIntent.getActivity(

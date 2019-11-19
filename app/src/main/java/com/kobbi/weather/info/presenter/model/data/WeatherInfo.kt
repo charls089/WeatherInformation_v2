@@ -21,12 +21,8 @@ data class WeatherInfo(
     val tmn: String,
     @ColumnInfo(name = "tmx")
     val tmx: String,
-    @ColumnInfo(name = "yesterday_tpr")
-    val yesterdayTpr: String?,
-    @ColumnInfo(name = "yesterday_wct")
-    val yesterdayWct: String?,
-    @ColumnInfo(name = "pm10")
-    val pm10: String,
-    @ColumnInfo(name = "pm25")
-    val pm25: String
+    var yesterdayTpr: String? = null,
+    var yesterdayWct: String? = null,
+    var pm10: String? = null,
+    var pm25: String? = null
 )

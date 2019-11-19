@@ -354,41 +354,38 @@ class WeatherRepository private constructor(context: Context) {
     fun loadWeatherInfo(area: Area?): WeatherInfo? {
         DLog.d(javaClass, "loadWeatherInfo() --> area : $area")
         area?.run {
-            GregorianCalendar().apply {
-                val today = (Utils.getCurrentTime() + "0000").toLong()
-                this.add(Calendar.HOUR, 1)
-                val time = (Utils.getCurrentTime("yyyyMMddHH", this.timeInMillis) + "00").toLong()
-//                val notifyData =
-//                    mWeatherDB.weatherInfoDao()
-//                        .getWeatherInfo(address, today, time, gridX, gridY)
-
-                this.add(Calendar.DATE, -1)
-                val yesterday = (Utils.getCurrentTime("yyyyMMddHH", this.timeInMillis) + "00").toLong()
-                DLog.d(
-                    this@WeatherRepository.javaClass,
-                    "loadWeatherInfo() --> today : $today, time : $time, yesterday : $yesterday"
-                )
-                LocationUtils.splitAddressLine(address).let {
-                    if (it.size >=2) {
-                        DLog.d(
-                            this@WeatherRepository.javaClass,
-                            "loadWeatherInfo() --> sidoName : ${it[0]}, cityName : ${it[1]}, gridX : $gridX, gridY : $gridY"
-                        )
-                        val weatherInfo =
-                            mWeatherDB.weatherInfoDao().loadWeatherInfo(address, it[0], it[1], today, yesterday, time, gridX, gridY)
-                        DLog.d(
-                            this@WeatherRepository.javaClass,
-                            "loadWeatherInfo() --> weatherInfo : $weatherInfo"
-                        )
-                        return weatherInfo
+            val today = SearchTime.getDate(SearchTime.DEFAULT)
+            val time = SearchTime.getDate(SearchTime.CURRENT)
+            DLog.d(
+                this@WeatherRepository.javaClass,
+                "loadWeatherInfo() --> today : $today, time : $time, gridX : $gridX, gridY : $gridY"
+            )
+            val weatherInfo =
+                mWeatherDB.weatherInfoDao()
+                    .loadWeatherInfo(address, today, time, gridX, gridY)
+            LocationUtils.splitAddressLine(address).let {
+                if (it.size >= 2) {
+                    val sidoName = it[0]
+                    val cityName = it[1]
+                    val yesterdayWeather = findYesterdayWeather(gridX, gridY)
+                    val airMeasure = findAirMeasureData(sidoName, cityName)
+                    DLog.d(
+                        this@WeatherRepository.javaClass,
+                        "sidoName : $sidoName, cityName : $cityName"
+                    )
+                    weatherInfo?.run {
+                        yesterdayTpr = yesterdayWeather?.t1h
+                        yesterdayWct = yesterdayWeather?.wct
+                        pm10 = airMeasure?.pm10
+                        pm25 = airMeasure?.pm25
                     }
                 }
-//                DLog.d(
-//                    this@WeatherRepository.javaClass,
-//                    "getWeatherInfo() --> notifyData : $notifyData"
-//                )
-//                return notifyData
             }
+            DLog.d(
+                this@WeatherRepository.javaClass,
+                "loadWeatherInfo() --> weatherInfo : $weatherInfo"
+            )
+            return weatherInfo
         }
         return null
     }
@@ -454,8 +451,8 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadAirMeasureLive() = mWeatherDB.airMeasureDao().loadLive()
 
-    fun findAirMeasureData(sidoName: String) =
-        mWeatherDB.airMeasureDao().findData(sidoName, SearchTime.getDate(SearchTime.AIR))
+    fun findAirMeasureData(sidoName: String, cityName: String) =
+        mWeatherDB.airMeasureDao().findData(sidoName, cityName)
 
     fun loadSpecialNewsLive() =
         mWeatherDB.specialNewsDao().loadLastDataLive(SearchTime.getDate(SearchTime.SPECIAL))

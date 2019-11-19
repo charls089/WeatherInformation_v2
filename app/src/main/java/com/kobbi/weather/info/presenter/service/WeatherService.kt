@@ -11,7 +11,6 @@ import android.location.Location
 import android.os.Binder
 import android.os.IBinder
 import android.os.SystemClock
-import android.util.Log
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.CompleteListener
@@ -160,7 +159,6 @@ class WeatherService : Service() {
 
     private fun requestAllWeather(init: Boolean) {
         OfferType.values().forEach { type ->
-            Log.e("####", "requestAllWeather() --> OfferType : $type")
             requestWeather(init, type)
         }
     }
@@ -228,7 +226,6 @@ class WeatherService : Service() {
                             weatherRepository.loadAllGridData().forEach { gridData ->
                                 val minMaxTpr =
                                     weatherRepository.findMinMaxTpr(gridData.x, gridData.y)
-                                Log.e("####", "minMaxTpr : $minMaxTpr")
                                 if (minMaxTpr.size != 2) {
                                     ApiRequestRepository.requestWeather(
                                         context,

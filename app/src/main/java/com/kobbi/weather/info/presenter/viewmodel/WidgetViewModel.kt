@@ -18,7 +18,7 @@ class WidgetViewModel(private val context: Context) {
     fun getWeatherInfo(listener: CompleteListener) {
         locatedArea?.run {
             weatherInfo?.run {
-                listener.onComplete(ReturnCode.NO_ERROR, weatherInfo!!)
+                listener.onComplete(ReturnCode.NO_ERROR, this)
             } ?: ApiRequestRepository.initBaseAreaData(context, this, listener)
         } ?: listener.onComplete(ReturnCode.DATA_IS_NULL, "We can't find your area right now.")
     }
