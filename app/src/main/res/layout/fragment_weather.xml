@@ -80,13 +80,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textSize="25dp"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="21dp"
                         app:setArea="@{areaVm.area}"
                         app:setPosition="@{position}"
                         app:setSpecial="@{weatherVm.special}"
                         tools:ignore="SpUsage" />
 
                     <ImageView
+                        android:layout_margin="8dp"
                         android:id="@+id/iv_sky_state"
                         android:layout_width="90dp"
                         android:layout_height="90dp"

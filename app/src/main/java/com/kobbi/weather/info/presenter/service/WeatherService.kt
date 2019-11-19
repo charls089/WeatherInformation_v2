@@ -34,29 +34,25 @@ class WeatherService : Service() {
 
     private val mListener = object : CompleteListener {
         override fun onComplete(code: ReturnCode, data: Any) {
+            val message: String
             when (code) {
                 ReturnCode.NETWORK_DISABLED -> {
-                    val message = getString(R.string.info_network_disabled)
-                    val title = getString(R.string.title_notify_network_disabled)
-                    Notificator.getInstance().showNotification(
-                        applicationContext, Notificator.ChannelType.DEFAULT, title, message
-                    )
+                    message = getString(R.string.info_network_disabled)
+                    DLog.writeLogFile(applicationContext, TAG, message)
                     if (data is OfferType)
                         registerRetryReceiver(data)
                 }
                 ReturnCode.SOCKET_TIMEOUT -> {
-                    val message = getString(R.string.info_network_timeout)
-                    val title = getString(R.string.title_notify_network_timeout)
-                    Notificator.getInstance().showNotification(
-                        applicationContext, Notificator.ChannelType.DEFAULT, title, message
-                    )
+                    message = getString(R.string.info_network_timeout)
                     if (data is OfferType)
                         requestWeather(true, data)
                 }
                 else -> {
-                    //Nothing
+                    message = ""
                 }
             }
+            if (message.isNotEmpty())
+                DLog.writeLogFile(applicationContext, TAG, "[$code] $message")
             Timer().schedule(1000) {
                 mIsRunning = false
             }
