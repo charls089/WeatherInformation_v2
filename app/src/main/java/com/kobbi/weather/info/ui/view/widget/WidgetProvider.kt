@@ -4,12 +4,8 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
-import android.view.View
 import android.widget.RemoteViews
-import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.AirCode

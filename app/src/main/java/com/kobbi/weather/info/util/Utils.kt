@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.checkSelfPermission
 import com.kobbi.weather.info.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
