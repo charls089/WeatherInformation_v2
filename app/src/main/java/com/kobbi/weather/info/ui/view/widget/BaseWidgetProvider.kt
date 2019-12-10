@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
-import android.view.View
 import android.view.WindowManager
 import android.widget.RemoteViews
 import androidx.core.os.postDelayed
@@ -87,6 +86,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     private fun setRemoteViews(context: Context) {
+        showProgressView(context)
         WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
             override fun onComplete(code: ReturnCode, data: Any) {
                 DLog.writeLogFile(context, TAG, "setRemoteViews.onComplete() --> code : $code, data : $data")
@@ -111,7 +111,9 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                 if (Utils.getNeedToRequestPermissions(context).isEmpty())
                     R.string.info_widget_data_load_error else R.string.info_widget_permission_not_checked
 
-                updateAppWidget(context, remoteViews)
+                Handler(Looper.getMainLooper()).postDelayed(500) {
+                    updateAppWidget(context, remoteViews)
+                }
             }
         })
     }
@@ -171,14 +173,12 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                 R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))
             )
             setTextViewText(R.id.tv_widget_error, context.getString(resId))
-            setViewVisibility(R.id.pb_widget, View.VISIBLE)
-            setViewVisibility(R.id.lo_widget_error_info, View.GONE)
-            Handler(Looper.getMainLooper()).postDelayed(500) {
-                setViewVisibility(R.id.pb_widget, View.GONE)
-                setViewVisibility(R.id.lo_widget_error_info, View.VISIBLE)
-                updateAppWidget(context, this)
-            }
         }
+    }
+
+    private fun showProgressView(context: Context) {
+        val remoteViews = RemoteViews(context.packageName, R.layout.widget_loading)
+        updateAppWidget(context, remoteViews)
     }
 
     private fun getWidgetProvider(context: Context): Class<out BaseWidgetProvider> {

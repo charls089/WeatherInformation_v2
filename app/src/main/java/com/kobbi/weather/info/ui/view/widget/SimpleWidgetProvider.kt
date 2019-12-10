@@ -51,13 +51,6 @@ class SimpleWidgetProvider : BaseWidgetProvider() {
                     R.id.tv_widget_update_time,
                     getPendingIntent(context, this@SimpleWidgetProvider.javaClass)
                 )
-                setViewVisibility(R.id.pb_widget, View.VISIBLE)
-                setViewVisibility(R.id.lo_widget_container, View.GONE)
-                Handler(Looper.getMainLooper()).postDelayed(500) {
-                    setViewVisibility(R.id.pb_widget, View.GONE)
-                    setViewVisibility(R.id.lo_widget_container, View.VISIBLE)
-                    updateAppWidget(context, this)
-                }
             }
         }
     }
