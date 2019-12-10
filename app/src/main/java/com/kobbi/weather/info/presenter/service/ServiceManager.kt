@@ -85,7 +85,6 @@ object ServiceManager {
     }
 
     fun notifyWeather() {
-        DLog.d(TAG, "ServiceManager.notifyWeather()")
         mWeatherService?.notifyMyLocation()
     }
 

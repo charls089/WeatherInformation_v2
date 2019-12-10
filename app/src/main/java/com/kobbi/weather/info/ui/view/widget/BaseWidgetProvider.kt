@@ -18,7 +18,6 @@ import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.ReturnCode
 import com.kobbi.weather.info.presenter.viewmodel.WidgetViewModel
-import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.SharedPrefHelper
 import com.kobbi.weather.info.util.Utils
@@ -90,7 +89,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     private fun setRemoteViews(context: Context) {
         WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
             override fun onComplete(code: ReturnCode, data: Any) {
-                DLog.writeLogFile(context, TAG, "setRemoteViews.omComplete() --> code : $code, data : $data")
+                DLog.writeLogFile(context, TAG, "setRemoteViews.onComplete() --> code : $code, data : $data")
                 val remoteViews = when (code) {
                     ReturnCode.NO_ERROR -> {
                         if (data is WeatherInfo) {
@@ -154,6 +153,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
+        DLog.writeLogFile(context, message = "updateAppWidget() --> remoteViews : $remoteViews")
         AppWidgetManager.getInstance(context)
             .updateAppWidget(getWidgetId(context), remoteViews)
     }
@@ -169,16 +169,6 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
             setOnClickPendingIntent(
                 R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))
-            )
-            setOnClickPendingIntent(
-                R.id.tv_widget_error, PendingIntent.getActivity(
-                    context,
-                    0,
-                    Intent(context, SplashActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    },
-                    0
-                )
             )
             setTextViewText(R.id.tv_widget_error, context.getString(resId))
             setViewVisibility(R.id.pb_widget, View.VISIBLE)

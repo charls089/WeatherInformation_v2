@@ -83,33 +83,33 @@ class WeatherService : Service() {
     }
 
     fun notifyMyLocation() {
-        if (SharedPrefHelper.getBool(
-                applicationContext,
-                SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION
-            )
-        )
-            thread {
-                val locatedArea = weatherRepository.loadLocatedArea()
-                weatherRepository.loadWeatherInfo(locatedArea)?.run {
-                    Notificator.getInstance().showNotification(
-                        applicationContext,
-                        Notificator.ChannelType.WEATHER,
-                        String.format(
-                            getString(R.string.holder_weather_notify), tpr, wct, tmn, tmx
-                        ),
-                        getString(R.string.info_more_weather_info_message),
-                        WeatherUtils.getSkyIcon(dateTime, pty, sky),
-                        PendingIntent.getActivity(
-                            applicationContext,
-                            0,
-                            Intent(applicationContext, SplashActivity::class.java).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            },
-                            0
+        applicationContext?.let { context ->
+            val isUse = SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION)
+            DLog.d(TAG, "notifyWeather() - isUse : $isUse")
+            if (isUse)
+                thread {
+                    val locatedArea = weatherRepository.loadLocatedArea()
+                    weatherRepository.loadWeatherInfo(locatedArea)?.run {
+                        Notificator.getInstance().showNotification(
+                            context,
+                            Notificator.ChannelType.WEATHER,
+                            String.format(
+                                getString(R.string.holder_weather_notify), tpr, wct, tmn, tmx
+                            ),
+                            getString(R.string.info_more_weather_info_message),
+                            WeatherUtils.getSkyIcon(dateTime, pty, sky),
+                            PendingIntent.getActivity(
+                                context,
+                                0,
+                                Intent(context, SplashActivity::class.java).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                },
+                                0
+                            )
                         )
-                    )
+                    }
                 }
-            }
+        }
     }
 
     private fun requestLocation() {
