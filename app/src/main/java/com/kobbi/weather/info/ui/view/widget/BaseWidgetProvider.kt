@@ -90,26 +90,28 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
             override fun onComplete(code: ReturnCode, data: Any) {
                 DLog.writeLogFile(context, TAG, "setRemoteViews.onComplete() --> code : $code, data : $data")
-                val remoteViews = when (code) {
-                    ReturnCode.NO_ERROR -> {
-                        if (data is WeatherInfo) {
-                            createRemoteViews(context, data)
-                        } else {
-                            getErrPageView(context, R.string.info_widget_data_load_error)
+                val remoteViews =
+                    if (Utils.getNeedToRequestPermissions(context).isNotEmpty())
+                        getErrPageView(context, R.string.info_widget_permission_not_checked)
+                    else
+                        when (code) {
+                            ReturnCode.NO_ERROR -> {
+                                if (data is WeatherInfo) {
+                                    createRemoteViews(context, data)
+                                } else {
+                                    getErrPageView(context, R.string.info_widget_data_load_error)
+                                }
+                            }
+                            ReturnCode.NETWORK_DISABLED -> {
+                                getErrPageView(context, R.string.info_network_disabled)
+                            }
+                            ReturnCode.SOCKET_TIMEOUT -> {
+                                getErrPageView(context, R.string.info_network_timeout)
+                            }
+                            else -> {
+                                getErrPageView(context, R.string.info_widget_data_load_error)
+                            }
                         }
-                    }
-                    ReturnCode.NETWORK_DISABLED -> {
-                        getErrPageView(context, R.string.info_network_disabled)
-                    }
-                    ReturnCode.SOCKET_TIMEOUT -> {
-                        getErrPageView(context, R.string.info_network_timeout)
-                    }
-                    else -> {
-                        getErrPageView(context, R.string.info_widget_data_load_error)
-                    }
-                }
-                if (Utils.getNeedToRequestPermissions(context).isEmpty())
-                    R.string.info_widget_data_load_error else R.string.info_widget_permission_not_checked
 
                 Handler(Looper.getMainLooper()).postDelayed(500) {
                     updateAppWidget(context, remoteViews)

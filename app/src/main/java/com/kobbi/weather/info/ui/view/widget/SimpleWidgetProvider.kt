@@ -44,7 +44,7 @@ class SimpleWidgetProvider : BaseWidgetProvider() {
                     )
                 )
                 setOnClickPendingIntent(
-                    R.id.tv_widget_update_time,
+                    R.id.lo_widget_refresh_container,
                     getPendingIntent(context, this@SimpleWidgetProvider.javaClass)
                 )
             }

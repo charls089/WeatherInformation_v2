@@ -7,14 +7,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion = '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion = '29.0.2'
     defaultConfig {
         applicationId "com.kobbi.weather.info"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 21007
-        versionName "2.1.007"
+        targetSdkVersion 29
+        versionCode 21008
+        versionName "2.1.008"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", "\"Fho07MdXTGuMn54adge2wYi1ENE8KZg0H7WdyaQHvnK61tEu7YhFGq7ORRObw3SotbH5jODmgaIyOvaX1f8QtA%3D%3D\"")
         buildConfigField("String", "ADDRESS_API_KEY", "\"U01TX0FVVEgyMDE5MDYyMDA5Mzk0MTEwODgyNDk=\"")
@@ -45,14 +45,14 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'
-    implementation 'androidx.room:room-runtime:2.2.1'
-    kapt 'androidx.room:room-compiler:2.2.1'
+    implementation 'androidx.room:room-runtime:2.2.2'
+    kapt 'androidx.room:room-compiler:2.2.2'
 
     //retrofit2
     implementation 'com.google.code.gson:gson:2.8.5'
