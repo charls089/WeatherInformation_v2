@@ -31,8 +31,10 @@ class WidgetViewModel(private val context: Context) {
                                 if (data is OfferType)
                                     when (data) {
                                         OfferType.CURRENT, OfferType.MIN_MAX -> {
-                                            weatherInfo?.run {
-                                                listener.onComplete(ReturnCode.NO_ERROR, this)
+                                            thread {
+                                                weatherInfo?.run {
+                                                    listener.onComplete(ReturnCode.NO_ERROR, this)
+                                                }
                                             }
                                         }
                                         else -> {
