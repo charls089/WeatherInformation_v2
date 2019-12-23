@@ -11,6 +11,8 @@ class DLog private constructor() {
         private const val TAG_PREFIX = "kobbi_"
         private const val LOG_SUFFIX = "_log.txt"
 
+        @JvmOverloads
+        @JvmStatic
         fun v(context: Context? = null, tag: String = "default", message: String) {
             if (BuildConfig.DEBUG) {
                 Log.v(TAG_PREFIX + tag, message)
@@ -39,12 +41,6 @@ class DLog private constructor() {
                 writeLogFile(context, tag, message)
         }
 
-        @JvmStatic
-        fun d(clazz: Class<*>, message: String) {
-            if (BuildConfig.DEBUG)
-                Log.d(TAG_PREFIX + clazz.simpleName, message)
-        }
-
         @JvmOverloads
         @JvmStatic
         fun e(context: Context? = null, tag: String = "default", message: String) {
@@ -53,12 +49,6 @@ class DLog private constructor() {
             }
             if (context != null)
                 writeLogFile(context, tag, message)
-        }
-
-        @JvmStatic
-        fun e(clazz: Class<*>, message: String) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG_PREFIX + clazz.simpleName, message)
         }
 
         private fun writeLogFile(context: Context, tag: String, message: String?) {

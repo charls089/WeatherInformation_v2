@@ -24,6 +24,7 @@ import kotlin.math.roundToInt
 
 class WeatherRepository private constructor(context: Context) {
     companion object {
+        private const val TAG = "WeatherRepository"
         private var INSTANCE: WeatherRepository? = null
 
         @JvmStatic
@@ -74,15 +75,15 @@ class WeatherRepository private constructor(context: Context) {
                     }
 
                     val pointCode = findAreaCode(list)
-                    DLog.d(javaClass, "insertArea() --> pointCode : ${pointCode.toString()}")
+                    DLog.d(tag = TAG, message = "insertArea() --> pointCode : ${pointCode.toString()}")
                     val grid = if (pointCode?.gridX == null)
                         LocationUtils.convertGrid(LocationUtils.convertAddress(context, address))
                     else
                         GridData(pointCode.gridX, pointCode.gridY)
                     val areaNo = pointCode?.areaNo
                     DLog.d(
-                        javaClass,
-                        "insertArea() --> area = $address, gridX = ${grid?.x}, gridY = ${grid?.y}, prvnCode = ${areaCode?.prvnCode}, cityCode = ${areaCode?.cityCode}, areaCode = $areaNo"
+                        tag = TAG,
+                        message = "insertArea() --> area = $address, gridX = ${grid?.x}, gridY = ${grid?.y}, prvnCode = ${areaCode?.prvnCode}, cityCode = ${areaCode?.cityCode}, areaCode = $areaNo"
                     )
                     if (grid != null && areaCode != null && areaNo != null) {
                         val area =
@@ -117,7 +118,7 @@ class WeatherRepository private constructor(context: Context) {
     fun insertWeather(gridData: GridData, item: List<WeatherItem>?) {
         thread {
             val forecastDataList = getWeatherList(item)
-            DLog.d(javaClass, "insertWeather() --> forecastDataList : $forecastDataList")
+            DLog.d(tag = TAG, message = "insertWeather() --> forecastDataList : $forecastDataList")
             val currentList = mutableListOf<CurrentWeather>()
             val dailyList = mutableListOf<DailyWeather>()
             val gridX = gridData.x
@@ -235,8 +236,8 @@ class WeatherRepository private constructor(context: Context) {
                                     else
                                         24
                                 DLog.d(
-                                    this@WeatherRepository.javaClass,
-                                    "insertLife() --> key : $key, dateTime : $dateTime, baseTime : $baseTime"
+                                    tag = TAG,
+                                    message = "insertLife() --> key : $key, dateTime : $dateTime, baseTime : $baseTime"
                                 )
                                 mWeatherDB.lifeIndexDao().insert(
                                     LifeIndex(
@@ -337,7 +338,7 @@ class WeatherRepository private constructor(context: Context) {
             if (splitAddr.isNotEmpty())
                 sidoList.add(splitAddr[0])
         }
-        DLog.d(javaClass, "loadAllSidoName() --> list : $sidoList")
+        DLog.d(tag = TAG, message = "loadAllSidoName() --> list : $sidoList")
         return sidoList.toList()
     }
 
@@ -352,13 +353,13 @@ class WeatherRepository private constructor(context: Context) {
     fun loadPlaceAddressLive() = mWeatherDB.favoritePlaceDao().loadAddressLive()
 
     fun loadWeatherInfo(area: Area?): WeatherInfo? {
-        DLog.d(javaClass, "loadWeatherInfo() --> area : $area")
+        DLog.d(tag = TAG, message = "loadWeatherInfo() --> area : $area")
         area?.run {
             val today = SearchTime.getDate(SearchTime.DEFAULT)
             val time = SearchTime.getDate(SearchTime.CURRENT)
             DLog.d(
-                this@WeatherRepository.javaClass,
-                "loadWeatherInfo() --> today : $today, time : $time, gridX : $gridX, gridY : $gridY"
+                tag = TAG,
+                message = "loadWeatherInfo() --> today : $today, time : $time, gridX : $gridX, gridY : $gridY"
             )
             val weatherInfo =
                 mWeatherDB.weatherInfoDao()
@@ -369,10 +370,7 @@ class WeatherRepository private constructor(context: Context) {
                     val cityName = it[1]
                     val yesterdayWeather = findYesterdayWeather(gridX, gridY)
                     val airMeasure = findAirMeasureData(sidoName, cityName)
-                    DLog.d(
-                        this@WeatherRepository.javaClass,
-                        "sidoName : $sidoName, cityName : $cityName"
-                    )
+                    DLog.d(tag = TAG, message = "sidoName : $sidoName, cityName : $cityName")
                     weatherInfo?.run {
                         yesterdayTpr = yesterdayWeather?.t1h
                         yesterdayWct = yesterdayWeather?.wct
@@ -381,10 +379,7 @@ class WeatherRepository private constructor(context: Context) {
                     }
                 }
             }
-            DLog.d(
-                this@WeatherRepository.javaClass,
-                "loadWeatherInfo() --> weatherInfo : $weatherInfo"
-            )
+            DLog.d(tag = TAG, message = "loadWeatherInfo() --> weatherInfo : $weatherInfo")
             return weatherInfo
         }
         return null
@@ -440,7 +435,7 @@ class WeatherRepository private constructor(context: Context) {
 
     fun loadLifeIndexLive(): LiveData<List<LifeIndex>> {
         val dateTime = SearchTime.getTime(SearchTime.LIFE)
-        DLog.d(javaClass, "loadLifeIndexLive() --> dateTime : $dateTime")
+        DLog.d(tag = TAG, message = "loadLifeIndexLive() --> dateTime : $dateTime")
         return mWeatherDB.lifeIndexDao().loadLive(dateTime.first, dateTime.second)
     }
 

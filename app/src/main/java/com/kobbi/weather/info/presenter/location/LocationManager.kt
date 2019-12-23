@@ -99,8 +99,8 @@ object LocationManager {
                     val currentTime = convertNanoToMillis(SystemClock.elapsedRealtimeNanos())
                     val locationTime = convertNanoToMillis(it.elapsedRealtimeNanos)
                     DLog.d(
-                        javaClass,
-                        "$currentTime - $locationTime(${currentTime - locationTime}) <= $LOCATION_OFFER_TIME"
+                        tag = "LocationManager",
+                        message = "$currentTime - $locationTime(${currentTime - locationTime}) <= $LOCATION_OFFER_TIME"
                     )
                     if (currentTime - locationTime <= LOCATION_OFFER_TIME)
                         return it
