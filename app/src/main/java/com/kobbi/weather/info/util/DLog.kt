@@ -8,7 +8,7 @@ import java.io.FileOutputStream
 
 class DLog private constructor() {
     companion object {
-        private const val TAG_PREFIX = "##_kbi_"
+        private const val TAG_PREFIX = "kobbi_"
         private const val LOG_SUFFIX = "_log.txt"
 
         fun v(context: Context? = null, tag: String = "default", message: String) {
