@@ -93,7 +93,7 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clickPrev() {
-        DLog.d("JusoModel", "clickPrev($mDepth)")
+        DLog.d(tag = "JusoModel", message = "clickPrev($mDepth)")
         mDepth -= 2
         _depth.postValue(mDepth)
         loadJusoList()

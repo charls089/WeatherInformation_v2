@@ -36,7 +36,7 @@ class LocationUtils private constructor() {
                 val filterAddress =
                     if (address.contains("세종")) address.replace("세종특별자치시", "연기군") else address
                 val list = Geocoder(context).getFromLocationName(filterAddress, 1)
-                DLog.d(TAG, message = "convertAddress($filterAddress).list : $list")
+                DLog.d(tag = TAG, message = "convertAddress($filterAddress).list : $list")
                 if (list.isNotEmpty()) {
                     val data = list[0]
                     LatLng(data.latitude, data.longitude)
@@ -45,7 +45,7 @@ class LocationUtils private constructor() {
                 }
 
             } catch (e: IOException) {
-                DLog.e(TAG, message = e.message)
+                DLog.e(tag = TAG, message = "${e.message}")
                 null
             }
         }
@@ -92,13 +92,13 @@ class LocationUtils private constructor() {
                     null
                 }
             } catch (e: IOException) {
-                DLog.writeLogFile(context, message = e.message)
+                DLog.e(context, TAG, "${e.message}")
                 null
             }
         }
 
         fun getAddressLine(context: Context, location: Location): String {
-            return getAddress(context, location)?.getAddressLine(0)?.replace("대한민국 ","") ?: ""
+            return getAddress(context, location)?.getAddressLine(0)?.replace("대한민국 ", "") ?: ""
         }
 
         @JvmStatic

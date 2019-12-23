@@ -69,8 +69,8 @@ enum class OfferType(
             }
             val baseDate = Utils.getCurrentTime(time = calendar.timeInMillis)
             DLog.d(
-                TAG,
-                "getBaseDateTime() -->type : $type, baseDate : $baseDate / baseTime : $baseTime"
+                tag = TAG,
+                message = "getBaseDateTime() -->type : $type, baseDate : $baseDate / baseTime : $baseTime"
             )
             return Pair(baseDate, baseTime)
         }

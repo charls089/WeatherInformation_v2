@@ -35,11 +35,11 @@ abstract class AreaCodeDatabase : RoomDatabase() {
         @JvmStatic
         fun getDatabase(context: Context): AreaCodeDatabase {
             return INSTANCE ?: synchronized(this) {
-                DLog.d(TAG, "getDatabase($context) - INSTANCE : $INSTANCE")
+                DLog.d(tag = TAG, message = "getDatabase($context) - INSTANCE : $INSTANCE")
                 val callback = object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        DLog.d(TAG, "callback.onCreate()")
+                        DLog.d(tag = TAG, message = "callback.onCreate()")
                     }
                 }
                 Room.databaseBuilder(context, AreaCodeDatabase::class.java, DB_NAME)
@@ -54,7 +54,7 @@ abstract class AreaCodeDatabase : RoomDatabase() {
         fun initializeDB(context: Context) {
             val init =
                 SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AREA_CODE_DATA_INITIALIZED)
-            DLog.d(TAG, "Initialized AreaCode DB -> $init")
+            DLog.d(tag = TAG, message = "Initialized AreaCode DB -> $init")
             if (!init) {
                 thread {
                     setDatabaseData(context, FCST_AREA_CODE_FILE_NAME)
@@ -119,7 +119,7 @@ abstract class AreaCodeDatabase : RoomDatabase() {
                     }
                 }
             }
-            DLog.d(TAG, "getDataFromAsset() --> List Size : ${list.size}")
+            DLog.d(tag = TAG, message = "getDataFromAsset() --> List Size : ${list.size}")
             return list
         }
     }

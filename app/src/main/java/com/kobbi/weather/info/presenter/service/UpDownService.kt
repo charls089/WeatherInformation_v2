@@ -22,14 +22,14 @@ class UpDownService : Service() {
     override fun onBind(intent: Intent): IBinder = mBinder
 
     fun echo() {
-        DLog.writeLogFile(applicationContext, TAG, "echo")
+        DLog.v(applicationContext, TAG, "echo")
         upPolaris()
         downPolaris()
     }
 
     fun upPolaris() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DLog.d(TAG, "up")
+            DLog.d(tag = TAG, message =  "up")
             val notificator = Notificator.getInstance()
             val type = Notificator.ChannelType.POLARIS
             val notification = notificator.getNotification(applicationContext, type)
@@ -39,7 +39,7 @@ class UpDownService : Service() {
 
     fun downPolaris() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DLog.d(TAG, "down")
+            DLog.d(tag = TAG, message =  "down")
             stopForeground(true)
         }
     }

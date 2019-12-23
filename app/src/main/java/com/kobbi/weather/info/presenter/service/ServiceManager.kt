@@ -30,11 +30,11 @@ object ServiceManager {
     private val mWeatherServiceConnection = object : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.i(TAG, "WeatherService was disconnected.")
+            DLog.i(tag = TAG, message = "WeatherService was disconnected.")
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.i(TAG, "WeatherService was connected.")
+            DLog.i(tag = TAG, message =  "WeatherService was connected.")
             val binder = service as WeatherService.LocalBinder
             mWeatherService = binder.service
             getWeatherInfo()
@@ -44,11 +44,11 @@ object ServiceManager {
     private val mPolarisServiceConnection = object : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.i(TAG, "UpDownService was disconnected.")
+            DLog.i(tag = TAG, message =  "UpDownService was disconnected.")
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.i(TAG, "UpDownService was connected.")
+            DLog.i(tag = TAG, message =  "UpDownService was connected.")
             val binder = service as UpDownService.LocalBinder
             mPolarisService = binder.service
             getWeatherInfo()
@@ -56,7 +56,7 @@ object ServiceManager {
     }
 
     fun restartService(context: Context) {
-        DLog.writeLogFile(context, TAG, "ServiceManager.restartService()")
+        DLog.i(context, TAG, "ServiceManager.restartService()")
         context.applicationContext?.let {
             registerRestartReceiver(it)
             registerNotifyReceiver(it)
@@ -72,7 +72,7 @@ object ServiceManager {
     }
 
     fun getWeatherInfo(init: Boolean = false) {
-        DLog.d(TAG, "ServiceManager.getWeatherInfo($init)")
+        DLog.d(tag = TAG, message =  "ServiceManager.getWeatherInfo($init)")
         mWeatherService?.runService(init)
     }
 

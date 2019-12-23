@@ -28,7 +28,7 @@ class MapViewDialog(private val latLng: LatLng?) : DialogFragment(), OnMapReadyC
             inflater.inflate(R.layout.dialog_map_vew, container, false)
         } catch (e:InflateException) {
             context?.let {
-               DLog.writeLogFile(it, TAG, "MapView is already created")
+               DLog.e(it, TAG, "MapView is already created")
             }
             null
         }

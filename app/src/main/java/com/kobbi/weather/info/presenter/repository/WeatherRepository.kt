@@ -97,7 +97,7 @@ class WeatherRepository private constructor(context: Context) {
                             )
                         //check Area is active
                         val isActiveArea = loadActiveArea().contains(area)
-                        DLog.writeLogFile(
+                        DLog.d(
                             context,
                             "AreaWeather",
                             "insertArea() --> isActiveArea : $isActiveArea"

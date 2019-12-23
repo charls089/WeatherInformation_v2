@@ -11,16 +11,32 @@ class DLog private constructor() {
         private const val TAG_PREFIX = "##_kbi_"
         private const val LOG_SUFFIX = "_log.txt"
 
-        @JvmStatic
-        fun i(tag: String = "default", message: String) {
-            if (BuildConfig.DEBUG)
-                Log.i(TAG_PREFIX + tag, message)
+        fun v(context: Context? = null, tag: String = "default", message: String) {
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG_PREFIX + tag, message)
+            }
+            if (context != null)
+                writeLogFile(context, tag, message)
         }
 
+        @JvmOverloads
         @JvmStatic
-        fun d(tag: String = "default", message: String) {
-            if (BuildConfig.DEBUG)
+        fun i(context: Context? = null, tag: String = "default", message: String) {
+            if (BuildConfig.DEBUG) {
+                Log.i(TAG_PREFIX + tag, message)
+            }
+            if (context != null)
+                writeLogFile(context, tag, message)
+        }
+
+        @JvmOverloads
+        @JvmStatic
+        fun d(context: Context? = null, tag: String = "default", message: String) {
+            if (BuildConfig.DEBUG) {
                 Log.d(TAG_PREFIX + tag, message)
+            }
+            if (context != null)
+                writeLogFile(context, tag, message)
         }
 
         @JvmStatic
@@ -29,20 +45,23 @@ class DLog private constructor() {
                 Log.d(TAG_PREFIX + clazz.simpleName, message)
         }
 
+        @JvmOverloads
         @JvmStatic
-        fun e(tag: String = "default", message: String?) {
-            Log.e(TAG_PREFIX + tag, message)
+        fun e(context: Context? = null, tag: String = "default", message: String) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG_PREFIX + tag, message)
+            }
+            if (context != null)
+                writeLogFile(context, tag, message)
         }
 
         @JvmStatic
-        fun e(clazz: Class<*>, message: String?) {
-            Log.e(TAG_PREFIX + clazz.simpleName, message)
-        }
-
-        @JvmStatic
-        fun writeLogFile(context: Context, tag: String = "default", message: String?) {
+        fun e(clazz: Class<*>, message: String) {
             if (BuildConfig.DEBUG)
-                e(tag, message)
+                Log.e(TAG_PREFIX + clazz.simpleName, message)
+        }
+
+        private fun writeLogFile(context: Context, tag: String, message: String?) {
             val dir = File(context.getExternalFilesDir(null), "log").apply {
                 if (!this.exists()) {
                     this.mkdirs()
@@ -53,7 +72,7 @@ class DLog private constructor() {
             FileOutputStream(logFile, true).use {
                 if (logFile.length() > 0)
                     it.write("\r\n".toByteArray())
-                it.write("[${Utils.getCurrentTime(Utils.VALUE_TIME_FORMAT)}] $message".toByteArray())
+                it.write("[${Utils.getCurrentTime(Utils.VALUE_TIME_FORMAT)}][$tag] $message".toByteArray())
             }
         }
     }

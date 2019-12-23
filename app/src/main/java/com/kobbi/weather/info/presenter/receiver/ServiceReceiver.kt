@@ -9,7 +9,7 @@ import com.kobbi.weather.info.util.DLog
 class ServiceReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
-            DLog.writeLogFile(
+            DLog.v(
                 context,
                 "ServiceReceiver",
                 "context : $context / action : ${intent?.action}"

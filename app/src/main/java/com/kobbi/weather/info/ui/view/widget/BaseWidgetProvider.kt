@@ -49,10 +49,11 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        DLog.writeLogFile(
-            context, TAG, "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+        DLog.i(
+            context,
+            TAG,
+            "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}, myWidgetId : ${getWidgetId(context)}"
         )
-        DLog.d(TAG, "onUpdate() --> getWidgetId : ${getWidgetId(context)}")
         if (getWidgetId(context) == Int.MIN_VALUE)
             setWidgetId(context, appWidgetIds[0])
         updateAppWidget(context)
@@ -71,14 +72,14 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent?) {
         super.onReceive(context, intent)
         val action = intent?.action
-        DLog.writeLogFile(context, TAG, "onReceive() --> action : $action")
+        DLog.i(context, TAG, "onReceive() --> action : $action")
         if (action == getAction(context)) {
             updateAppWidget(context)
         }
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        DLog.writeLogFile(
+        DLog.i(
             context, TAG, "onDeleted() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
         super.onDeleted(context, appWidgetIds)
@@ -89,7 +90,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         showProgressView(context)
         WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
             override fun onComplete(code: ReturnCode, data: Any) {
-                DLog.writeLogFile(context, TAG, "setRemoteViews.onComplete() --> code : $code, data : $data")
+                DLog.d(context, TAG, "setRemoteViews.onComplete() --> code : $code, data : $data")
                 val remoteViews =
                     if (Utils.getNeedToRequestPermissions(context).isNotEmpty())
                         getErrPageView(context, R.string.info_widget_permission_not_checked)
@@ -157,7 +158,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
-        DLog.writeLogFile(context, message = "updateAppWidget() --> remoteViews : $remoteViews")
+        DLog.d(context, TAG, message = "updateAppWidget() --> remoteViews : $remoteViews")
         AppWidgetManager.getInstance(context)
             .updateAppWidget(getWidgetId(context), remoteViews)
     }
@@ -169,7 +170,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     private fun getErrPageView(context: Context, resId: Int): RemoteViews {
-        DLog.d(TAG, "getErrPageView()")
+        DLog.e(tag = TAG, message = "getErrPageView()")
         return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
             setOnClickPendingIntent(
                 R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))

@@ -14,7 +14,7 @@ import com.kobbi.weather.info.util.WeatherUtils
 
 class SimpleWidgetProvider : BaseWidgetProvider() {
     override fun createRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews {
-        DLog.d("SimpleWidgetProvider", "createRemoteViews()")
+        DLog.i(tag = "SimpleWidgetProvider", message = "createRemoteViews()")
         return getRemoteViews(context, weatherInfo)
     }
 

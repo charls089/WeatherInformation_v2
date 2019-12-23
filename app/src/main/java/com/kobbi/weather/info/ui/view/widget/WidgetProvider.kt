@@ -18,7 +18,7 @@ import com.kobbi.weather.info.util.WeatherUtils
 class WidgetProvider : BaseWidgetProvider() {
 
     override fun createRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews {
-        DLog.d("WidgetProvider", "createRemoteViews()")
+        DLog.d(tag = "WidgetProvider", message = "createRemoteViews()")
         val options =
             AppWidgetManager.getInstance(context).getAppWidgetOptions(getWidgetId(context))
         return getRemoteViews(context, getWidgetWidth(context, options), weatherInfo)

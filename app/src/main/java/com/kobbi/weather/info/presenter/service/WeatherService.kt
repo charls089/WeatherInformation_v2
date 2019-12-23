@@ -36,9 +36,11 @@ class WeatherService : Service() {
         override fun onComplete(code: ReturnCode, data: Any) {
             val message: String
             when (code) {
+                ReturnCode.NO_ERROR -> {
+                    message = getString(R.string.info_network_success)
+                }
                 ReturnCode.NETWORK_DISABLED -> {
                     message = getString(R.string.info_network_disabled)
-                    DLog.writeLogFile(applicationContext, TAG, message)
                     if (data is OfferType)
                         registerRetryReceiver(data)
                 }
@@ -48,11 +50,11 @@ class WeatherService : Service() {
                         requestWeather(true, data)
                 }
                 else -> {
-                    message = ""
+                    message = getString(R.string.info_network_unknown)
                 }
             }
             if (message.isNotEmpty())
-                DLog.writeLogFile(applicationContext, TAG, "[$code] $message")
+                DLog.d(applicationContext, TAG, "[$code] $message")
             Timer().schedule(1000) {
                 mIsRunning = false
             }
@@ -73,7 +75,7 @@ class WeatherService : Service() {
         if (mIsRunning)
             return
         mIsRunning = true
-        DLog.d(TAG, "runService() - init : $init")
+        DLog.d(tag = TAG, message =  "runService() - init : $init")
         applicationContext?.let { context ->
             WeatherApplication.setUpdateCheckTime(context)
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
@@ -85,7 +87,7 @@ class WeatherService : Service() {
     fun notifyMyLocation() {
         applicationContext?.let { context ->
             val isUse = SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION)
-            DLog.d(TAG, "notifyWeather() - isUse : $isUse")
+            DLog.d(tag = TAG, message =  "notifyWeather() - isUse : $isUse")
             if (isUse)
                 thread {
                     val locatedArea = weatherRepository.loadLocatedArea()
@@ -144,7 +146,7 @@ class WeatherService : Service() {
                             message = "Location needs runtime permission"
                         }
                     }
-                    DLog.writeLogFile(
+                    DLog.i(
                         context, TAG,
                         "getLocation.onComplete() --> responseCode : $responseCode, message : $message"
                     )

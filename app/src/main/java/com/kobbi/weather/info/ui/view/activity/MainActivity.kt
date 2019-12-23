@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             val weatherVm = ViewModelProviders.of(this@MainActivity)[WeatherViewModel::class.java]
             mAreaVm = ViewModelProviders.of(this@MainActivity)[AreaViewModel::class.java].apply {
                 area.observe(this@MainActivity, Observer {
-                    DLog.d("AreaViewModel", "area.observe() --> Area Change")
+                    DLog.d(tag = "AreaViewModel", message = "area.observe() --> Area Change")
                     weatherVm.refreshData()
                     if (it.isNotEmpty()) {
                         clViewContainer.startAnimation(
