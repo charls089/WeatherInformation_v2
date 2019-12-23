@@ -39,6 +39,9 @@ class WeatherService : Service() {
                 ReturnCode.NO_ERROR -> {
                     message = getString(R.string.info_network_success)
                 }
+                ReturnCode.NOT_UPDATE_TIME -> {
+                    message = getString(R.string.info_not_update_time)
+                }
                 ReturnCode.NETWORK_DISABLED -> {
                     message = getString(R.string.info_network_disabled)
                     if (data is OfferType)
@@ -49,12 +52,16 @@ class WeatherService : Service() {
                     if (data is OfferType)
                         requestWeather(true, data)
                 }
+                ReturnCode.DATA_IS_NULL -> {
+                    message = getString(R.string.info_data_is_empty)
+                }
                 else -> {
                     message = getString(R.string.info_network_unknown)
                 }
             }
-            if (message.isNotEmpty())
-                DLog.d(applicationContext, TAG, "[$code] $message")
+            if (data is OfferType) {
+                DLog.d(applicationContext, TAG, "[$data] $message")
+            }
             Timer().schedule(1000) {
                 mIsRunning = false
             }

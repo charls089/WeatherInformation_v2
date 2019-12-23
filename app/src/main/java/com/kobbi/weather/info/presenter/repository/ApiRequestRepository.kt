@@ -79,6 +79,8 @@ class ApiRequestRepository private constructor() {
                         listener?.run {
                             if (t is SocketTimeoutException) {
                                 listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
+                            } else {
+                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
                             }
                         }
                     }
@@ -130,6 +132,8 @@ class ApiRequestRepository private constructor() {
                     listener?.run {
                         if (t is SocketTimeoutException) {
                             listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
+                        } else {
+                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.WEEKLY)
                         }
                     }
                 }
@@ -172,6 +176,8 @@ class ApiRequestRepository private constructor() {
                         listener?.run {
                             if (t is SocketTimeoutException) {
                                 listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.LIFE)
+                            } else {
+                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.LIFE)
                             }
                         }
                     }
@@ -209,6 +215,8 @@ class ApiRequestRepository private constructor() {
                     listener?.run {
                         if (t is SocketTimeoutException) {
                             listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.BASE)
+                        } else {
+                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.BASE)
                         }
                     }
                 }
@@ -253,6 +261,8 @@ class ApiRequestRepository private constructor() {
                         listener?.run {
                             if (t is SocketTimeoutException) {
                                 listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.AIR)
+                            } else {
+                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.AIR)
                             }
                         }
                     }
