@@ -82,7 +82,7 @@ class WeatherService : Service() {
         if (mIsRunning)
             return
         mIsRunning = true
-        DLog.d(tag = TAG, message =  "runService() - init : $init")
+        DLog.d(tag = TAG, message = "runService() - init : $init")
         applicationContext?.let { context ->
             WeatherApplication.setUpdateCheckTime(context)
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
@@ -94,7 +94,7 @@ class WeatherService : Service() {
     fun notifyMyLocation() {
         applicationContext?.let { context ->
             val isUse = SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION)
-            DLog.d(tag = TAG, message =  "notifyWeather() - isUse : $isUse")
+            DLog.d(tag = TAG, message = "notifyWeather() - isUse : $isUse")
             if (isUse)
                 thread {
                     val locatedArea = weatherRepository.loadLocatedArea()
@@ -102,10 +102,10 @@ class WeatherService : Service() {
                         Notificator.getInstance().showNotification(
                             context,
                             Notificator.ChannelType.WEATHER,
+                            address,
                             String.format(
-                                getString(R.string.holder_weather_notify), tpr, wct, tmn, tmx
+                                getString(R.string.holder_weather_notify), tpr, wct
                             ),
-                            getString(R.string.info_more_weather_info_message),
                             WeatherUtils.getSkyIcon(dateTime, pty, sky),
                             PendingIntent.getActivity(
                                 context,
