@@ -4,6 +4,7 @@ import com.kobbi.weather.info.presenter.model.type.OfferType
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -33,7 +34,7 @@ class ExampleUnitTest {
     @Test
     fun array_check() {
         val array = Array(8) { i -> "${if (i * 3 < 10) "0" else ""}${i*3}" }
-        print("array : ${array.toList()}")
+        print("array : ${array.contentToString()}")
     }
 
     @Test

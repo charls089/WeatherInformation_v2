@@ -1,6 +1,9 @@
 package com.kobbi.weather.info.presenter.repository
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import com.kobbi.weather.info.data.database.entity.Area
 import com.kobbi.weather.info.data.network.client.AirMeasureClient
 import com.kobbi.weather.info.data.network.client.JusoClient
@@ -31,6 +34,10 @@ class ApiRequestRepository private constructor() {
             gridData: GridData,
             listener: CompleteListener? = null
         ) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val apiUrl = when (type) {
                 OfferType.CURRENT, OfferType.YESTERDAY -> ApiConstants.API_FORECAST_TIME_DATA
                 OfferType.MIN_MAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
@@ -52,18 +59,19 @@ class ApiRequestRepository private constructor() {
                         call: Call<WeatherResponse>,
                         response: Response<WeatherResponse>
                     ) {
-                        DLog.writeLogFile(
+                        DLog.d(
                             context,
                             TAG,
                             "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
                         )
                         val item = response.body()?.response?.body?.items?.item
-                        DLog.d(TAG, "requestWeather.item : $item")
+                        DLog.d(tag = TAG, message = "requestWeather.item : $item")
                         WeatherRepository.getInstance(context).insertWeather(gridData, item)
+                        listener?.onComplete(ReturnCode.NO_ERROR, type)
                     }
 
                     override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                        DLog.writeLogFile(
+                        DLog.e(
                             context,
                             TAG,
                             "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
@@ -71,6 +79,8 @@ class ApiRequestRepository private constructor() {
                         listener?.run {
                             if (t is SocketTimeoutException) {
                                 listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
+                            } else {
+                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
                             }
                         }
                     }
@@ -85,6 +95,10 @@ class ApiRequestRepository private constructor() {
             areaCode: AreaCode,
             listener: CompleteListener? = null
         ) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val id =
                 if (apiUrl == ApiConstants.API_MIDDLE_TEMPERATURE) areaCode.cityCode else areaCode.prvnCode
             val tmFc = OfferType.getBaseDateTime(OfferType.WEEKLY)
@@ -99,17 +113,18 @@ class ApiRequestRepository private constructor() {
                     call: Call<MiddleResponse>,
                     response: Response<MiddleResponse>
                 ) {
-                    DLog.writeLogFile(
+                    DLog.d(
                         context, TAG,
                         "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
                     )
                     val item = response.body()?.response?.body?.items?.item
-                    DLog.d(TAG, "requestMiddle.item : $item")
+                    DLog.d(tag = TAG, message = "requestMiddle.item : $item")
                     WeatherRepository.getInstance(context).insertMiddle(areaCode, item)
+                    listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
                 }
 
                 override fun onFailure(call: Call<MiddleResponse>, t: Throwable) {
-                    DLog.writeLogFile(
+                    DLog.e(
                         context,
                         TAG,
                         "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
@@ -117,15 +132,25 @@ class ApiRequestRepository private constructor() {
                     listener?.run {
                         if (t is SocketTimeoutException) {
                             listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
+                        } else {
+                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.WEEKLY)
                         }
                     }
                 }
-
             })
         }
 
         @JvmStatic
-        fun requestLife(context: Context, type: OfferType, areaNo: String, listener: CompleteListener? = null) {
+        fun requestLife(
+            context: Context,
+            type: OfferType,
+            areaNo: String,
+            listener: CompleteListener? = null
+        ) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val apiList = ApiConstants.LifeApi.checkRequestUrl()
             for (api in apiList) {
                 if (api.offerType == type) {
@@ -140,24 +165,27 @@ class ApiRequestRepository private constructor() {
                         override fun onResponse(
                             call: Call<LifeResponse>, response: Response<LifeResponse>
                         ) {
-                            DLog.writeLogFile(
+                            DLog.d(
                                 context, TAG,
                                 "requestLife.onResponse() -> <${api.apiName}>call : $call, response : $response"
                             )
                             val indexModel = response.body()?.response?.body?.indexModel
-                            DLog.d(TAG, "<$api>indexModel : $indexModel")
+                            DLog.d(tag = TAG, message = "<$api>indexModel : $indexModel")
                             WeatherRepository.getInstance(context).insertLife(areaNo, indexModel)
+                            listener?.onComplete(ReturnCode.NO_ERROR, type)
                         }
 
                         override fun onFailure(call: Call<LifeResponse>, t: Throwable) {
-                            DLog.writeLogFile(
+                            DLog.e(
                                 context,
                                 TAG,
-                                "requestLife.onFailure() -> <$api>call : $call, t : $t"
+                                "requestLife.onFailure() -> <${api.apiName}>call : $call, t : $t"
                             )
                             listener?.run {
                                 if (t is SocketTimeoutException) {
-                                    listener.onComplete(ReturnCode.SOCKET_TIMEOUT, api.offerType)
+                                    listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
+                                } else {
+                                    listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
                                 }
                             }
                         }
@@ -166,7 +194,12 @@ class ApiRequestRepository private constructor() {
             }
         }
 
+        @JvmStatic
         fun requestNews(context: Context, listener: CompleteListener? = null) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("numOfRows", 100)
                 put("_type", "json")
@@ -177,24 +210,22 @@ class ApiRequestRepository private constructor() {
                     call: Call<NewsResponse>,
                     response: Response<NewsResponse>
                 ) {
-                    DLog.writeLogFile(
-                        context, TAG,
-                        "requestNews.onResponse() -> call : $call, response : $response"
+                    DLog.d(
+                        context, TAG, "requestNews.onResponse() -> call : $call, response : $response"
                     )
                     val item = response.body()?.response?.body?.items?.item
-                    DLog.d(TAG, "requestNews.item : $item")
+                    DLog.d(tag = TAG, message = "requestNews.item : $item")
                     WeatherRepository.getInstance(context).insertSpecialNews(item)
+                    listener?.onComplete(ReturnCode.NO_ERROR, OfferType.BASE)
                 }
 
                 override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                    DLog.writeLogFile(
-                        context,
-                        TAG,
-                        "requestNews.onFailure() -> call : $call, t : $t"
-                    )
+                    DLog.e(context, TAG, "requestNews.onFailure() -> call : $call, t : $t")
                     listener?.run {
                         if (t is SocketTimeoutException) {
                             listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.BASE)
+                        } else {
+                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.BASE)
                         }
                     }
                 }
@@ -202,7 +233,15 @@ class ApiRequestRepository private constructor() {
         }
 
         @JvmStatic
-        fun requestAirMeasure(context: Context, sidoName: String, listener: CompleteListener? = null) {
+        fun requestAirMeasure(
+            context: Context,
+            sidoName: String,
+            listener: CompleteListener? = null
+        ) {
+            if (!isNetworkConnected(context)) {
+                listener?.onComplete(ReturnCode.NETWORK_DISABLED)
+                return
+            }
             val addressCode = Address.getSidoCode(sidoName)
             addressCode?.let {
                 val params = java.util.LinkedHashMap<String, Any>().apply {
@@ -217,23 +256,26 @@ class ApiRequestRepository private constructor() {
                         call: Call<AirResponse>,
                         response: Response<AirResponse>
                     ) {
-                        DLog.writeLogFile(
+                        DLog.d(
                             context, TAG,
                             "requestAirMeasure.onResponse() -> call : $call, response : $response"
                         )
                         val list = response.body()?.list
-                        DLog.d(TAG, "requestAirMeasure.list : $list")
+                        DLog.d(tag = TAG, message = "requestAirMeasure.list : $list")
                         WeatherRepository.getInstance(context)
                             .insertAirMeasure(addressCode.fullName, list)
+                        listener?.onComplete(ReturnCode.NO_ERROR, OfferType.AIR)
                     }
 
                     override fun onFailure(call: Call<AirResponse>, t: Throwable) {
-                        DLog.writeLogFile(
+                        DLog.e(
                             context, TAG, "requestAirMeasure.onFailure() -> call : $call, t : $t"
                         )
                         listener?.run {
                             if (t is SocketTimeoutException) {
                                 listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.AIR)
+                            } else {
+                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.AIR)
                             }
                         }
                     }
@@ -242,6 +284,7 @@ class ApiRequestRepository private constructor() {
             }
         }
 
+        @JvmStatic
         fun requestJuso(apiUrl: String, code: List<String>, listener: CompleteListener) {
             val params = LinkedHashMap<String, Any>().apply {
                 if (code.isNotEmpty()) {
@@ -258,9 +301,12 @@ class ApiRequestRepository private constructor() {
                     call: Call<JusoResponse>,
                     response: Response<JusoResponse>
                 ) {
-                    DLog.d(TAG, "requestJuso.onResponse() -> call : $call, response : $response")
+                    DLog.d(
+                        tag = TAG,
+                        message = "requestJuso.onResponse() -> call : $call, response : $response"
+                    )
                     val items = response.body()?.response?.body
-                    DLog.d(TAG, "requestJuso.items : $items")
+                    DLog.d(tag = TAG, message = "requestJuso.items : $items")
                     if (items != null)
                         listener.onComplete(ReturnCode.NO_ERROR, items)
                     else
@@ -274,7 +320,8 @@ class ApiRequestRepository private constructor() {
             })
         }
 
-        fun initBaseAreaData(context: Context, area: Area) {
+        @JvmStatic
+        fun initBaseAreaData(context: Context, area: Area, listener: CompleteListener? = null) {
             val sidoName = LocationUtils.splitAddressLine(area.address)
             val areaCode = AreaCode(
                 area.prvnCode,
@@ -293,6 +340,26 @@ class ApiRequestRepository private constructor() {
             requestLife(context, OfferType.LIFE_TIME, areaNo)
             requestAirMeasure(context, sidoName[0])
             requestNews(context)
+        }
+
+        private fun isNetworkConnected(context: Context): Boolean {
+            val conn = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            return conn?.run {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    getNetworkCapabilities(this.activeNetwork)?.let { capabilities ->
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                    } ?: false
+                } else {
+                    val activeNetwork = activeNetworkInfo
+                    @Suppress("DEPRECATION")
+                    when (activeNetwork?.type) {
+                        ConnectivityManager.TYPE_WIFI, ConnectivityManager.TYPE_MOBILE -> true
+                        else -> false
+                    }
+                }
+            } ?: false
         }
     }
 }

@@ -271,7 +271,7 @@ object BindingAdapter {
         position: Int?
     ) {
         val area = getAreaFromViewModel(areas, position)
-        DLog.d("BindingAdapter","setSpecial() --> news : $news")
+        DLog.d(tag = "BindingAdapter", message = "setSpecial() --> news : $news")
         area?.let {
             news?.let {
                 val cityName = LocationUtils.getCityCode(area.address)
@@ -287,7 +287,8 @@ object BindingAdapter {
                     }
                 }
                 DLog.d(
-                    "BindingAdapter", "setSpecial() -> result : $result / cityName : $cityName"
+                    tag = "BindingAdapter",
+                    message = "setSpecial() -> result : $result / cityName : $cityName"
                 )
                 view.run {
                     visibility = if (result.isEmpty()) View.GONE else View.VISIBLE

@@ -23,6 +23,8 @@ enum class OfferType(
         private val DEFAULT_OFFER_TIME_RANGE = 0..10
 
         fun isNeedToUpdate(type: OfferType): Boolean {
+            if (type == YESTERDAY || type == MIN_MAX)
+                return true
             val currentTime = Utils.getCurrentTime("HHmm", System.currentTimeMillis()).toInt()
             return type.baseTimeList.any {
                 val offerTime = it.toInt() + type.offerTime
@@ -82,8 +84,8 @@ enum class OfferType(
             }
             val baseDate = Utils.getCurrentTime(time = calendar.timeInMillis)
             DLog.d(
-                TAG,
-                "getBaseDateTime() -->type : $type, baseDate : $baseDate / baseTime : $baseTime"
+                tag = TAG,
+                message = "getBaseDateTime() -->type : $type, baseDate : $baseDate / baseTime : $baseTime"
             )
             return Pair(baseDate, baseTime)
         }

@@ -1,16 +1,11 @@
 package com.kobbi.weather.info.ui.view.widget
 
 import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import android.widget.RemoteViews
-import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
-import com.kobbi.weather.info.presenter.repository.WeatherRepository
+import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.ui.view.activity.MainActivity
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.LocationUtils
@@ -18,13 +13,13 @@ import com.kobbi.weather.info.util.Utils
 import com.kobbi.weather.info.util.WeatherUtils
 
 class SimpleWidgetProvider : BaseWidgetProvider() {
-    override fun createRemoteViews(context: Context): RemoteViews? {
-        DLog.d("SimpleWidgetProvider", "createRemoteViews()")
-        return getRemoteViews(context)
+    override fun createRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews {
+        DLog.i(tag = "SimpleWidgetProvider", message = "createRemoteViews()")
+        return getRemoteViews(context, weatherInfo)
     }
 
-    private fun getRemoteViews(context: Context): RemoteViews? {
-        return getWeatherInfo(context)?.run {
+    private fun getRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews {
+        return weatherInfo.run {
             RemoteViews(context.packageName, R.layout.widget_weather_simple).apply {
                 val splitAddress = LocationUtils.splitAddressLine(address)
                 val cityName = splitAddress.lastOrNull()
@@ -49,16 +44,9 @@ class SimpleWidgetProvider : BaseWidgetProvider() {
                     )
                 )
                 setOnClickPendingIntent(
-                    R.id.tv_widget_update_time,
+                    R.id.lo_widget_refresh_container,
                     getPendingIntent(context, this@SimpleWidgetProvider.javaClass)
                 )
-                setViewVisibility(R.id.pb_widget, View.VISIBLE)
-                setViewVisibility(R.id.lo_widget_container, View.GONE)
-                Handler(Looper.getMainLooper()).postDelayed(500) {
-                    setViewVisibility(R.id.pb_widget, View.GONE)
-                    setViewVisibility(R.id.lo_widget_container, View.VISIBLE)
-                    updateAppWidget(context, this)
-                }
             }
         }
     }

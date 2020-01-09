@@ -4,15 +4,11 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
-import android.view.View
 import android.widget.RemoteViews
-import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.AirCode
-import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.MainActivity
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.LocationUtils
@@ -21,19 +17,19 @@ import com.kobbi.weather.info.util.WeatherUtils
 
 class WidgetProvider : BaseWidgetProvider() {
 
-    override fun createRemoteViews(context: Context): RemoteViews? {
-        DLog.d("WidgetProvider", "createRemoteViews()")
+    override fun createRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews {
+        DLog.d(tag = "WidgetProvider", message = "createRemoteViews()")
         val options =
             AppWidgetManager.getInstance(context).getAppWidgetOptions(getWidgetId(context))
-        return getWidgetWidth(context, options)?.let { wigetWidth ->
-            getRemoteViews(context, wigetWidth)
-        }
+        return getRemoteViews(context, getWidgetWidth(context, options), weatherInfo)
     }
 
-    private fun getRemoteViews(context: Context, widgetWidth: Int): RemoteViews? {
-        val weatherRepository = WeatherRepository.getInstance(context)
-        val locatedArea = weatherRepository.loadLocatedArea()
-        return weatherRepository.getWeatherInfo(locatedArea)?.run {
+    private fun getRemoteViews(
+        context: Context,
+        widgetWidth: Int,
+        weatherInfo: WeatherInfo
+    ): RemoteViews {
+        return weatherInfo.run {
             val resId =
                 if (widgetWidth > 3) R.layout.widget_weather_horizontal else R.layout.widget_weather_vertical
             RemoteViews(context.packageName, resId).apply {
@@ -66,13 +62,11 @@ class WidgetProvider : BaseWidgetProvider() {
                     R.id.iv_widget_sky, WeatherUtils.getSkyIcon(dateTime, pty, sky)
                 )
 
-                if (splitAddress.size >= 2) {
-                    weatherRepository
-                        .findAirMeasureData(splitAddress[0], splitAddress[1])?.run {
-                            setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10))
-                            setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM25, pm25))
-                        }
+                if (!pm10.isNullOrEmpty() && !pm25.isNullOrEmpty()) {
+                    setTextDynamic(ViewDip.PM10, getAirValue(context, AirCode.PM10, pm10!!))
+                    setTextDynamic(ViewDip.PM25, getAirValue(context, AirCode.PM25, pm25!!))
                 }
+
                 setOnClickPendingIntent(
                     R.id.lo_widget_weather_info,
                     PendingIntent.getActivity(
@@ -85,16 +79,9 @@ class WidgetProvider : BaseWidgetProvider() {
                     )
                 )
                 setOnClickPendingIntent(
-                    R.id.lo_refresh_container, getPendingIntent(context, this@WidgetProvider.javaClass)
+                    R.id.lo_refresh_container,
+                    getPendingIntent(context, this@WidgetProvider.javaClass)
                 )
-
-                setViewVisibility(R.id.pb_widget, View.VISIBLE)
-                setViewVisibility(R.id.lo_widget_container, View.GONE)
-                Handler(Looper.getMainLooper()).postDelayed(500) {
-                    setViewVisibility(R.id.pb_widget, View.GONE)
-                    setViewVisibility(R.id.lo_widget_container, View.VISIBLE)
-                    updateAppWidget(context, this)
-                }
             }
         }
     }

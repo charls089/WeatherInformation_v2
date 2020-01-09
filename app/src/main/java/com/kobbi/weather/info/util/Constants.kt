@@ -1,8 +1,5 @@
 package com.kobbi.weather.info.util
 
-/**
- *
- */
 class Constants private constructor() {
     companion object {
         const val POP = "POP"        //강수확률

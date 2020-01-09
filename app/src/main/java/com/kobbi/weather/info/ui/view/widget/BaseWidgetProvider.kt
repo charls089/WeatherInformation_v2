@@ -9,15 +9,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
-import android.view.View
 import android.view.WindowManager
 import android.widget.RemoteViews
 import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
+import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
-import com.kobbi.weather.info.presenter.repository.WeatherRepository
-import com.kobbi.weather.info.ui.view.activity.MainActivity
-import com.kobbi.weather.info.ui.view.activity.SplashActivity
+import com.kobbi.weather.info.presenter.model.type.ReturnCode
+import com.kobbi.weather.info.presenter.viewmodel.WidgetViewModel
 import com.kobbi.weather.info.util.DLog
 import com.kobbi.weather.info.util.SharedPrefHelper
 import com.kobbi.weather.info.util.Utils
@@ -42,7 +41,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         private const val REFRESH_WIDGET_ACTION = ".action.refresh.widget.data"
     }
 
-    abstract fun createRemoteViews(context: Context): RemoteViews?
+    abstract fun createRemoteViews(context: Context, weatherInfo: WeatherInfo): RemoteViews
 
     override fun onUpdate(
         context: Context,
@@ -50,10 +49,11 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        DLog.writeLogFile(
-            context, TAG, "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}"
+        DLog.i(
+            context,
+            TAG,
+            "onUpdate() --> appWidgetIds : ${appWidgetIds.toList()}, myWidgetId : ${getWidgetId(context)}"
         )
-        DLog.d(TAG, "onUpdate() --> getWidgetId : ${getWidgetId(context)}")
         if (getWidgetId(context) == Int.MIN_VALUE)
             setWidgetId(context, appWidgetIds[0])
         updateAppWidget(context)
@@ -72,30 +72,56 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent?) {
         super.onReceive(context, intent)
         val action = intent?.action
-        DLog.writeLogFile(context, TAG, "onReceive() --> action : $action")
+        DLog.i(context, TAG, "onReceive() --> action : $action")
         if (action == getAction(context)) {
             updateAppWidget(context)
         }
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        DLog.writeLogFile(
+        DLog.i(
             context, TAG, "onDeleted() --> appWidgetIds : ${appWidgetIds.toList()}"
         )
         super.onDeleted(context, appWidgetIds)
         resetWidgetId(context)
     }
 
-    open fun getWeatherInfo(context: Context): WeatherInfo? {
-        WeatherRepository.getInstance(context.applicationContext).run {
-            val area = loadLocatedArea()
-            val weatherInfo = getWeatherInfo(area)
-            DLog.d(TAG, "area : $area, weatherInfo : $weatherInfo")
-            return weatherInfo
-        }
+    private fun setRemoteViews(context: Context) {
+        showProgressView(context)
+        WidgetViewModel(context).getWeatherInfo(object : CompleteListener {
+            override fun onComplete(code: ReturnCode, data: Any) {
+                DLog.d(context, TAG, "setRemoteViews.onComplete() --> code : $code, data : $data")
+                val remoteViews =
+                    if (Utils.getNeedToRequestPermissions(context).isNotEmpty())
+                        getErrPageView(context, R.string.info_widget_permission_not_checked)
+                    else
+                        when (code) {
+                            ReturnCode.NO_ERROR -> {
+                                if (data is WeatherInfo) {
+                                    createRemoteViews(context, data)
+                                } else {
+                                    getErrPageView(context, R.string.info_widget_data_load_error)
+                                }
+                            }
+                            ReturnCode.NETWORK_DISABLED -> {
+                                getErrPageView(context, R.string.info_network_disabled)
+                            }
+                            ReturnCode.SOCKET_TIMEOUT -> {
+                                getErrPageView(context, R.string.info_network_timeout)
+                            }
+                            else -> {
+                                getErrPageView(context, R.string.info_widget_data_load_error)
+                            }
+                        }
+
+                Handler(Looper.getMainLooper()).postDelayed(500) {
+                    updateAppWidget(context, remoteViews)
+                }
+            }
+        })
     }
 
-    open fun getWidgetWidth(context: Context?, options: Bundle?): Int? {
+    open fun getWidgetWidth(context: Context?, options: Bundle?): Int {
         options?.run {
             val maxWidth = getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
             val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
@@ -115,7 +141,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                 return count
             }
         }
-        return null
+        return 2
     }
 
     open fun getDip(widthSize: Int, value: Int): Float {
@@ -132,48 +158,30 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     }
 
     open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
+        DLog.d(context, TAG, message = "updateAppWidget() --> remoteViews : $remoteViews")
         AppWidgetManager.getInstance(context)
             .updateAppWidget(getWidgetId(context), remoteViews)
     }
 
     private fun updateAppWidget(context: Context) {
         thread {
-            val remoteViews = createRemoteViews(context) ?: getErrPageView(context)
-            updateAppWidget(context, remoteViews)
+            setRemoteViews(context)
         }
     }
 
-    private fun getErrPageView(context: Context): RemoteViews {
-        DLog.d(TAG, "getErrPageView()")
+    private fun getErrPageView(context: Context, resId: Int): RemoteViews {
+        DLog.e(tag = TAG, message = "getErrPageView()")
         return RemoteViews(context.packageName, R.layout.widget_weather_error).apply {
             setOnClickPendingIntent(
                 R.id.iv_error_refresh, getPendingIntent(context, getWidgetProvider(context))
             )
-            setOnClickPendingIntent(
-                R.id.tv_widget_error, PendingIntent.getActivity(
-                    context,
-                    0,
-                    Intent(context, SplashActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    },
-                    0
-                )
-            )
-            setTextViewText(
-                R.id.tv_widget_error,
-                context.getString(
-                    if (Utils.getNeedToRequestPermissions(context).isEmpty())
-                        R.string.info_widget_data_load_error else R.string.info_widget_permission_not_checked
-                )
-            )
-            setViewVisibility(R.id.pb_widget, View.VISIBLE)
-            setViewVisibility(R.id.lo_widget_error_info, View.GONE)
-            Handler(Looper.getMainLooper()).postDelayed(500) {
-                setViewVisibility(R.id.pb_widget, View.GONE)
-                setViewVisibility(R.id.lo_widget_error_info, View.VISIBLE)
-                updateAppWidget(context, this)
-            }
+            setTextViewText(R.id.tv_widget_error, context.getString(resId))
         }
+    }
+
+    private fun showProgressView(context: Context) {
+        val remoteViews = RemoteViews(context.packageName, R.layout.widget_loading)
+        updateAppWidget(context, remoteViews)
     }
 
     private fun getWidgetProvider(context: Context): Class<out BaseWidgetProvider> {

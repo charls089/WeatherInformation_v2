@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 
 data class WeatherInfo(
     @ColumnInfo(name = "address")
-    val address:String,
+    val address: String,
     @ColumnInfo(name = "today_dateTime")
     val dateTime: Long,
     @ColumnInfo(name = "today_tpr")
@@ -20,5 +20,9 @@ data class WeatherInfo(
     @ColumnInfo(name = "tmn")
     val tmn: String,
     @ColumnInfo(name = "tmx")
-    val tmx: String
+    val tmx: String,
+    var yesterdayTpr: String? = null,
+    var yesterdayWct: String? = null,
+    var pm10: String? = null,
+    var pm25: String? = null
 )

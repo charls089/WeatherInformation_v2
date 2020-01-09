@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import com.kobbi.weather.info.R
 
 
 class Notificator private constructor() {
@@ -71,11 +72,11 @@ class Notificator private constructor() {
             } else {
                 NotificationCompat.Builder(applicationContext)
             }
-        if (title != null && message != null)
-            with(builder) {
+        with(builder) {
+            setSmallIcon(R.drawable.notify_img2)
+            if (title != null && message != null) {
                 setContentTitle(title)
                 setContentText(message)
-                setSmallIcon(context.applicationContext.applicationInfo.icon)
                 setAutoCancel(true)
                 if (icon != null)
                     setLargeIcon(BitmapFactory.decodeResource(context.resources, icon))
@@ -84,6 +85,7 @@ class Notificator private constructor() {
                     setContentIntent(pendingIntent)
                 }
             }
+        }
 
         return builder.build()
     }

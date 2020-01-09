@@ -36,7 +36,7 @@ abstract class WeatherDatabase : RoomDatabase() {
         private val mCallback = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
-                DLog.d(TAG, "WeatherDatabase.onCreate()")
+                DLog.d(tag = TAG, message = "WeatherDatabase.onCreate()")
             }
         }
 
@@ -46,7 +46,7 @@ abstract class WeatherDatabase : RoomDatabase() {
         @JvmStatic
         fun getDatabase(context: Context): WeatherDatabase {
             return INSTANCE ?: synchronized(this) {
-                DLog.d(TAG, "getDatabase($context) - INSTANCE : $INSTANCE")
+                DLog.d(tag = TAG, message = "getDatabase($context) - INSTANCE : $INSTANCE")
                 Room.databaseBuilder(
                     context.applicationContext,
                     WeatherDatabase::class.java,

@@ -9,19 +9,19 @@ import com.kobbi.weather.info.util.DLog
 class ServiceReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
-            DLog.writeLogFile(
+            DLog.v(
                 context,
                 "ServiceReceiver",
                 "context : $context / action : ${intent?.action}"
             )
             intent?.action?.let { action ->
                 when (action) {
-                    Intent.ACTION_BOOT_COMPLETED -> ServiceManager.restartService(it, true)
-                    ServiceManager.getAction(context, ServiceManager.ACTION_RESTART) -> ServiceManager.restartService(
-                        it,
-                        false
-                    )
-                    ServiceManager.getAction(context, ServiceManager.ACTION_NOTIFY) -> ServiceManager.notifyWeather()
+                    Intent.ACTION_BOOT_COMPLETED,
+                    ServiceManager.getAction(context, ServiceManager.ACTION_RESTART) ->
+                        ServiceManager.restartService(it)
+
+                    ServiceManager.getAction(context, ServiceManager.ACTION_NOTIFY) ->
+                        ServiceManager.notifyWeather()
                 }
             }
         }

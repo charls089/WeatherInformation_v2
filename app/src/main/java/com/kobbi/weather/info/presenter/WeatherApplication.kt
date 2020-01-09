@@ -18,10 +18,10 @@ class WeatherApplication : Application() {
         private const val TAG = "WeatherApplication"
 
         fun startProcess(context: Context) {
-            DLog.writeLogFile(context, TAG, "Start WeatherApplication")
+            DLog.i(context, TAG, "Start WeatherApplication")
             setUpdateCheckTime(context, 0)
             AreaCodeDatabase.initializeDB(context)
-            ServiceManager.restartService(context, true)
+            ServiceManager.restartService(context)
         }
 
         fun setUpdateCheckTime(context: Context, time: Long = System.currentTimeMillis()) {
