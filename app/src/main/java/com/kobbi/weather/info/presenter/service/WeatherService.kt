@@ -1,5 +1,6 @@
 package com.kobbi.weather.info.presenter.service
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
@@ -92,7 +93,8 @@ class WeatherService : Service() {
 
     fun notifyMyLocation() {
         applicationContext?.let { context ->
-            val isUse = SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION)
+            val isUse =
+                SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION)
             DLog.d(tag = TAG, message = "notifyWeather() - isUse : $isUse")
             if (isUse)
                 thread {
@@ -152,7 +154,7 @@ class WeatherService : Service() {
                             message = "Location needs runtime permission"
                         }
                     }
-                    DLog.writeLogFile(
+                    DLog.i(
                         context, TAG,
                         "getLocation.onComplete() --> responseCode : $responseCode, message : $message"
                     )

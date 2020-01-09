@@ -73,7 +73,7 @@ class Notificator private constructor() {
                 NotificationCompat.Builder(applicationContext)
             }
         with(builder) {
-            setSmallIcon(R.drawable.notify_img2)
+            setSmallIcon(R.drawable.notify_img)
             if (title != null && message != null) {
                 setContentTitle(title)
                 setContentText(message)
