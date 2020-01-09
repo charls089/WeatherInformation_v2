@@ -39,10 +39,10 @@ class ExampleUnitTest {
 
     @Test
     fun offerTypeCheck() {
-        val isNeedToUpdate = OfferType.isNeedToUpdate(OfferType.LIFE_TIME)
+        val isNeedToUpdate = OfferType.isNeedToUpdate(OfferType.CURRENT)
         println("isNeedToUpdate : $isNeedToUpdate")
 
-        val time = OfferType.getBaseDateTime(OfferType.LIFE_TIME)
+        val time = OfferType.getBaseDateTime(OfferType.CURRENT)
         println("time : $time")
         println(time.first+time.second.dropLast(2))
     }

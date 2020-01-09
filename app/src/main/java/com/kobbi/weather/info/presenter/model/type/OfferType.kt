@@ -75,7 +75,8 @@ enum class OfferType(
                                 break
                             }
                             if (i == listIndices.last) {
-                                baseTime = baseTimeList[baseTimeList.size - 1]
+                                val index = baseTimeList.size - if (type == LIFE_TIME) 2 else 1
+                                baseTime = baseTimeList[index]
                                 break
                             }
                         }

@@ -12,8 +12,8 @@ android {
         applicationId "com.kobbi.weather.info"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 21008
-        versionName "2.1.008"
+        versionCode 21009
+        versionName "2.1.009"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", "\"Fho07MdXTGuMn54adge2wYi1ENE8KZg0H7WdyaQHvnK61tEu7YhFGq7ORRObw3SotbH5jODmgaIyOvaX1f8QtA%3D%3D\"")
         buildConfigField("String", "ADDRESS_API_KEY", "\"U01TX0FVVEgyMDE5MDYyMDA5Mzk0MTEwODgyNDk=\"")
