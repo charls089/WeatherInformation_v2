@@ -183,31 +183,33 @@ class WeatherRepository private constructor(context: Context) {
                 val tprList = mutableListOf<WeeklyTpr>()
                 val landList = mutableListOf<WeeklyLand>()
                 val baseDate = OfferType.getBaseDateTime(OfferType.WEEKLY).first
-                for (i in 3..7) {
-                    val cal = GregorianCalendar().apply {
-                        time = Utils.convertStringToDate(date = baseDate)
-                        add(Calendar.DATE, i)
+                Utils.convertStringToDate(date = baseDate)?.let { date ->
+                    for (i in 3..7) {
+                        val cal = GregorianCalendar().apply {
+                            time = date
+                            add(Calendar.DATE, i)
+                        }
+                        val dateTime = Utils.getCurrentTime(time = cal.timeInMillis).toLong()
+                        val wfAm = getMapData(it, "wf${i}Am")
+                        val wfPm = getMapData(it, "wf${i}Pm")
+                        val taMax = getMapData(it, "taMax$i")
+                        val taMin = getMapData(it, "taMin$i")
+                        val rnStAm = getMapData(it, "rnSt${i}Am")
+                        val rnStPm = getMapData(it, "rnSt${i}Pm")
+                        if (wfAm.isEmpty()) {
+                            tprList.add(WeeklyTpr(dateTime, prvnCode, cityCode, taMin, taMax))
+                        } else {
+                            landList.add(
+                                WeeklyLand(dateTime, prvnCode, wfAm, wfPm, rnStAm, rnStPm)
+                            )
+                        }
                     }
-                    val dateTime = Utils.getCurrentTime(time = cal.timeInMillis).toLong()
-                    val wfAm = getMapData(it, "wf${i}Am")
-                    val wfPm = getMapData(it, "wf${i}Pm")
-                    val taMax = getMapData(it, "taMax$i")
-                    val taMin = getMapData(it, "taMin$i")
-                    val rnStAm = getMapData(it, "rnSt${i}Am")
-                    val rnStPm = getMapData(it, "rnSt${i}Pm")
-                    if (wfAm.isEmpty()) {
-                        tprList.add(WeeklyTpr(dateTime, prvnCode, cityCode, taMin, taMax))
-                    } else {
-                        landList.add(
-                            WeeklyLand(dateTime, prvnCode, wfAm, wfPm, rnStAm, rnStPm)
-                        )
-                    }
+                    val weeklyDao = mWeatherDB.weeklyWeatherDao()
+                    if (tprList.isEmpty())
+                        weeklyDao.insertLand(landList)
+                    else
+                        weeklyDao.insertTpr(tprList)
                 }
-                val weeklyDao = mWeatherDB.weeklyWeatherDao()
-                if (tprList.isEmpty())
-                    weeklyDao.insertLand(landList)
-                else
-                    weeklyDao.insertTpr(tprList)
             }
         }
     }
@@ -489,15 +491,16 @@ class WeatherRepository private constructor(context: Context) {
     }
 
     /**
-     * Formula : 13.12 + 0.6215 * t - 11.37 * v^0.16 + 0.3965 * v^0.16 * t
+     * Formula : 13.12 + 0.6215 * t - 11.37 * v^0.16 + 0.3965 * v^0.16 * t (v : km/h)
      *
      * @param t Temperature
-     * @param w Wind Velocity
+     * @param w Wind Velocity (m/s)
      */
     private fun getWindChillTemperature(t: String, w: String): String {
         return try {
             val tpr = t.toDouble()
-            val v = w.toDouble()
+            //TODO m/s --> km/h
+            val v = w.toDouble() * 3.6
             (13.12 + 0.6215 * tpr - 11.37 * v.pow(0.16) + 0.3965 * v.pow(0.16) * tpr).roundToInt()
                 .toString()
         } catch (e: NumberFormatException) {

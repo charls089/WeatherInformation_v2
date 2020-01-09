@@ -162,10 +162,10 @@ class WeatherService : Service() {
                                 )
                             }
                         }
-                        OfferType.LIFE -> {
+                        OfferType.LIFE_TIME, OfferType.LIFE_DAY -> {
                             weatherRepository.loadAllAreaNo().forEach { areaNo ->
                                 ApiRequestRepository.requestLife(
-                                    context, areaNo, mListener
+                                    context, type, areaNo, mListener
                                 )
                             }
                         }
@@ -190,7 +190,7 @@ class WeatherService : Service() {
                                 }
                             }
                         }
-                        OfferType.MINMAX -> {
+                        OfferType.MIN_MAX -> {
                             //Nothing
                         }
                     }

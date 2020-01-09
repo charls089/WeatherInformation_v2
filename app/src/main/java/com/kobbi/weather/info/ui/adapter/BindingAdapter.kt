@@ -20,7 +20,6 @@ import com.kobbi.weather.info.presenter.model.data.MinMaxTpr
 import com.kobbi.weather.info.presenter.model.data.WeeklyData
 import com.kobbi.weather.info.presenter.model.type.AirCode
 import com.kobbi.weather.info.presenter.model.type.LifeCode
-import com.kobbi.weather.info.presenter.model.type.SearchTime
 import com.kobbi.weather.info.presenter.viewmodel.JusoViewModel
 import com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel
 import com.kobbi.weather.info.ui.view.LifeItemLayout

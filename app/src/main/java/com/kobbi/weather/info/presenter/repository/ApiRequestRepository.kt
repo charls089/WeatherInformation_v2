@@ -33,7 +33,7 @@ class ApiRequestRepository private constructor() {
         ) {
             val apiUrl = when (type) {
                 OfferType.CURRENT, OfferType.YESTERDAY -> ApiConstants.API_FORECAST_TIME_DATA
-                OfferType.MINMAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
+                OfferType.MIN_MAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
                 else -> ""
             }
             if (apiUrl.isNotEmpty()) {
@@ -120,44 +120,49 @@ class ApiRequestRepository private constructor() {
                         }
                     }
                 }
+
             })
         }
 
         @JvmStatic
-        fun requestLife(context: Context, areaNo: String, listener: CompleteListener? = null) {
-            val time = OfferType.getBaseDateTime(OfferType.LIFE)
-            val params = java.util.LinkedHashMap<String, Any>().apply {
-                put("areaNo", areaNo)
-                put("time", time.first + time.second.dropLast(2))
-                put("_type", "json")
-            }
+        fun requestLife(context: Context, type: OfferType, areaNo: String, listener: CompleteListener? = null) {
             val apiList = ApiConstants.LifeApi.checkRequestUrl()
-            for (apiUrl in apiList) {
-                val client = WeatherClient.getInstance()
-                client.requestLife(apiUrl.url, params).enqueue(object : Callback<LifeResponse> {
-                    override fun onResponse(
-                        call: Call<LifeResponse>, response: Response<LifeResponse>
-                    ) {
-                        DLog.writeLogFile(
-                            context, TAG,
-                            "requestLife.onResponse() -> <$apiUrl>call : $call, response : $response"
-                        )
-                        val indexModel = response.body()?.response?.body?.indexModel
-                        DLog.d(TAG, "<$apiUrl>indexModel : $indexModel")
-                        WeatherRepository.getInstance(context).insertLife(areaNo, indexModel)
+            for (api in apiList) {
+                if (api.offerType == type) {
+                    val time = OfferType.getBaseDateTime(type)
+                    val params = java.util.LinkedHashMap<String, Any>().apply {
+                        put("areaNo", areaNo)
+                        put("time", time.first + time.second.dropLast(2))
+                        put("_type", "json")
                     }
+                    val client = WeatherClient.getInstance()
+                    client.requestLife(api.url, params).enqueue(object : Callback<LifeResponse> {
+                        override fun onResponse(
+                            call: Call<LifeResponse>, response: Response<LifeResponse>
+                        ) {
+                            DLog.writeLogFile(
+                                context, TAG,
+                                "requestLife.onResponse() -> <${api.apiName}>call : $call, response : $response"
+                            )
+                            val indexModel = response.body()?.response?.body?.indexModel
+                            DLog.d(TAG, "<$api>indexModel : $indexModel")
+                            WeatherRepository.getInstance(context).insertLife(areaNo, indexModel)
+                        }
 
-                    override fun onFailure(call: Call<LifeResponse>, t: Throwable) {
-                        DLog.writeLogFile(
-                            context, TAG, "requestLife.onFailure() -> <$apiUrl>call : $call, t : $t"
-                        )
-                        listener?.run {
-                            if (t is SocketTimeoutException) {
-                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.LIFE)
+                        override fun onFailure(call: Call<LifeResponse>, t: Throwable) {
+                            DLog.writeLogFile(
+                                context,
+                                TAG,
+                                "requestLife.onFailure() -> <$api>call : $call, t : $t"
+                            )
+                            listener?.run {
+                                if (t is SocketTimeoutException) {
+                                    listener.onComplete(ReturnCode.SOCKET_TIMEOUT, api.offerType)
+                                }
                             }
                         }
-                    }
-                })
+                    })
+                }
             }
         }
 
@@ -281,10 +286,11 @@ class ApiRequestRepository private constructor() {
             requestWeather(context, OfferType.CURRENT, gridData)
             requestWeather(context, OfferType.YESTERDAY, gridData)
             requestWeather(context, OfferType.DAILY, gridData)
-            requestWeather(context, OfferType.MINMAX, gridData)
+            requestWeather(context, OfferType.MIN_MAX, gridData)
             requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
             requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
-            requestLife(context, areaNo)
+            requestLife(context, OfferType.LIFE_DAY, areaNo)
+            requestLife(context, OfferType.LIFE_TIME, areaNo)
             requestAirMeasure(context, sidoName[0])
             requestNews(context)
         }

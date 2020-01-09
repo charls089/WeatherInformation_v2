@@ -11,6 +11,7 @@ import android.os.SystemClock
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.receiver.ServiceReceiver
 import com.kobbi.weather.info.util.DLog
+import com.kobbi.weather.info.util.SharedPrefHelper
 import java.util.*
 
 object ServiceManager {
@@ -51,7 +52,7 @@ object ServiceManager {
             DLog.i(TAG, "UpDownService was connected.")
             val binder = service as UpDownService.LocalBinder
             mPolarisService = binder.service
-            getWeatherInfo()
+            mPolarisService?.echo()
         }
     }
 
@@ -60,7 +61,8 @@ object ServiceManager {
         context.applicationContext?.let {
             if (init) {
                 registerRestartReceiver(it)
-                registerNotifyReceiver(it)
+                if (SharedPrefHelper.getBool(it,SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION))
+                    registerNotifyReceiver(it)
             }
 
             bindService(it, WeatherService::class.java, mWeatherServiceConnection)

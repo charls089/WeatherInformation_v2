@@ -1,5 +1,6 @@
 package com.kobbi.weather.info.util
 
+import com.kobbi.weather.info.presenter.model.type.OfferType
 import java.util.*
 
 class ApiConstants private constructor() {
@@ -59,15 +60,15 @@ class ApiConstants private constructor() {
         const val API_DONG_URL = "getEupMyunDongList"      //읍,면,동
     }
 
-    enum class LifeApi(name: String, val url: String, val startMonth: Int, val endMonth: Int) {
-        SENSORY_TEM("체감온도", "getSensorytemLifeList", Calendar.NOVEMBER, Calendar.MARCH),
-        WINTER("동파가능지수", "getWinterLifeList", Calendar.DECEMBER, Calendar.FEBRUARY),
-        ULTRA_V("자외선지수", "getUltrvLifeList", Calendar.MARCH, Calendar.NOVEMBER),
-        FSN("식중독지수", "getFsnLifeList", Calendar.JANUARY, Calendar.DECEMBER),
-        HEAT("열지수", "getHeatLifeList", Calendar.JUNE, Calendar.SEPTEMBER),
-        DSPLS("불쾌지수", "getDsplsLifeList", Calendar.JUNE, Calendar.SEPTEMBER),
-        AIR_POLLUTION("대기오염확산지수", "getAirpollutionLifeList", Calendar.NOVEMBER, Calendar.MAY),
-        SENSORY_HEAT("더위체감지수", "getSensoryHeatLifeList", Calendar.MAY, Calendar.SEPTEMBER);
+    enum class LifeApi(val apiName: String, val url: String, val startMonth: Int, val endMonth: Int, val offerType: OfferType) {
+        SENSORY_TEM("체감온도", "getSensorytemLifeList", Calendar.NOVEMBER, Calendar.MARCH, OfferType.LIFE_TIME),
+        WINTER("동파가능지수", "getWinterLifeList", Calendar.DECEMBER, Calendar.FEBRUARY, OfferType.LIFE_TIME),
+        ULTRA_V("자외선지수", "getUltrvLifeList", Calendar.MARCH, Calendar.NOVEMBER, OfferType.LIFE_DAY),
+        FSN("식중독지수", "getFsnLifeList", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_DAY),
+        HEAT("열지수", "getHeatLifeList", Calendar.JUNE, Calendar.SEPTEMBER, OfferType.LIFE_TIME),
+        DSPLS("불쾌지수", "getDsplsLifeList", Calendar.JUNE, Calendar.SEPTEMBER, OfferType.LIFE_TIME),
+        AIR_POLLUTION("대기오염확산지수", "getAirpollutionLifeList", Calendar.NOVEMBER, Calendar.MAY, OfferType.LIFE_TIME),
+        SENSORY_HEAT("더위체감지수", "getSensoryHeatLifeList", Calendar.MAY, Calendar.SEPTEMBER, OfferType.LIFE_TIME);
 
         companion object {
             @JvmStatic
