@@ -23,11 +23,11 @@ class UpDownService : Service() {
 
     fun echo() {
         DLog.v(applicationContext, TAG, "echo")
-        upPolaris()
-        downPolaris()
+        upService()
+        downService()
     }
 
-    fun upPolaris() {
+    fun upService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DLog.d(tag = TAG, message =  "up")
             val notificator = Notificator.getInstance()
@@ -37,7 +37,7 @@ class UpDownService : Service() {
         }
     }
 
-    fun downPolaris() {
+    fun downService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DLog.d(tag = TAG, message =  "down")
             stopForeground(true)

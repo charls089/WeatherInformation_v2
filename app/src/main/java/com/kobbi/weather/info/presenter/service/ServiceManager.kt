@@ -35,7 +35,7 @@ object ServiceManager {
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.i(tag = TAG, message =  "WeatherService was connected.")
+            DLog.i(tag = TAG, message = "WeatherService was connected.")
             val binder = service as WeatherService.LocalBinder
             mWeatherService = binder.service
             getWeatherInfo()
@@ -45,11 +45,11 @@ object ServiceManager {
     private val mPolarisServiceConnection = object : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.i(tag = TAG, message =  "UpDownService was disconnected.")
+            DLog.i(tag = TAG, message = "UpDownService was disconnected.")
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.i(tag = TAG, message =  "UpDownService was connected.")
+            DLog.i(tag = TAG, message = "UpDownService was connected.")
             val binder = service as UpDownService.LocalBinder
             mPolarisService = binder.service
             mPolarisService?.echo()
@@ -61,7 +61,7 @@ object ServiceManager {
         context.applicationContext?.let {
             if (init) {
                 registerRestartReceiver(it)
-                if (SharedPrefHelper.getBool(it,SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION))
+                if (SharedPrefHelper.getBool(it, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION))
                     registerNotifyReceiver(it)
             }
 
@@ -77,16 +77,16 @@ object ServiceManager {
 
     @Synchronized
     fun getWeatherInfo(init: Boolean = false) {
-        DLog.d(tag = TAG, message =  "ServiceManager.getWeatherInfo($init)")
+        DLog.d(tag = TAG, message = "ServiceManager.getWeatherInfo($init)")
         mWeatherService?.runService(init)
     }
 
     fun startF() {
-        mPolarisService?.upPolaris()
+        mPolarisService?.upService()
     }
 
     fun stopF() {
-        mPolarisService?.downPolaris()
+        mPolarisService?.downService()
     }
 
     fun notifyWeather() {
