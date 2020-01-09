@@ -6,7 +6,6 @@ import com.kobbi.weather.info.BuildConfig
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.lang.Exception
 
 class DLog private constructor() {
     companion object {
