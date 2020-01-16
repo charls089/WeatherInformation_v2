@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.kobbi.weather.info.data.database.dao.ForecastAreaCodeDAO
 import com.kobbi.weather.info.data.database.dao.LifeAreaCodeDAO
@@ -16,7 +17,7 @@ import kotlin.concurrent.thread
 
 @Database(
     entities = [ForecastAreaCode::class, LifeAreaCode::class],
-    version = 1
+    version = 2
 )
 abstract class AreaCodeDatabase : RoomDatabase() {
     abstract fun fcstAreaCodeDao(): ForecastAreaCodeDAO
@@ -44,6 +45,13 @@ abstract class AreaCodeDatabase : RoomDatabase() {
                 }
                 Room.databaseBuilder(context, AreaCodeDatabase::class.java, DB_NAME)
                     .addCallback(callback)
+                    //modify zone info(19.01.06)
+                    .addMigrations(object : Migration(1, 2) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            SharedPrefHelper.setBool(context, SharedPrefHelper.KEY_AREA_CODE_DATA_INITIALIZED, false)
+                            initializeDB(context)
+                        }
+                    })
                     .build().also {
                         INSTANCE = it
                     }
