@@ -338,12 +338,12 @@ class ApiRequestRepository private constructor() {
             val gridData =
                 GridData(area.gridX, area.gridY)
             val areaNo = area.areaCode
-            requestVillage(context, OfferType.CURRENT, gridData)
-            requestVillage(context, OfferType.YESTERDAY, gridData)
-            requestVillage(context, OfferType.DAILY, gridData)
-            requestVillage(context, OfferType.MIN_MAX, gridData)
-            requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
-            requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
+            requestVillage(context, OfferType.CURRENT, gridData, listener)
+            requestVillage(context, OfferType.YESTERDAY, gridData, listener)
+            requestVillage(context, OfferType.DAILY, gridData, listener)
+            requestVillage(context, OfferType.MIN_MAX, gridData,listener)
+            requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, listener)
+            requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, listener)
             requestLife(context, OfferType.LIFE_DAY, areaNo)
             requestLife(context, OfferType.LIFE_TIME, areaNo)
             requestAirMeasure(context, sidoName[0])

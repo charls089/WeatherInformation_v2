@@ -23,7 +23,7 @@ class WidgetViewModel(private val context: Context) {
             locatedArea?.run {
                 weatherInfo?.run {
                     listener.onComplete(ReturnCode.NO_ERROR, this)
-                } ?: ApiRequestRepository.initBaseAreaData(context, this, object : CompleteListener {
+                } ?: ApiRequestRepository.initBaseAreaData(context.applicationContext, this, object : CompleteListener {
                     override fun onComplete(code: ReturnCode, data: Any) {
                         DLog.d(
                             tag = "WidgetViewModel",
@@ -51,7 +51,7 @@ class WidgetViewModel(private val context: Context) {
                         }
                     }
                 })
-            } ?: listener.onComplete(ReturnCode.DATA_IS_NULL, "We can't find your area right now.")
+            } ?: listener.onComplete(ReturnCode.AREA_IS_NOT_FOUND, "We can't find your area right now.")
         }
     }
 }

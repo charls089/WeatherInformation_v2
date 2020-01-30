@@ -6,5 +6,6 @@ enum class ReturnCode {
     NOT_UPDATE_TIME,
     NETWORK_DISABLED,
     SOCKET_TIMEOUT,
+    AREA_IS_NOT_FOUND,
     UNKNOWN_ERROR
 }

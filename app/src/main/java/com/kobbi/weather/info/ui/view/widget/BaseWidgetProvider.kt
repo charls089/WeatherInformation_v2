@@ -109,6 +109,9 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                             ReturnCode.SOCKET_TIMEOUT -> {
                                 getErrPageView(context, R.string.info_network_timeout)
                             }
+                            ReturnCode.DATA_IS_NULL -> {
+                                getErrPageView(context, R.string.info_data_is_empty)
+                            }
                             else -> {
                                 getErrPageView(context, R.string.info_widget_data_load_error)
                             }
