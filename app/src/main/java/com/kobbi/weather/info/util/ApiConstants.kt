@@ -6,25 +6,24 @@ import java.util.*
 class ApiConstants private constructor() {
     companion object {
 
-        const val API_KMA_BASE_URL = "http://newsky2.kma.go.kr/"
+        const val API_KMA_BASE_URL = "http://apis.data.go.kr/1360000/"
 
         //동네 예보
-        const val API_WEATHER_SERVICE = "service/SecndSrtpdFrcstInfoService2/"
-        const val API_FORECAST_GRIB = "ForecastGrib"
-        const val API_FORECAST_TIME_DATA = "ForecastTimeData"
-        const val API_FORECAST_SPACE_DATA = "ForecastSpaceData"
-        const val API_VERSION_CHECK = "ForecastVersionCheck"
+        const val API_VILLAGE_SERVICE = "VilageFcstInfoService"
+        const val API_FORECAST_GRIB = "getUltraSrtNcst"
+        const val API_FORECAST_TIME_DATA = "getUltraSrtFcst"
+        const val API_FORECAST_SPACE_DATA = "getVilageFcst"
+        const val API_VERSION_CHECK = "getFcstVersion"
 
         //중기 예보
-        const val API_MIDDLE_SERVICE = "service/MiddleFrcstInfoService/"
-        const val API_MIDDLE_FORECAST = "getMiddleForecast"
-        const val API_MIDDLE_LAND_WEATHER = "getMiddleLandWeather"
-        const val API_MIDDLE_SEA_WEATHER = "getMiddleSeaWeather"
-        const val API_MIDDLE_TEMPERATURE = "getMiddleTemperature"
-        const val API_MIDDLE_LAND_WEATHER_CONF = "getMiddleLandWeatherConf"
+        const val API_MIDDLE_SERVICE = "MidFcstInfoService"
+        const val API_MIDDLE_FORECAST = "getMidFcst"
+        const val API_MIDDLE_LAND_WEATHER = "getMidLandFcst"
+        const val API_MIDDLE_SEA_WEATHER = "getMidSeaFcst"
+        const val API_MIDDLE_TEMPERATURE = "getMidTa"
 
         //기상특보
-        const val API_SPECIAL_REPORT_SERVICE = "service/WetherSpcnwsInfoService/"
+        const val API_SPECIAL_SERVICE = "WthrWrnInfoService"
         const val API_SPECIAL_WARNING_LIST = "WeatherWarningList"                      //기상특보목록조회
         const val API_SPECIAL_WARNING_ITEM = "WeatherWarningItem"                      //기상특보통보문조회
         const val API_SPECIAL_WEATHER_INFO_LIST = "WeatherInfomationList"              //기상정보목록조회
@@ -38,7 +37,10 @@ class ApiConstants private constructor() {
 
 
         //생활기상지수
-        const val API_LIFE_SERVICE = "iros/RetrieveLifeIndexService3/"
+        const val API_LIFE_SERVICE = "LivingWthrIdxService"
+
+        //보건기상지수
+        const val API_HEALTH_SERVICE = "HealthWthrIdxService"
 
         //대기 오염정보
         const val API_AIRKOREA_BASE_URL =
@@ -52,7 +54,6 @@ class ApiConstants private constructor() {
         const val API_DISTRICT_AVG_LIST = "getCtprvnMesureSidoLIst"    //시군구별 실시간 평균정보 조회
 
         //지번주소 조회서비스
-        const val API_JUSO_BASE_URL = "http://www.juso.go.kr/addrlink/addrLinkApi.do"
         const val API_EPOST_BASE_URL = "http://openapi.epost.go.kr/postal/"
         const val API_EPOST_SERVICE = "retrieveLotNumberAdressAreaCdService/"
         const val API_PRVN_URL = "getBorodCityList"        //광역시,도
@@ -60,19 +61,32 @@ class ApiConstants private constructor() {
         const val API_DONG_URL = "getEupMyunDongList"      //읍,면,동
     }
 
-    enum class LifeApi(val apiName: String, val url: String, val startMonth: Int, val endMonth: Int, val offerType: OfferType) {
-        SENSORY_TEM("체감온도", "getSensorytemLifeList", Calendar.NOVEMBER, Calendar.MARCH, OfferType.LIFE_TIME),
-        WINTER("동파가능지수", "getWinterLifeList", Calendar.DECEMBER, Calendar.FEBRUARY, OfferType.LIFE_TIME),
-        ULTRA_V("자외선지수", "getUltrvLifeList", Calendar.MARCH, Calendar.NOVEMBER, OfferType.LIFE_DAY),
-        FSN("식중독지수", "getFsnLifeList", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_DAY),
-        HEAT("열지수", "getHeatLifeList", Calendar.JUNE, Calendar.SEPTEMBER, OfferType.LIFE_TIME),
-        DSPLS("불쾌지수", "getDsplsLifeList", Calendar.JUNE, Calendar.SEPTEMBER, OfferType.LIFE_TIME),
-        AIR_POLLUTION("대기오염확산지수", "getAirpollutionLifeList", Calendar.NOVEMBER, Calendar.MAY, OfferType.LIFE_TIME),
-        SENSORY_HEAT("더위체감지수", "getSensoryHeatLifeList", Calendar.MAY, Calendar.SEPTEMBER, OfferType.LIFE_TIME);
+    enum class LifeHealthApi(
+        val apiName: String,
+        val url: String,
+        val startMonth: Int,
+        val endMonth: Int,
+        val offerType: OfferType,
+        val serviceType: ServiceType
+    ) {
+        SENSORY_TEM("체감온도", "getWindChillIdx", Calendar.NOVEMBER, Calendar.MARCH, OfferType.LIFE_TIME, ServiceType.LIFE),
+        DISCOMFORT("불쾌지수", "getDiscomfortIdx", Calendar.JUNE, Calendar.SEPTEMBER, OfferType.LIFE_TIME, ServiceType.LIFE),
+        WINTER("동파가능지수", "getFreezeIdx", Calendar.NOVEMBER, Calendar.MARCH, OfferType.LIFE_TIME, ServiceType.LIFE),
+        ULTRA_V("자외선지수", "getUVIdx", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_DAY, ServiceType.LIFE),
+        AIR_DIFFUSION("대기확산지수", "getAirDiffusionIdx", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_TIME, ServiceType.LIFE),
+        SENSORY_HEAT("더위체감지수", "getHeatFeelingIdx", Calendar.MAY, Calendar.SEPTEMBER, OfferType.LIFE_TIME, ServiceType.LIFE),
+
+        ASTHMA("폐질환가능지수", "getAsthmaIdx", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_DAY, ServiceType.HEALTH),
+        STROKE("뇌졸중가능지수", "getStrokeIdx", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_DAY, ServiceType.HEALTH),
+        FOOD_POISON("식중독지수", "getFoodPoisoningIdx", Calendar.JANUARY, Calendar.DECEMBER, OfferType.LIFE_DAY, ServiceType.HEALTH),
+        OAK_POLLEN_RISK("꽃가루농도위험지수(참나무)", "getOakPollenRiskIdx", Calendar.APRIL, Calendar.MAY, OfferType.LIFE_DAY, ServiceType.HEALTH),
+        PINE_POLLEN_RISK("꽃가루농도위험지수(소나무)", "getPinePollenRiskIdx", Calendar.APRIL, Calendar.MAY, OfferType.LIFE_DAY, ServiceType.HEALTH),
+        WEEDS_POLLEN_RISK("꽃가루농도위험지수(잡초류)", "getWeedsPollenRiskndx", Calendar.SEPTEMBER, Calendar.OCTOBER, OfferType.LIFE_DAY, ServiceType.HEALTH),
+        COLD("감기가능지수", "getAsthmaIdx", Calendar.SEPTEMBER, Calendar.APRIL, OfferType.LIFE_DAY, ServiceType.HEALTH);
 
         companion object {
             @JvmStatic
-            fun checkRequestUrl(): List<LifeApi> {
+            fun checkRequestUrl(): List<LifeHealthApi> {
                 val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
                 return values().filter {
                     it.run {
@@ -85,5 +99,9 @@ class ApiConstants private constructor() {
                 }
             }
         }
+    }
+
+    enum class ServiceType {
+        LIFE, HEALTH
     }
 }

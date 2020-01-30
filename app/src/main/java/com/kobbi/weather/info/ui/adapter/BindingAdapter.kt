@@ -19,7 +19,7 @@ import com.kobbi.weather.info.presenter.listener.LongClickListener
 import com.kobbi.weather.info.presenter.model.data.MinMaxTpr
 import com.kobbi.weather.info.presenter.model.data.WeeklyData
 import com.kobbi.weather.info.presenter.model.type.AirCode
-import com.kobbi.weather.info.presenter.model.type.LifeCode
+import com.kobbi.weather.info.presenter.model.type.LifeHealthCode
 import com.kobbi.weather.info.presenter.viewmodel.JusoViewModel
 import com.kobbi.weather.info.presenter.viewmodel.PlaceViewModel
 import com.kobbi.weather.info.ui.view.LifeItemLayout
@@ -489,8 +489,8 @@ object BindingAdapter {
                 for (index in indexList) {
                     val codeNo = index.codeNo
                     val value = index.value
-                    val codeName = LifeCode.findLifeCode(codeNo)?.codeName
-                    val level = LifeCode.getLifeLevel(codeNo, value)
+                    val codeName = LifeHealthCode.findLifeCode(codeNo)?.codeName
+                    val level = LifeHealthCode.getLifeLevel(codeNo, value)
                     view.context?.let { context ->
                         val itemView = LifeItemLayout(context)
                         with(itemView) {

@@ -138,6 +138,19 @@ class Constants private constructor() {
             VALUE_PM10_LEVEL_VERY_BAD
         )
 
+        private val VALUE_HEALTH_LEVEL_LOW = Pair(0 until 1, "낮음")
+        private val VALUE_HEALTH_LEVEL_NORMAL = Pair(1 until 2, "보통")
+        private val VALUE_HEALTH_LEVEL_HIGH = Pair(2 until 3, "높음")
+        private val VALUE_HEALTH_LEVEL_VERY_HIGH = Pair(3 until Int.MAX_VALUE, "매우높음")
+        val VALUE_RANGE_HEALTH_LEVEL = arrayOf(
+            VALUE_HEALTH_LEVEL_LOW,
+            VALUE_HEALTH_LEVEL_NORMAL,
+            VALUE_HEALTH_LEVEL_HIGH,
+            VALUE_HEALTH_LEVEL_VERY_HIGH
+        )
+
+
+
         const val STATE_CODE_ACTIVE = 0
         const val STATE_CODE_INACTIVE = 1
         const val STATE_CODE_LOCATED = 2

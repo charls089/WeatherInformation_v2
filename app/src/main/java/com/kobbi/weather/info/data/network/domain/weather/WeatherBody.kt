@@ -4,8 +4,10 @@ import com.google.gson.annotations.SerializedName
 
 
 data class WeatherBody(
+    @SerializedName("dataType")
+    val dataType: String,
     @SerializedName("items")
-    val items: WeatherItems,
+    val items: List<Map<String, String>>,
     @SerializedName("numOfRows")
     val numOfRows: Int,
     @SerializedName("pageNo")

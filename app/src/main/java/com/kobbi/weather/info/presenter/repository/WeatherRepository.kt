@@ -5,10 +5,8 @@ import androidx.lifecycle.LiveData
 import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.data.database.WeatherDatabase
 import com.kobbi.weather.info.data.database.entity.*
-import com.kobbi.weather.info.data.network.domain.news.NewsItem
-import com.kobbi.weather.info.data.network.domain.weather.WeatherItem
 import com.kobbi.weather.info.presenter.model.data.*
-import com.kobbi.weather.info.presenter.model.type.LifeCode
+import com.kobbi.weather.info.presenter.model.type.LifeHealthCode
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.model.type.SearchTime
 import com.kobbi.weather.info.util.Constants
@@ -75,7 +73,10 @@ class WeatherRepository private constructor(context: Context) {
                     }
 
                     val pointCode = findAreaCode(list)
-                    DLog.d(tag = TAG, message = "insertArea() --> pointCode : ${pointCode.toString()}")
+                    DLog.d(
+                        tag = TAG,
+                        message = "insertArea() --> pointCode : ${pointCode.toString()}"
+                    )
                     val grid = if (pointCode?.gridX == null)
                         LocationUtils.convertGrid(LocationUtils.convertAddress(context, address))
                     else
@@ -115,7 +116,7 @@ class WeatherRepository private constructor(context: Context) {
         }
     }
 
-    fun insertWeather(gridData: GridData, item: List<WeatherItem>?) {
+    fun insertWeather(gridData: GridData, item: List<Map<String, String>>?) {
         thread {
             val forecastDataList = getWeatherList(item)
             DLog.d(tag = TAG, message = "insertWeather() --> forecastDataList : $forecastDataList")
@@ -175,8 +176,8 @@ class WeatherRepository private constructor(context: Context) {
         }
     }
 
-    fun insertMiddle(areaCode: AreaCode, item: Map<String, String>?) {
-        item?.let {
+    fun insertMiddle(areaCode: AreaCode, items: List<Map<String, String>>?) {
+        items?.forEach { item ->
             thread {
                 val prvnCode = areaCode.prvnCode
                 val cityCode = areaCode.cityCode
@@ -191,12 +192,17 @@ class WeatherRepository private constructor(context: Context) {
                             add(Calendar.DATE, i)
                         }
                         val dateTime = Utils.getCurrentTime(time = cal.timeInMillis).toLong()
-                        val wfAm = getMapData(it, "wf${i}Am")
-                        val wfPm = getMapData(it, "wf${i}Pm")
-                        val taMax = getMapData(it, "taMax$i")
-                        val taMin = getMapData(it, "taMin$i")
-                        val rnStAm = getMapData(it, "rnSt${i}Am")
-                        val rnStPm = getMapData(it, "rnSt${i}Pm")
+
+                        //중기육상예보 데이터
+                        val wfAm = getMapData(item, "wf${i}Am")
+                        val wfPm = getMapData(item, "wf${i}Pm")
+                        val rnStAm = getMapData(item, "rnSt${i}Am")
+                        val rnStPm = getMapData(item, "rnSt${i}Pm")
+
+                        //중기기온조회 데이터
+                        val taMax = getMapData(item, "taMax$i")
+                        val taMin = getMapData(item, "taMin$i")
+
                         if (wfAm.isEmpty()) {
                             tprList.add(WeeklyTpr(dateTime, prvnCode, cityCode, taMin, taMax))
                         } else {
@@ -215,15 +221,15 @@ class WeatherRepository private constructor(context: Context) {
         }
     }
 
-    fun insertLife(areaCode: String, indexModel: Map<String, String>?) {
-        indexModel?.let {
+    fun insertLife(areaCode: String, items: List<Map<String, String>>?) {
+        items?.forEach { item ->
             thread {
-                val code = getMapData(it, "code")
-                val date = getMapData(it, "date")
-                val lifeCode = LifeCode.findLifeCode(code)
+                val code = getMapData(item, "code")
+                val date = getMapData(item, "date")
+                val lifeCode = LifeHealthCode.findLifeCode(code)
                 fun insertData(key: String, field: Int, amount: Int) {
                     Utils.convertStringToDate(Utils.VALUE_DATETIME_FORMAT, date)?.let { date ->
-                        val data = getMapData(it, key)
+                        val data = getMapData(item, key)
                         if (data.isNotEmpty())
                             Calendar.getInstance().run {
                                 time = date
@@ -296,13 +302,20 @@ class WeatherRepository private constructor(context: Context) {
         }
     }
 
-    fun insertSpecialNews(item: NewsItem?) {
-        item?.let {
+    fun insertSpecialNews(items: List<Map<String, String>>?) {
+        items?.forEach { item ->
             thread {
-                val key = "${item.tmFc.toString().substring(0..5)}_${item.tmSeq}"
+                val tmFc = getMapData(item, "tmFc")
+                val tmSeq = getMapData(item, "tmSeq")
+                val tmEf = getMapData(item, "tmEf")
+                val t6 = getMapData(item, "t6")
+                val t7 = getMapData(item, "t7")
+                val other = getMapData(item, "other")
+
+                val key = "${tmFc.substring(0..5)}_${tmSeq}"
                 mWeatherDB.specialNewsDao().insert(
                     SpecialNews(
-                        key, item.tmFc, item.tmSeq, item.tmEf, item.t6, item.t7, item.other
+                        key, tmFc.toLong(), tmSeq.toInt(), tmEf.toLong(), t6, t7, other
                     )
                 )
             }
@@ -462,15 +475,15 @@ class WeatherRepository private constructor(context: Context) {
         mWeatherDB.favoritePlaceDao().delete(deleteList)
     }
 
-    private fun getWeatherList(item: List<WeatherItem>?): List<ForecastData> {
+    private fun getWeatherList(items: List<Map<String, String>>?): List<ForecastData> {
         val linkedMap = LinkedHashMap<String, HashMap<String, String>>()
-        item?.forEach { weather ->
-            val dateTime = weather.fcstDate + weather.fcstTime
-            val category = weather.category
-            val value = weather.fcstValue
+        items?.forEach { item ->
+            val dateTime = getMapData(item, "fcstDate") + getMapData(item, "fcstTime")
+            val category = getMapData(item, "category")
+            val value = getMapData(item, "fcstValue")
             if (linkedMap[dateTime] == null)
                 linkedMap[dateTime] = HashMap()
-            linkedMap[dateTime]?.set(category, value)
+            linkedMap[dateTime]?.put(category, value)
         }
         val forecastDataList = mutableListOf<ForecastData>()
         linkedMap.forEach { map ->
@@ -509,7 +522,6 @@ class WeatherRepository private constructor(context: Context) {
     private fun getWindChillTemperature(t: String, w: String): String {
         return try {
             val tpr = t.toDouble()
-            //TODO m/s --> km/h
             val v = w.toDouble() * 3.6
             (13.12 + 0.6215 * tpr - 11.37 * v.pow(0.16) + 0.3965 * v.pow(0.16) * tpr).roundToInt()
                 .toString()

@@ -28,7 +28,7 @@ class ApiRequestRepository private constructor() {
         private const val TAG = "ApiRequestRepository"
 
         @JvmStatic
-        fun requestWeather(
+        fun requestVillage(
             context: Context,
             type: OfferType,
             gridData: GridData,
@@ -41,20 +41,20 @@ class ApiRequestRepository private constructor() {
             val apiUrl = when (type) {
                 OfferType.CURRENT, OfferType.YESTERDAY -> ApiConstants.API_FORECAST_TIME_DATA
                 OfferType.MIN_MAX, OfferType.DAILY -> ApiConstants.API_FORECAST_SPACE_DATA
-                else -> ""
+                else -> return
             }
-            if (apiUrl.isNotEmpty()) {
-                val baseTime = OfferType.getBaseDateTime(type)
-                val params = LinkedHashMap<String, Any>().apply {
-                    put("base_date", baseTime.first)
-                    put("base_time", baseTime.second)
-                    put("nx", gridData.x)
-                    put("ny", gridData.y)
-                    put("numOfRows", 1000)
-                    put("_type", "json")
-                }
-                val client = WeatherClient.getInstance()
-                client.requestWeather(apiUrl, params).enqueue(object : Callback<WeatherResponse> {
+            val baseTime = OfferType.getBaseDateTime(type)
+            val params = LinkedHashMap<String, Any>().apply {
+                put("base_date", baseTime.first)
+                put("base_time", baseTime.second)
+                put("nx", gridData.x)
+                put("ny", gridData.y)
+                put("numOfRows", 1000)
+                put("dataType", "json")
+            }
+            val client = WeatherClient.getInstance()
+            client.requestWeather(ApiConstants.API_VILLAGE_SERVICE, apiUrl, params)
+                .enqueue(object : Callback<WeatherResponse> {
                     override fun onResponse(
                         call: Call<WeatherResponse>,
                         response: Response<WeatherResponse>
@@ -64,9 +64,9 @@ class ApiRequestRepository private constructor() {
                             TAG,
                             "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
                         )
-                        val item = response.body()?.response?.body?.items?.item
-                        DLog.d(tag = TAG, message = "requestWeather.item : $item")
-                        WeatherRepository.getInstance(context).insertWeather(gridData, item)
+                        val items = response.body()?.response?.body?.items
+                        DLog.d(tag = TAG, message = "requestWeather.items : $items")
+                        WeatherRepository.getInstance(context).insertWeather(gridData, items)
                         listener?.onComplete(ReturnCode.NO_ERROR, type)
                     }
 
@@ -85,7 +85,6 @@ class ApiRequestRepository private constructor() {
                         }
                     }
                 })
-            }
         }
 
         @JvmStatic
@@ -105,39 +104,40 @@ class ApiRequestRepository private constructor() {
             val params = LinkedHashMap<String, Any>().apply {
                 put("regId", id)
                 put("tmFc", tmFc.first + tmFc.second)
-                put("_type", "json")
+                put("dataType", "json")
             }
             val client = WeatherClient.getInstance()
-            client.requestMiddle(apiUrl, params).enqueue(object : Callback<MiddleResponse> {
-                override fun onResponse(
-                    call: Call<MiddleResponse>,
-                    response: Response<MiddleResponse>
-                ) {
-                    DLog.d(
-                        context, TAG,
-                        "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
-                    )
-                    val item = response.body()?.response?.body?.items?.item
-                    DLog.d(tag = TAG, message = "requestMiddle.item : $item")
-                    WeatherRepository.getInstance(context).insertMiddle(areaCode, item)
-                    listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
-                }
+            client.requestWeather(ApiConstants.API_MIDDLE_SERVICE, apiUrl, params)
+                .enqueue(object : Callback<WeatherResponse> {
+                    override fun onResponse(
+                        call: Call<WeatherResponse>,
+                        response: Response<WeatherResponse>
+                    ) {
+                        DLog.d(
+                            context, TAG,
+                            "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
+                        )
+                        val items = response.body()?.response?.body?.items
+                        DLog.d(tag = TAG, message = "requestMiddle.items : $items")
+                        WeatherRepository.getInstance(context).insertMiddle(areaCode, items)
+                        listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
+                    }
 
-                override fun onFailure(call: Call<MiddleResponse>, t: Throwable) {
-                    DLog.e(
-                        context,
-                        TAG,
-                        "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
-                    )
-                    listener?.run {
-                        if (t is SocketTimeoutException) {
-                            listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
-                        } else {
-                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.WEEKLY)
+                    override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                        DLog.e(
+                            context,
+                            TAG,
+                            "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
+                        )
+                        listener?.run {
+                            if (t is SocketTimeoutException) {
+                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
+                            } else {
+                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.WEEKLY)
+                            }
                         }
                     }
-                }
-            })
+                })
         }
 
         @JvmStatic
@@ -151,45 +151,50 @@ class ApiRequestRepository private constructor() {
                 listener?.onComplete(ReturnCode.NETWORK_DISABLED)
                 return
             }
-            val apiList = ApiConstants.LifeApi.checkRequestUrl()
+            val apiList = ApiConstants.LifeHealthApi.checkRequestUrl()
             for (api in apiList) {
                 if (api.offerType == type) {
                     val time = OfferType.getBaseDateTime(type)
                     val params = java.util.LinkedHashMap<String, Any>().apply {
                         put("areaNo", areaNo)
                         put("time", time.first + time.second.dropLast(2))
-                        put("_type", "json")
+                        put("dataType", "json")
+                    }
+                    val serviceUrl = when(api.serviceType) {
+                        ApiConstants.ServiceType.LIFE -> ApiConstants.API_LIFE_SERVICE
+                        ApiConstants.ServiceType.HEALTH -> ApiConstants.API_HEALTH_SERVICE
                     }
                     val client = WeatherClient.getInstance()
-                    client.requestLife(api.url, params).enqueue(object : Callback<LifeResponse> {
-                        override fun onResponse(
-                            call: Call<LifeResponse>, response: Response<LifeResponse>
-                        ) {
-                            DLog.d(
-                                context, TAG,
-                                "requestLife.onResponse() -> <${api.apiName}>call : $call, response : $response"
-                            )
-                            val indexModel = response.body()?.response?.body?.indexModel
-                            DLog.d(tag = TAG, message = "<$api>indexModel : $indexModel")
-                            WeatherRepository.getInstance(context).insertLife(areaNo, indexModel)
-                            listener?.onComplete(ReturnCode.NO_ERROR, type)
-                        }
+                    client.requestWeather(serviceUrl, api.url, params)
+                        .enqueue(object : Callback<WeatherResponse> {
+                            override fun onResponse(
+                                call: Call<WeatherResponse>, response: Response<WeatherResponse>
+                            ) {
+                                DLog.d(
+                                    context, TAG,
+                                    "requestLife.onResponse() -> <${api.apiName}>call : $call, response : $response"
+                                )
+                                val items = response.body()?.response?.body?.items
+                                DLog.d(tag = TAG, message = "<$api>items : $items")
+                                WeatherRepository.getInstance(context).insertLife(areaNo, items)
+                                listener?.onComplete(ReturnCode.NO_ERROR, type)
+                            }
 
-                        override fun onFailure(call: Call<LifeResponse>, t: Throwable) {
-                            DLog.e(
-                                context,
-                                TAG,
-                                "requestLife.onFailure() -> <${api.apiName}>call : $call, t : $t"
-                            )
-                            listener?.run {
-                                if (t is SocketTimeoutException) {
-                                    listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
-                                } else {
-                                    listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
+                            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                                DLog.e(
+                                    context,
+                                    TAG,
+                                    "requestLife.onFailure() -> <${api.apiName}>call : $call, t : $t"
+                                )
+                                listener?.run {
+                                    if (t is SocketTimeoutException) {
+                                        listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
+                                    } else {
+                                        listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
                 }
             }
         }
@@ -202,24 +207,28 @@ class ApiRequestRepository private constructor() {
             }
             val params = java.util.LinkedHashMap<String, Any>().apply {
                 put("numOfRows", 100)
-                put("_type", "json")
+                put("dataType", "json")
             }
             val client = WeatherClient.getInstance()
-            client.requestNews(params).enqueue(object : Callback<NewsResponse> {
+            client.requestWeather(
+                ApiConstants.API_SPECIAL_SERVICE, ApiConstants.API_SPECIAL_STATUS, params
+            ).enqueue(object : Callback<WeatherResponse> {
                 override fun onResponse(
-                    call: Call<NewsResponse>,
-                    response: Response<NewsResponse>
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
                 ) {
                     DLog.d(
-                        context, TAG, "requestNews.onResponse() -> call : $call, response : $response"
+                        context,
+                        TAG,
+                        "requestNews.onResponse() -> call : $call, response : $response"
                     )
-                    val item = response.body()?.response?.body?.items?.item
-                    DLog.d(tag = TAG, message = "requestNews.item : $item")
-                    WeatherRepository.getInstance(context).insertSpecialNews(item)
+                    val items = response.body()?.response?.body?.items
+                    DLog.d(tag = TAG, message = "requestNews.items : $items")
+                    WeatherRepository.getInstance(context).insertSpecialNews(items)
                     listener?.onComplete(ReturnCode.NO_ERROR, OfferType.BASE)
                 }
 
-                override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
                     DLog.e(context, TAG, "requestNews.onFailure() -> call : $call, t : $t")
                     listener?.run {
                         if (t is SocketTimeoutException) {
@@ -262,8 +271,7 @@ class ApiRequestRepository private constructor() {
                         )
                         val list = response.body()?.list
                         DLog.d(tag = TAG, message = "requestAirMeasure.list : $list")
-                        WeatherRepository.getInstance(context)
-                            .insertAirMeasure(addressCode.fullName, list)
+                        WeatherRepository.getInstance(context).insertAirMeasure(addressCode.fullName, list)
                         listener?.onComplete(ReturnCode.NO_ERROR, OfferType.AIR)
                     }
 
@@ -330,10 +338,10 @@ class ApiRequestRepository private constructor() {
             val gridData =
                 GridData(area.gridX, area.gridY)
             val areaNo = area.areaCode
-            requestWeather(context, OfferType.CURRENT, gridData)
-            requestWeather(context, OfferType.YESTERDAY, gridData)
-            requestWeather(context, OfferType.DAILY, gridData)
-            requestWeather(context, OfferType.MIN_MAX, gridData)
+            requestVillage(context, OfferType.CURRENT, gridData)
+            requestVillage(context, OfferType.YESTERDAY, gridData)
+            requestVillage(context, OfferType.DAILY, gridData)
+            requestVillage(context, OfferType.MIN_MAX, gridData)
             requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode)
             requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode)
             requestLife(context, OfferType.LIFE_DAY, areaNo)
@@ -343,7 +351,8 @@ class ApiRequestRepository private constructor() {
         }
 
         private fun isNetworkConnected(context: Context): Boolean {
-            val conn = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            val conn =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
             return conn?.run {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     getNetworkCapabilities(this.activeNetwork)?.let { capabilities ->

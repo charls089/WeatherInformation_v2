@@ -176,7 +176,7 @@ class WeatherService : Service() {
                     when (type) {
                         OfferType.CURRENT, OfferType.DAILY -> {
                             weatherRepository.loadAllGridData().forEach { gridData ->
-                                ApiRequestRepository.requestWeather(
+                                ApiRequestRepository.requestVillage(
                                     context, type, gridData, mListener
                                 )
                             }
@@ -222,7 +222,7 @@ class WeatherService : Service() {
                                         gridData.y
                                     ) == null
                                 ) {
-                                    ApiRequestRepository.requestWeather(
+                                    ApiRequestRepository.requestVillage(
                                         context, type, gridData, mListener
                                     )
                                 }
@@ -233,7 +233,7 @@ class WeatherService : Service() {
                                 val minMaxTpr =
                                     weatherRepository.findMinMaxTpr(gridData.x, gridData.y)
                                 if (minMaxTpr.size != 2) {
-                                    ApiRequestRepository.requestWeather(
+                                    ApiRequestRepository.requestVillage(
                                         context,
                                         type,
                                         gridData,
