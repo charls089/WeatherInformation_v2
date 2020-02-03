@@ -7,7 +7,7 @@ data class WeatherBody(
     @SerializedName("dataType")
     val dataType: String,
     @SerializedName("items")
-    val items: List<Map<String, String>>,
+    val items: WeatherItem,
     @SerializedName("numOfRows")
     val numOfRows: Int,
     @SerializedName("pageNo")

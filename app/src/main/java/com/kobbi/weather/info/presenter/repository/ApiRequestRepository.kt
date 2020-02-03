@@ -64,7 +64,7 @@ class ApiRequestRepository private constructor() {
                             TAG,
                             "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
                         )
-                        val items = response.body()?.response?.body?.items
+                        val items = response.body()?.response?.body?.items?.item
                         DLog.d(tag = TAG, message = "requestWeather.items : $items")
                         WeatherRepository.getInstance(context).insertWeather(gridData, items)
                         listener?.onComplete(ReturnCode.NO_ERROR, type)
@@ -117,7 +117,7 @@ class ApiRequestRepository private constructor() {
                             context, TAG,
                             "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
                         )
-                        val items = response.body()?.response?.body?.items
+                        val items = response.body()?.response?.body?.items?.item
                         DLog.d(tag = TAG, message = "requestMiddle.items : $items")
                         WeatherRepository.getInstance(context).insertMiddle(areaCode, items)
                         listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
@@ -174,7 +174,7 @@ class ApiRequestRepository private constructor() {
                                     context, TAG,
                                     "requestLife.onResponse() -> <${api.apiName}>call : $call, response : $response"
                                 )
-                                val items = response.body()?.response?.body?.items
+                                val items = response.body()?.response?.body?.items?.item
                                 DLog.d(tag = TAG, message = "<$api>items : $items")
                                 WeatherRepository.getInstance(context).insertLife(areaNo, items)
                                 listener?.onComplete(ReturnCode.NO_ERROR, type)
@@ -222,7 +222,7 @@ class ApiRequestRepository private constructor() {
                         TAG,
                         "requestNews.onResponse() -> call : $call, response : $response"
                     )
-                    val items = response.body()?.response?.body?.items
+                    val items = response.body()?.response?.body?.items?.item
                     DLog.d(tag = TAG, message = "requestNews.items : $items")
                     WeatherRepository.getInstance(context).insertSpecialNews(items)
                     listener?.onComplete(ReturnCode.NO_ERROR, OfferType.BASE)
