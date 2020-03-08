@@ -128,7 +128,7 @@ class JusoViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             mPrevPosition = -1
             _depth.postValue(++mDepth)
-            ApiRequestRepository.requestJuso(apiUrl, mCodeList, listener = listener)
+            ApiRequestRepository.requestJuso(getApplication(),apiUrl, mCodeList, listener = listener)
         }
     }
 

@@ -15,8 +15,6 @@ android {
         versionCode 21010
         versionName "2.1.010"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_KEY", "\"Fho07MdXTGuMn54adge2wYi1ENE8KZg0H7WdyaQHvnK61tEu7YhFGq7ORRObw3SotbH5jODmgaIyOvaX1f8QtA%3D%3D\"")
-        buildConfigField("String", "ADDRESS_API_KEY", "\"U01TX0FVVEgyMDE5MDYyMDA5Mzk0MTEwODgyNDk=\"")
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]

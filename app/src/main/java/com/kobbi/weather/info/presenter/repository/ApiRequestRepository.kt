@@ -22,6 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.SocketTimeoutException
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class ApiRequestRepository private constructor() {
     companion object {
@@ -53,7 +55,12 @@ class ApiRequestRepository private constructor() {
                 put("dataType", "json")
             }
             val client = WeatherClient.getInstance()
-            client.requestWeather(ApiConstants.API_VILLAGE_SERVICE, apiUrl, params)
+            client.requestWeather(
+                    ApiConstants.API_VILLAGE_SERVICE,
+                    apiUrl,
+                    getApiKey(context),
+                    params
+                )
                 .enqueue(object : Callback<WeatherResponse> {
                     override fun onResponse(
                         call: Call<WeatherResponse>,
@@ -107,7 +114,12 @@ class ApiRequestRepository private constructor() {
                 put("dataType", "json")
             }
             val client = WeatherClient.getInstance()
-            client.requestWeather(ApiConstants.API_MIDDLE_SERVICE, apiUrl, params)
+            client.requestWeather(
+                    ApiConstants.API_MIDDLE_SERVICE,
+                    apiUrl,
+                    getApiKey(context),
+                    params
+                )
                 .enqueue(object : Callback<WeatherResponse> {
                     override fun onResponse(
                         call: Call<WeatherResponse>,
@@ -160,12 +172,12 @@ class ApiRequestRepository private constructor() {
                         put("time", time.first + time.second.dropLast(2))
                         put("dataType", "json")
                     }
-                    val serviceUrl = when(api.serviceType) {
+                    val serviceUrl = when (api.serviceType) {
                         ApiConstants.ServiceType.LIFE -> ApiConstants.API_LIFE_SERVICE
                         ApiConstants.ServiceType.HEALTH -> ApiConstants.API_HEALTH_SERVICE
                     }
                     val client = WeatherClient.getInstance()
-                    client.requestWeather(serviceUrl, api.url, params)
+                    client.requestWeather(serviceUrl, api.url, getApiKey(context), params)
                         .enqueue(object : Callback<WeatherResponse> {
                             override fun onResponse(
                                 call: Call<WeatherResponse>, response: Response<WeatherResponse>
@@ -211,7 +223,10 @@ class ApiRequestRepository private constructor() {
             }
             val client = WeatherClient.getInstance()
             client.requestWeather(
-                ApiConstants.API_SPECIAL_SERVICE, ApiConstants.API_SPECIAL_STATUS, params
+                ApiConstants.API_SPECIAL_SERVICE,
+                ApiConstants.API_SPECIAL_STATUS,
+                getApiKey(context),
+                params
             ).enqueue(object : Callback<WeatherResponse> {
                 override fun onResponse(
                     call: Call<WeatherResponse>,
@@ -260,40 +275,49 @@ class ApiRequestRepository private constructor() {
                     put("_returnType", "json")
                 }
                 val client = AirMeasureClient.getInstance()
-                client.requestAirMeasure(params).enqueue(object : Callback<AirResponse> {
-                    override fun onResponse(
-                        call: Call<AirResponse>,
-                        response: Response<AirResponse>
-                    ) {
-                        DLog.d(
-                            context, TAG,
-                            "requestAirMeasure.onResponse() -> call : $call, response : $response"
-                        )
-                        val list = response.body()?.list
-                        DLog.d(tag = TAG, message = "requestAirMeasure.list : $list")
-                        WeatherRepository.getInstance(context).insertAirMeasure(addressCode.fullName, list)
-                        listener?.onComplete(ReturnCode.NO_ERROR, OfferType.AIR)
-                    }
+                client.requestAirMeasure(getApiKey(context), params)
+                    .enqueue(object : Callback<AirResponse> {
+                        override fun onResponse(
+                            call: Call<AirResponse>,
+                            response: Response<AirResponse>
+                        ) {
+                            DLog.d(
+                                context, TAG,
+                                "requestAirMeasure.onResponse() -> call : $call, response : $response"
+                            )
+                            val list = response.body()?.list
+                            DLog.d(tag = TAG, message = "requestAirMeasure.list : $list")
+                            WeatherRepository.getInstance(context)
+                                .insertAirMeasure(addressCode.fullName, list)
+                            listener?.onComplete(ReturnCode.NO_ERROR, OfferType.AIR)
+                        }
 
-                    override fun onFailure(call: Call<AirResponse>, t: Throwable) {
-                        DLog.e(
-                            context, TAG, "requestAirMeasure.onFailure() -> call : $call, t : $t"
-                        )
-                        listener?.run {
-                            if (t is SocketTimeoutException) {
-                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.AIR)
-                            } else {
-                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.AIR)
+                        override fun onFailure(call: Call<AirResponse>, t: Throwable) {
+                            DLog.e(
+                                context,
+                                TAG,
+                                "requestAirMeasure.onFailure() -> call : $call, t : $t"
+                            )
+                            listener?.run {
+                                if (t is SocketTimeoutException) {
+                                    listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.AIR)
+                                } else {
+                                    listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.AIR)
+                                }
                             }
                         }
-                    }
 
-                })
+                    })
             }
         }
 
         @JvmStatic
-        fun requestJuso(apiUrl: String, code: List<String>, listener: CompleteListener) {
+        fun requestJuso(
+            context: Context,
+            apiUrl: String,
+            code: List<String>,
+            listener: CompleteListener
+        ) {
             val params = LinkedHashMap<String, Any>().apply {
                 if (code.isNotEmpty()) {
                     val brtcCd = Address.getSidoCode(code[0])?.shortName ?: return
@@ -304,28 +328,29 @@ class ApiRequestRepository private constructor() {
                 put("_type", "json")
             }
             val client = JusoClient.getInstance()
-            client.requestJuso(apiUrl, params).enqueue(object : Callback<JusoResponse> {
-                override fun onResponse(
-                    call: Call<JusoResponse>,
-                    response: Response<JusoResponse>
-                ) {
-                    DLog.d(
-                        tag = TAG,
-                        message = "requestJuso.onResponse() -> call : $call, response : $response"
-                    )
-                    val items = response.body()?.response?.body
-                    DLog.d(tag = TAG, message = "requestJuso.items : $items")
-                    if (items != null)
-                        listener.onComplete(ReturnCode.NO_ERROR, items)
-                    else
-                        listener.onComplete(ReturnCode.DATA_IS_NULL, Any())
-                }
+            client.requestJuso(apiUrl, getApiKey(context), params)
+                .enqueue(object : Callback<JusoResponse> {
+                    override fun onResponse(
+                        call: Call<JusoResponse>,
+                        response: Response<JusoResponse>
+                    ) {
+                        DLog.d(
+                            tag = TAG,
+                            message = "requestJuso.onResponse() -> call : $call, response : $response"
+                        )
+                        val items = response.body()?.response?.body
+                        DLog.d(tag = TAG, message = "requestJuso.items : $items")
+                        if (items != null)
+                            listener.onComplete(ReturnCode.NO_ERROR, items)
+                        else
+                            listener.onComplete(ReturnCode.DATA_IS_NULL, Any())
+                    }
 
-                override fun onFailure(call: Call<JusoResponse>, t: Throwable) {
-                    val message = "onFailure() -> call : $call, t : $t"
-                    listener.onComplete(ReturnCode.UNKNOWN_ERROR, message)
-                }
-            })
+                    override fun onFailure(call: Call<JusoResponse>, t: Throwable) {
+                        val message = "onFailure() -> call : $call, t : $t"
+                        listener.onComplete(ReturnCode.UNKNOWN_ERROR, message)
+                    }
+                })
         }
 
         @JvmStatic
@@ -341,7 +366,7 @@ class ApiRequestRepository private constructor() {
             requestVillage(context, OfferType.CURRENT, gridData, listener)
             requestVillage(context, OfferType.YESTERDAY, gridData, listener)
             requestVillage(context, OfferType.DAILY, gridData, listener)
-            requestVillage(context, OfferType.MIN_MAX, gridData,listener)
+            requestVillage(context, OfferType.MIN_MAX, gridData, listener)
             requestMiddle(context, ApiConstants.API_MIDDLE_LAND_WEATHER, areaCode, listener)
             requestMiddle(context, ApiConstants.API_MIDDLE_TEMPERATURE, areaCode, listener)
             requestLife(context, OfferType.LIFE_DAY, areaNo)
@@ -369,6 +394,14 @@ class ApiRequestRepository private constructor() {
                     }
                 }
             } ?: false
+        }
+
+        private fun getApiKey(context: Context): String {
+            val asset = context.applicationContext.assets.open("apiConfig.properties")
+            return Properties().run {
+                load(asset)
+                getProperty("data_api_key")
+            }
         }
     }
 }
