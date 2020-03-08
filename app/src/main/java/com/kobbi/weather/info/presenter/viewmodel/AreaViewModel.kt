@@ -34,10 +34,4 @@ class AreaViewModel(application: Application) : AndroidViewModel(application) {
     init {
         _position.postValue(0)
     }
-
-    fun refreshWeatherInfo(init: Boolean = false) {
-        ServiceManager.getWeatherInfo(init)
-    }
-
-
 }

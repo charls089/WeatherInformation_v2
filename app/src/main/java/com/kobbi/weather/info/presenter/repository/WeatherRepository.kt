@@ -400,8 +400,8 @@ class WeatherRepository private constructor(context: Context) {
         return null
     }
 
-    fun findCurrentWeather(x: Int, y: Int) =
-        mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.CURRENT), x, y)
+    fun loadCurrentWeather() =
+        mWeatherDB.currentWeatherDao().load(SearchTime.getDate(SearchTime.CURRENT))
 
     fun loadCurrentWeatherLive() =
         mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.CURRENT))
@@ -470,7 +470,7 @@ class WeatherRepository private constructor(context: Context) {
     fun deletePlace(list: List<String>) {
         val deleteList = mutableListOf<FavoritePlace>()
         for (address in list) {
-            deleteList.add(FavoritePlace(address))
+            deleteList.add(com.kobbi.weather.info.data.database.entity.FavoritePlace(address))
         }
         mWeatherDB.favoritePlaceDao().delete(deleteList)
     }

@@ -7,11 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.FragmentWeatherBinding
-import com.kobbi.weather.info.presenter.viewmodel.AreaViewModel
-import com.kobbi.weather.info.presenter.viewmodel.WeatherViewModel
+import com.kobbi.weather.info.presenter.WeatherApplication
 
 class WeatherViewFragment : Fragment() {
 
@@ -34,24 +32,19 @@ class WeatherViewFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentWeatherBinding>(
             inflater, R.layout.fragment_weather, container, false
         ).apply {
-            context?.applicationContext?.let {
-                activity?.run {
-                    weatherVm =
-                        ViewModelProviders.of(this)[WeatherViewModel::class.java]
-
-                    areaVm =
-                        ViewModelProviders.of(this)[AreaViewModel::class.java].apply {
-                            position.observe(this@run, Observer {
-                                svContainer.smoothScrollTo(0, 0)
-                                rvForecastDailyData.smoothScrollToPosition(0)
-                                rvForecastWeeklyData.smoothScrollToPosition(0)
-                            })
-                        }
-                    position = arguments?.getInt(POSITION_INDEX_CODE) ?: 0
-                    lifecycleOwner = this@WeatherViewFragment
+            activity?.run {
+                val weatherApplication = this.application as WeatherApplication
+                weatherVm = weatherApplication.weatherViewModel
+                areaVm = weatherApplication.areaViewModel.apply {
+                    position.observe(this@run, Observer {
+                        svContainer.smoothScrollTo(0, 0)
+                        rvForecastDailyData.smoothScrollToPosition(0)
+                        rvForecastWeeklyData.smoothScrollToPosition(0)
+                    })
                 }
             }
-
+            position = arguments?.getInt(POSITION_INDEX_CODE) ?: 0
+            lifecycleOwner = this@WeatherViewFragment
         }
         return binding.root
     }

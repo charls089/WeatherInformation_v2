@@ -24,16 +24,16 @@ class ApiConstants private constructor() {
 
         //기상특보
         const val API_SPECIAL_SERVICE = "WthrWrnInfoService"
-        const val API_SPECIAL_WARNING_LIST = "WeatherWarningList"                      //기상특보목록조회
-        const val API_SPECIAL_WARNING_ITEM = "WeatherWarningItem"                      //기상특보통보문조회
-        const val API_SPECIAL_WEATHER_INFO_LIST = "WeatherInfomationList"              //기상정보목록조회
-        const val API_SPECIAL_WEATHER_INFO = "WeatherInformation"                      //기상정보문조회
-        const val API_SPECIAL_BREAKING_LIST = "WeatherBreakingNewsList"                //기상속보목록조회
-        const val API_SPECIAL_BREAKING = "WeatherAnnouncement"                         //기상속보조회
-        const val API_SPECIAL_PREP_LIST = "PreparationSprcialNewsList"                 //기상예비특보목록조회
-        const val API_SPECIAL_PREP = "WeatherPrepareWarning"                           //기상예비특보조회
-        const val API_SPECIAL_CODE = "SpecialNewsCode"                                 //특보코드조회
-        const val API_SPECIAL_STATUS = "SpecialNewsStatus"                             //특보현황조회
+        const val API_SPECIAL_WARNING_LIST = "getWthrWrnList"             //기상특보목록조회
+        const val API_SPECIAL_WARNING_MESSAGE = "getWthrWrnMsg"           //기상특보통보문조회
+        const val API_SPECIAL_WEATHER_INFO_LIST = "getWthrInfoList"       //기상정보목록조회
+        const val API_SPECIAL_WEATHER_INFO = "getWthrInfo"                //기상정보문조회
+        const val API_SPECIAL_BREAKING_LIST = "getWthrBrkNewsList"        //기상속보목록조회
+        const val API_SPECIAL_BREAKING = "getWthrBrkNews"                 //기상속보조회
+        const val API_SPECIAL_PREP_LIST = "getWthrPwnList"                //기상예비특보목록조회
+        const val API_SPECIAL_PREP = "getWthrPwn"                         //기상예비특보조회
+        const val API_SPECIAL_CODE = "getPwnCd"                           //특보코드조회
+        const val API_SPECIAL_STATUS = "getPwnStatus"                     //특보현황조회
 
 
         //생활기상지수
