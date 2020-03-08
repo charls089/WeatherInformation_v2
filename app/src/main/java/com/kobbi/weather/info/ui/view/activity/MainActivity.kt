@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -70,6 +71,18 @@ class MainActivity : AppCompatActivity() {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 }
                 startActivity(intent)
+            }
+            R.id.action_info -> {
+                //자료 제공
+                AlertDialog.Builder(this).run {
+                    setTitle(R.string.guide_dialog_info_title)
+                    setMessage(R.string.guide_dialog_info_message)
+                    setCancelable(false)
+                    setPositiveButton(R.string.guide_btn_confirm){dialog,_->
+                        dialog.dismiss()
+                    }
+                    show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

@@ -107,6 +107,10 @@
     <string name="guide_btn_select">선택</string>
     <string name="guide_btn_ok">완료</string>
     <string name="guide_btn_prev">이전</string>
+    <string name="guide_btn_confirm">확인</string>
+
+    <string name="guide_dialog_info_title">자료 제공</string>
+    <string name="guide_dialog_info_message">날씨 정보 제공 : 기상청</string>
 
     <string name="content_description_close">close dialog</string>
 
@@ -145,5 +149,6 @@
     <string name="favorite_place">즐겨찾는 장소</string>
     <string name="refresh">새로고침</string>
     <string name="settings">설정</string>
+    <string name="information">자료 제공</string>
     <string name="all_weather">전국 날씨</string>
 </resources>
