@@ -9,8 +9,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.data.database.entity.WeeklyWeather
 import com.kobbi.weather.info.databinding.ItemForecastWeekDataBinding
 
-class WeeklyAdapter(items: List<WeeklyWeather>) :
-    RecyclerView.Adapter<WeeklyAdapter.ViewHolder>() {
+class WeeklyAdapter(items: List<WeeklyWeather>) : RecyclerView.Adapter<WeeklyAdapter.ViewHolder>() {
     private val mItems = mutableListOf<WeeklyWeather>()
 
     init {

@@ -82,7 +82,7 @@ class ApiConstants private constructor() {
         OAK_POLLEN_RISK("꽃가루농도위험지수(참나무)", "getOakPollenRiskIdx", Calendar.APRIL, Calendar.MAY, OfferType.LIFE_DAY, ServiceType.HEALTH),
         PINE_POLLEN_RISK("꽃가루농도위험지수(소나무)", "getPinePollenRiskIdx", Calendar.APRIL, Calendar.MAY, OfferType.LIFE_DAY, ServiceType.HEALTH),
         WEEDS_POLLEN_RISK("꽃가루농도위험지수(잡초류)", "getWeedsPollenRiskndx", Calendar.SEPTEMBER, Calendar.OCTOBER, OfferType.LIFE_DAY, ServiceType.HEALTH),
-        COLD("감기가능지수", "getAsthmaIdx", Calendar.SEPTEMBER, Calendar.APRIL, OfferType.LIFE_DAY, ServiceType.HEALTH);
+        COLD("감기가능지수", "getColdIdx", Calendar.SEPTEMBER, Calendar.APRIL, OfferType.LIFE_DAY, ServiceType.HEALTH);
 
         companion object {
             @JvmStatic

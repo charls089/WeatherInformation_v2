@@ -14,7 +14,7 @@ enum class LifeHealthCode(
     HEAT("열지수", "A05", range = Constants.VALUE_RANGE_HEAT),
     DSPLS("불쾌지수", "A06", range = Constants.VALUE_RANGE_DSP_LS),
     WINTER("동파가능지수", "A08", range = Constants.VALUE_RANGE_WINTER),
-    AIR_POLLUTION("대기확산지수", "A09", range = Constants.VALUE_RANGE_AIR),
+    AIR_DIFFUSION("대기확산지수", "A09", range = Constants.VALUE_RANGE_AIR),
     ASTHMA("천식·폐질환가능지수", "D01", Constants.TYPE_DAY),
     STROKE("뇌졸중가능지수", "D02", Constants.TYPE_DAY),
     OAK_POLLEN_RISK("꽃가루농도위험지수(참나무)", "D06", Constants.TYPE_DAY),

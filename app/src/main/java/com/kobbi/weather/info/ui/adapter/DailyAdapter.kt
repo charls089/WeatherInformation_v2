@@ -9,8 +9,7 @@ import com.kobbi.weather.info.R
 import com.kobbi.weather.info.data.database.entity.DailyWeather
 import com.kobbi.weather.info.databinding.ItemForecastTimeDataBinding
 
-class DailyAdapter(items: List<DailyWeather>) :
-    RecyclerView.Adapter<DailyAdapter.ViewHolder>() {
+class DailyAdapter(items: List<DailyWeather>) : RecyclerView.Adapter<DailyAdapter.ViewHolder>() {
     private val mItems = mutableListOf<DailyWeather>()
 
     init {

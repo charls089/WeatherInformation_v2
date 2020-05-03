@@ -86,6 +86,9 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         resetWidgetId(context)
     }
 
+    /**
+     * 로딩 뷰에서 화면으로 넘어가지 않는 버그 발생
+     */
     private fun setRemoteViews(context: Context) {
         showProgressView(context)
         WidgetViewModel(context).getWeatherInfo(object : CompleteListener {

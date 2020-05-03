@@ -17,7 +17,7 @@ import com.kobbi.weather.info.util.SharedPrefHelper
 abstract class BaseActivity : AppCompatActivity() {
     companion object {
         private val NEED_PERMISSIONS =
-            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         private const val REQUEST_CODE_PERMISSIONS = 100
         private const val REQUEST_PERMISSION_SETTING = 101
     }

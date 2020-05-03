@@ -484,7 +484,8 @@ object BindingAdapter {
             }?.sortedBy {
                 it.codeNo
             }
-
+            DLog.i(tag = "BindingAdapter",message = "createLife() --> lifeIndex : $lifeIndex")
+            DLog.i(tag = "BindingAdapter",message = "createLife() --> filteredIdxList : $filteredIdxList")
             filteredIdxList?.let { indexList ->
                 for (index in indexList) {
                     val codeNo = index.codeNo
