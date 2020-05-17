@@ -8,6 +8,7 @@ import android.location.LocationManager.NETWORK_PROVIDER
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
+import com.kobbi.weather.info.presenter.listener.LocationCompleteListener
 import com.kobbi.weather.info.presenter.service.ServiceManager
 import com.kobbi.weather.info.util.DLog
 import java.util.*
@@ -16,18 +17,28 @@ import kotlin.math.pow
 
 
 object LocationManager {
-    const val RESPONSE_NO_ERROR = 0
-    const val RESPONSE_LOCATION_TIMEOUT = 1
-    const val RESPONSE_MISSING_PERMISSION = 2
+    enum class ResponseCode {
+        RESPONSE_NO_ERROR,
+        RESPONSE_LOCATION_TIMEOUT,
+        RESPONSE_MISSING_PERMISSION;
+
+        companion object {
+            fun isComplete(code: ResponseCode): Boolean {
+                return values().any {
+                    code == it
+                }
+            }
+        }
+    }
 
     private const val LOCATION_OFFER_TIME = 10 * 60 * 1000L
     private const val DEFAULT_WAIT_TIME = 4 * 1000L
 
-    private val mExecutionWaits = HashSet<com.kobbi.weather.info.presenter.listener.LocationListener>()
+    private val mExecutionWaits = HashSet<LocationCompleteListener>()
     private var mIsRunning = false
 
     @Synchronized
-    fun getLocation(context: Context, listener: com.kobbi.weather.info.presenter.listener.LocationListener) {
+    fun getLocation(context: Context, listener: LocationCompleteListener) {
         val locationManager =
             context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
 
@@ -38,7 +49,7 @@ object LocationManager {
         mIsRunning = true
 
         getLocationFromCache(locationManager)?.let {
-            sendCallbackComplete(RESPONSE_NO_ERROR, it)
+            sendCallbackComplete(ResponseCode.RESPONSE_NO_ERROR, it)
             return
         }
 
@@ -49,7 +60,7 @@ object LocationManager {
                 timer.cancel()
                 locationManager.removeUpdates(this)
                 location?.let {
-                    sendCallbackComplete(RESPONSE_NO_ERROR, location)
+                    sendCallbackComplete(ResponseCode.RESPONSE_NO_ERROR, location)
                 }
             }
 
@@ -66,23 +77,21 @@ object LocationManager {
             }
         }
         try {
-            ServiceManager.startF()
             locationManager.requestLocationUpdates(
                 NETWORK_PROVIDER, 0L, 0F, locationListener, Looper.getMainLooper()
             )
-            ServiceManager.stopF()
             timer.schedule(DEFAULT_WAIT_TIME) {
                 locationManager.removeUpdates(locationListener)
-                sendCallbackComplete(RESPONSE_LOCATION_TIMEOUT, null)
+                sendCallbackComplete(ResponseCode.RESPONSE_LOCATION_TIMEOUT, null)
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
-            sendCallbackComplete(RESPONSE_MISSING_PERMISSION, null)
+            sendCallbackComplete(ResponseCode.RESPONSE_MISSING_PERMISSION, null)
         }
     }
 
     @Synchronized
-    private fun sendCallbackComplete(responseCode: Int, location: Location?) {
+    private fun sendCallbackComplete(responseCode: ResponseCode, location: Location?) {
         for (listener in mExecutionWaits) {
             listener.onComplete(responseCode, location)
         }

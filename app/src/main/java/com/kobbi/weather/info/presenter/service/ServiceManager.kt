@@ -2,11 +2,10 @@ package com.kobbi.weather.info.presenter.service
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.IBinder
+import android.os.Build
 import android.os.SystemClock
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.receiver.ServiceReceiver
@@ -25,37 +24,6 @@ object ServiceManager {
 
     private const val TAG = "ServiceManager"
 
-    private var mWeatherService: WeatherService? = null
-    private var mPolarisService: UpDownService? = null
-
-    private val mWeatherServiceConnection = object : ServiceConnection {
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.i(tag = TAG, message = "WeatherService was disconnected.")
-        }
-
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.i(tag = TAG, message = "WeatherService was connected.")
-            val binder = service as WeatherService.LocalBinder
-            mWeatherService = binder.service
-            getWeatherInfo()
-        }
-    }
-
-    private val mPolarisServiceConnection = object : ServiceConnection {
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            DLog.i(tag = TAG, message = "UpDownService was disconnected.")
-        }
-
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            DLog.i(tag = TAG, message = "UpDownService was connected.")
-            val binder = service as UpDownService.LocalBinder
-            mPolarisService = binder.service
-            mPolarisService?.echo()
-        }
-    }
-
     fun restartService(context: Context, init: Boolean) {
         DLog.i(context, TAG, "ServiceManager.restartService()")
         context.applicationContext?.let {
@@ -65,32 +33,31 @@ object ServiceManager {
                     registerNotifyReceiver(it)
             }
 
-            bindService(it, WeatherService::class.java, mWeatherServiceConnection)
-            bindService(it, UpDownService::class.java, mPolarisServiceConnection)
-
             val beforeCheckTime = WeatherApplication.getUpdateCheckTime(it)
             if (System.currentTimeMillis() - beforeCheckTime > CHECK_WEATHER_INFO_INTERVAL)
-                getWeatherInfo()
+                getWeatherInfo(it)
         }
-        mPolarisService?.echo()
     }
 
     @Synchronized
-    fun getWeatherInfo(init: Boolean = false) {
+    fun getWeatherInfo(context: Context, init: Boolean = false) {
         DLog.d(tag = TAG, message = "ServiceManager.getWeatherInfo($init)")
-        mWeatherService?.runService(init)
+        startServiceWithType(context, if (init) 0 else 2)
     }
 
-    fun startF() {
-        mPolarisService?.upService()
+    fun notifyWeather(context: Context) {
+        startServiceWithType(context, 1)
     }
 
-    fun stopF() {
-        mPolarisService?.downService()
-    }
-
-    fun notifyWeather() {
-        mWeatherService?.notifyMyLocation()
+    private fun startServiceWithType(context: Context, type: Int) {
+        val intent = Intent(context, WeatherService::class.java).apply {
+            putExtra("type", type)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
     }
 
     fun getAction(context: Context, action: String) = context.packageName + action

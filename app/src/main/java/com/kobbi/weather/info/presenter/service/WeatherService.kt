@@ -1,20 +1,19 @@
 package com.kobbi.weather.info.presenter.service
 
 import android.app.AlarmManager
+import android.app.IntentService
 import android.app.PendingIntent
-import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
-import android.os.Binder
-import android.os.IBinder
+import android.os.Build
 import android.os.SystemClock
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.CompleteListener
-import com.kobbi.weather.info.presenter.listener.LocationListener
+import com.kobbi.weather.info.presenter.listener.LocationCompleteListener
 import com.kobbi.weather.info.presenter.location.LocationManager
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.model.type.ReturnCode
@@ -26,12 +25,13 @@ import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
-class WeatherService : Service() {
+class WeatherService : IntentService(WeatherService::class.simpleName) {
     companion object {
         private const val TAG = "WeatherService"
         private const val ACTION_RETRY = "com.kobbi.weather.info.action.retry"
     }
 
+    private val mWeatherRepository by lazy { WeatherRepository.getInstance(applicationContext) }
     private val mListener = object : CompleteListener {
         override fun onComplete(code: ReturnCode, data: Any) {
             val message: String
@@ -62,28 +62,36 @@ class WeatherService : Service() {
             if (data is OfferType) {
                 DLog.d(applicationContext, TAG, "[$data] $message")
             }
-            Timer().schedule(1000) {
-                mIsRunning = false
+        }
+    }
+
+    override fun onHandleIntent(workIntent: Intent?) {
+        DLog.i(tag = TAG, message = "WeatherService2.onHandleIntent()")
+        workIntent?.run {
+            when (getIntExtra("type", -1)) {
+                -1 -> {
+
+                }
+                0 -> {
+                    runService(true)
+                }
+                1 -> {
+                    notifyMyLocation()
+                }
+                2 -> {
+                    runService(false)
+                }
+                else -> {
+
+                }
             }
         }
     }
 
-    private val weatherRepository by lazy { WeatherRepository.getInstance(applicationContext) }
-    private val mBinder = LocalBinder()
-    private var mIsRunning = false
-
-    inner class LocalBinder : Binder() {
-        internal val service: WeatherService get() = this@WeatherService
-    }
-
-    override fun onBind(intent: Intent): IBinder = mBinder
-
-    fun runService(init: Boolean) {
-        if (mIsRunning)
-            return
-        mIsRunning = true
+    private fun runService(init: Boolean) {
         DLog.d(tag = TAG, message = "runService() - init : $init")
         applicationContext?.let { context ->
+            startService()
             WeatherApplication.setUpdateCheckTime(context)
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
                 requestLocation()
@@ -91,15 +99,43 @@ class WeatherService : Service() {
         }
     }
 
-    fun notifyMyLocation() {
+    private fun requestLocation() {
         applicationContext?.let { context ->
+            LocationManager.getLocation(context, object : LocationCompleteListener {
+                override fun onComplete(
+                    responseCode: LocationManager.ResponseCode,
+                    location: Location?
+                ) {
+                    if (LocationManager.ResponseCode.isComplete(responseCode)) {
+                        location?.let {
+                            val address =
+                                LocationUtils.getAddressLine(context, location)
+                            val addrList = LocationUtils.splitAddressLine(address)
+                            mWeatherRepository.insertArea(
+                                context,
+                                addrList,
+                                Constants.STATE_CODE_LOCATED
+                            )
+                        }
+                    }
+                    DLog.i(
+                        context, TAG, "getLocation.onComplete() --> responseCode : $responseCode"
+                    )
+                }
+            })
+        }
+    }
+
+    private fun notifyMyLocation() {
+        applicationContext?.let { context ->
+            startService()
             val isUse =
                 SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_NOTIFICATION)
             DLog.d(tag = TAG, message = "notifyWeather() - isUse : $isUse")
             if (isUse)
                 thread {
-                    val locatedArea = weatherRepository.loadLocatedArea()
-                    weatherRepository.loadWeatherInfo(locatedArea)?.run {
+                    val locatedArea = mWeatherRepository.loadLocatedArea()
+                    mWeatherRepository.loadWeatherInfo(locatedArea)?.run {
                         Notificator.getInstance().showNotification(
                             context,
                             Notificator.ChannelType.WEATHER,
@@ -118,49 +154,11 @@ class WeatherService : Service() {
                             )
                         )
                     }
+                    stopService()
                 }
-        }
-    }
-
-    private fun requestLocation() {
-        applicationContext?.let { context ->
-            LocationManager.getLocation(context, object : LocationListener {
-                override fun onComplete(responseCode: Int, location: Location?) {
-                    var message = ""
-                    when (responseCode) {
-                        LocationManager.RESPONSE_NO_ERROR -> {
-                            location?.let {
-                                val time =
-                                    Utils.getCurrentTime("yyyy-MM-dd, HH:mm:ss", it.time)
-                                val address =
-                                    LocationUtils.getAddressLine(context, location)
-                                val addrList = LocationUtils.splitAddressLine(address)
-                                weatherRepository.insertArea(
-                                    context,
-                                    addrList,
-                                    Constants.STATE_CODE_LOCATED
-                                )
-                                message =
-                                    "time : $time, provider : ${it.provider}, LatLng:(${it.latitude},${it.longitude}), area : $address"
-                            }
-                        }
-                        LocationManager.RESPONSE_LOCATION_TIMEOUT -> {
-                            //위치 획득 시간초과
-                            message = "Location Timeout"
-                        }
-                        LocationManager.RESPONSE_MISSING_PERMISSION -> {
-                            //권한 요청 로직
-                            WeatherApplication.setUpdateCheckTime(context, 0)
-                            message = "Location needs runtime permission"
-                        }
-                    }
-                    DLog.i(
-                        context, TAG,
-                        "getLocation.onComplete() --> responseCode : $responseCode, message : $message"
-                    )
-                }
-            })
-        }
+            else
+                stopService()
+        } ?: run { stopService() }
     }
 
     private fun requestAllWeather(init: Boolean) {
@@ -175,14 +173,14 @@ class WeatherService : Service() {
                 thread {
                     when (type) {
                         OfferType.CURRENT, OfferType.DAILY -> {
-                            weatherRepository.loadAllGridData().forEach { gridData ->
+                            mWeatherRepository.loadAllGridData().forEach { gridData ->
                                 ApiRequestRepository.requestVillage(
                                     context, type, gridData, mListener
                                 )
                             }
                         }
                         OfferType.WEEKLY -> {
-                            weatherRepository.loadAllAreaCode().forEach { areaCode ->
+                            mWeatherRepository.loadAllAreaCode().forEach { areaCode ->
                                 ApiRequestRepository.requestMiddle(
                                     context,
                                     ApiConstants.API_MIDDLE_LAND_WEATHER,
@@ -198,14 +196,14 @@ class WeatherService : Service() {
                             }
                         }
                         OfferType.LIFE_TIME, OfferType.LIFE_DAY -> {
-                            weatherRepository.loadAllAreaNo().forEach { areaNo ->
+                            mWeatherRepository.loadAllAreaNo().forEach { areaNo ->
                                 ApiRequestRepository.requestLife(
                                     context, type, areaNo, mListener
                                 )
                             }
                         }
                         OfferType.AIR -> {
-                            weatherRepository.loadAllSidoName().forEach { sidoName ->
+                            mWeatherRepository.loadAllSidoName().forEach { sidoName ->
                                 ApiRequestRepository.requestAirMeasure(
                                     context, sidoName, mListener
                                 )
@@ -215,9 +213,9 @@ class WeatherService : Service() {
                             ApiRequestRepository.requestNews(context, mListener)
                         }
                         OfferType.YESTERDAY -> {
-                            weatherRepository.loadAllGridData().forEach { gridData ->
+                            mWeatherRepository.loadAllGridData().forEach { gridData ->
                                 if (
-                                    weatherRepository.findYesterdayWeather(
+                                    mWeatherRepository.findYesterdayWeather(
                                         gridData.x,
                                         gridData.y
                                     ) == null
@@ -229,9 +227,9 @@ class WeatherService : Service() {
                             }
                         }
                         OfferType.MIN_MAX -> {
-                            weatherRepository.loadAllGridData().forEach { gridData ->
+                            mWeatherRepository.loadAllGridData().forEach { gridData ->
                                 val minMaxTpr =
-                                    weatherRepository.findMinMaxTpr(gridData.x, gridData.y)
+                                    mWeatherRepository.findMinMaxTpr(gridData.x, gridData.y)
                                 if (minMaxTpr.size != 2) {
                                     ApiRequestRepository.requestVillage(
                                         context,
@@ -272,5 +270,23 @@ class WeatherService : Service() {
                 }
             }, IntentFilter(ACTION_RETRY))
         }
+    }
+
+    private fun startService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DLog.d(tag = TAG, message = "start")
+            val notificator = Notificator.getInstance()
+            val type = Notificator.ChannelType.POLARIS
+            val notification = notificator.getNotification(applicationContext, type)
+            startForeground(notificator.getNotificationId(type), notification)
+        }
+    }
+
+    private fun stopService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DLog.d(tag = TAG, message = "stop")
+            stopForeground(true)
+        }
+        stopSelf()
     }
 }

@@ -49,9 +49,6 @@
         <service
             android:name=".presenter.service.WeatherService"
             android:exported="false" />
-        <service
-            android:name=".presenter.service.UpDownService"
-            android:exported="false" />
 
         <receiver android:name=".presenter.receiver.ServiceReceiver">
             <intent-filter>

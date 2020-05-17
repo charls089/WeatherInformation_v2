@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        WeatherApplication.refreshWeatherInfo()
+        WeatherApplication.refreshWeatherInfo(applicationContext)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_refresh -> {
                 //데이터 새로고침
-                WeatherApplication.refreshWeatherInfo(true)
+                WeatherApplication.refreshWeatherInfo(applicationContext, true)
             }
             R.id.action_add_location -> {
                 //즐겨찾는 장소 화면 이동

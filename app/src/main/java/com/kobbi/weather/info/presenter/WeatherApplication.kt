@@ -43,8 +43,8 @@ class WeatherApplication : Application() {
         fun getUpdateCheckTime(context: Context) =
             SharedPrefHelper.getLong(context, SharedPrefHelper.KEY_LAST_UPDATE_CHECK_TIME)
 
-        fun refreshWeatherInfo(init: Boolean = false) {
-            ServiceManager.getWeatherInfo(init)
+        fun refreshWeatherInfo(context: Context, init: Boolean = false) {
+            ServiceManager.getWeatherInfo(context, init)
         }
     }
 }

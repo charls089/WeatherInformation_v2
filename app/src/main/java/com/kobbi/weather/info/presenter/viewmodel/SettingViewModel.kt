@@ -1,6 +1,7 @@
 package com.kobbi.weather.info.presenter.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
@@ -27,9 +28,9 @@ class SettingViewModel(application: Application) : AndroidViewModel(application)
         )
     }
 
-    fun onAgreeChangedResults(isAgree: Boolean) {
+    fun onAgreeChangedResults(context: Context, isAgree: Boolean) {
         if (isAgree) {
-            ServiceManager.getWeatherInfo()
+            ServiceManager.getWeatherInfo(context)
         } else {
             thread {
                 _weatherRepository.run {

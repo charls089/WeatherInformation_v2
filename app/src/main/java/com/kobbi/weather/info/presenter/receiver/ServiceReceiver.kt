@@ -22,7 +22,7 @@ class ServiceReceiver : BroadcastReceiver() {
                         ServiceManager.restartService(it, false)
 
                     ServiceManager.getAction(context, ServiceManager.ACTION_NOTIFY) ->
-                        ServiceManager.notifyWeather()
+                        ServiceManager.notifyWeather(context)
                 }
             }
         }

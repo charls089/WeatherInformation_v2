@@ -36,7 +36,7 @@ class SettingsActivity : BaseActivity() {
                     if (isAgree) {
                         checkPermission()
                     }
-                    mSettingVm.onAgreeChangedResults(isAgree)
+                    mSettingVm.onAgreeChangedResults(applicationContext, isAgree)
                     val messageId = if (isAgree) {
                         R.string.info_use_location_service
                     } else {
