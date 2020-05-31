@@ -4,8 +4,21 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.data.database.WeatherDatabase
-import com.kobbi.weather.info.data.database.entity.*
-import com.kobbi.weather.info.presenter.model.data.*
+import com.kobbi.weather.info.data.database.entity.AirMeasure
+import com.kobbi.weather.info.data.database.entity.Area
+import com.kobbi.weather.info.data.database.entity.CurrentWeather
+import com.kobbi.weather.info.data.database.entity.DailyWeather
+import com.kobbi.weather.info.data.database.entity.FavoritePlace
+import com.kobbi.weather.info.data.database.entity.LifeIndex
+import com.kobbi.weather.info.data.database.entity.SpecialNews
+import com.kobbi.weather.info.data.database.entity.WeeklyLand
+import com.kobbi.weather.info.data.database.entity.WeeklyTpr
+import com.kobbi.weather.info.data.database.entity.WeeklyWeather
+import com.kobbi.weather.info.presenter.model.data.AreaCode
+import com.kobbi.weather.info.presenter.model.data.BranchCode
+import com.kobbi.weather.info.presenter.model.data.ForecastData
+import com.kobbi.weather.info.presenter.model.data.GridData
+import com.kobbi.weather.info.presenter.model.data.WeatherInfo
 import com.kobbi.weather.info.presenter.model.type.LifeHealthCode
 import com.kobbi.weather.info.presenter.model.type.OfferType
 import com.kobbi.weather.info.presenter.model.type.SearchTime
@@ -74,8 +87,8 @@ class WeatherRepository private constructor(context: Context) {
 
                     val pointCode = findAreaCode(list)
                     DLog.d(
-                        tag = TAG,
-                        message = "insertArea() --> pointCode : ${pointCode.toString()}"
+                            tag = TAG,
+                            message = "insertArea() --> pointCode : ${pointCode.toString()}"
                     )
                     val grid = if (pointCode?.gridX == null)
                         LocationUtils.convertGrid(LocationUtils.convertAddress(context, address))
@@ -83,26 +96,26 @@ class WeatherRepository private constructor(context: Context) {
                         GridData(pointCode.gridX, pointCode.gridY)
                     val areaNo = pointCode?.areaNo
                     DLog.d(
-                        tag = TAG,
-                        message = "insertArea() --> area = $address, gridX = ${grid?.x}, gridY = ${grid?.y}, prvnCode = ${areaCode?.prvnCode}, cityCode = ${areaCode?.cityCode}, areaCode = $areaNo"
+                            tag = TAG,
+                            message = "insertArea() --> area = $address, gridX = ${grid?.x}, gridY = ${grid?.y}, prvnCode = ${areaCode?.prvnCode}, cityCode = ${areaCode?.cityCode}, areaCode = $areaNo"
                     )
                     if (grid != null && areaCode != null && areaNo != null) {
                         val area =
-                            Area(
-                                address,
-                                areaCode.prvnCode,
-                                areaCode.cityCode,
-                                areaNo,
-                                grid.x,
-                                grid.y,
-                                stateCode
-                            )
+                                Area(
+                                        address,
+                                        areaCode.prvnCode,
+                                        areaCode.cityCode,
+                                        areaNo,
+                                        grid.x,
+                                        grid.y,
+                                        stateCode
+                                )
                         //check Area is active
                         val isActiveArea = loadActiveArea().contains(area)
                         DLog.d(
-                            context,
-                            "AreaWeather",
-                            "insertArea() --> isActiveArea : $isActiveArea"
+                                context,
+                                "AreaWeather",
+                                "insertArea() --> isActiveArea : $isActiveArea"
                         )
                         if (!isActiveArea)
                             ApiRequestRepository.initBaseAreaData(context, area)
@@ -151,19 +164,19 @@ class WeatherRepository private constructor(context: Context) {
                 if (sky.isNotEmpty() && wsd.isNotEmpty() && pty.isNotEmpty()) {
                     if (t3h.isNotEmpty()) {
                         dailyList.add(
-                            DailyWeather(
-                                dateTime, gridX, gridY,
-                                pop, t3h, tmn, tmx, r06, s06, sky, uuu, vvv, reh,
-                                pty, lgt, wav, vec, wsd, wct
-                            )
+                                DailyWeather(
+                                        dateTime, gridX, gridY,
+                                        pop, t3h, tmn, tmx, r06, s06, sky, uuu, vvv, reh,
+                                        pty, lgt, wav, vec, wsd, wct
+                                )
                         )
                     }
                     if (t1h.isNotEmpty()) {
                         currentList.add(
-                            CurrentWeather(
-                                dateTime, gridX, gridY,
-                                t1h, rn1, sky, uuu, vvv, reh, pty, lgt, vec, wsd, wct
-                            )
+                                CurrentWeather(
+                                        dateTime, gridX, gridY,
+                                        t1h, rn1, sky, uuu, vvv, reh, pty, lgt, vec, wsd, wct
+                                )
                         )
                     }
                 }
@@ -207,7 +220,7 @@ class WeatherRepository private constructor(context: Context) {
                             tprList.add(WeeklyTpr(dateTime, prvnCode, cityCode, taMin, taMax))
                         } else {
                             landList.add(
-                                WeeklyLand(dateTime, prvnCode, wfAm, wfPm, rnStAm, rnStPm)
+                                    WeeklyLand(dateTime, prvnCode, wfAm, wfPm, rnStAm, rnStPm)
                             )
                         }
                     }
@@ -235,26 +248,26 @@ class WeatherRepository private constructor(context: Context) {
                                 time = date
                                 add(field, amount)
                                 val dateTime =
-                                    Utils.getCurrentTime(time = this.timeInMillis).toLong()
+                                        Utils.getCurrentTime(time = this.timeInMillis).toLong()
                                 val baseTime =
-                                    if (lifeCode!!.type == Constants.TYPE_3HOUR)
-                                        Utils.getCurrentTime(
-                                            "HH", this.timeInMillis
-                                        ).toInt()
-                                    else
-                                        24
+                                        if (lifeCode!!.type == Constants.TYPE_3HOUR)
+                                            Utils.getCurrentTime(
+                                                    "HH", this.timeInMillis
+                                            ).toInt()
+                                        else
+                                            24
                                 DLog.d(
-                                    tag = TAG,
-                                    message = "insertLife() --> key : $key, dateTime : $dateTime, baseTime : $baseTime"
+                                        tag = TAG,
+                                        message = "insertLife() --> key : $key, dateTime : $dateTime, baseTime : $baseTime"
                                 )
                                 mWeatherDB.lifeIndexDao().insert(
-                                    LifeIndex(
-                                        dateTime,
-                                        baseTime,
-                                        areaCode,
-                                        code,
-                                        data.toInt()
-                                    )
+                                        com.kobbi.weather.info.data.database.entity.LifeIndex(
+                                                dateTime,
+                                                baseTime,
+                                                areaCode,
+                                                code,
+                                                data.toInt()
+                                        )
                                 )
                             }
                     }
@@ -290,10 +303,10 @@ class WeatherRepository private constructor(context: Context) {
                     val pm25Value = getMapData(it, "pm25Value")
                     val time = Regex("\\D").replace(dataTime, "")
                     results.add(
-                        AirMeasure(
-                            time.toLong(), sidoName, cityName,
-                            so2Value, coValue, o3Value, no2Value, pm10Value, pm25Value
-                        )
+                            AirMeasure(
+                                    time.toLong(), sidoName, cityName,
+                                    so2Value, coValue, o3Value, no2Value, pm10Value, pm25Value
+                            )
                     )
                 }
             }
@@ -314,9 +327,9 @@ class WeatherRepository private constructor(context: Context) {
 
                 val key = "${tmFc.substring(0..5)}_${tmSeq}"
                 mWeatherDB.specialNewsDao().insert(
-                    SpecialNews(
-                        key, tmFc.toLong(), tmSeq.toInt(), tmEf.toLong(), t6, t7, other
-                    )
+                        SpecialNews(
+                                key, tmFc.toLong(), tmSeq.toInt(), tmEf.toLong(), t6, t7, other
+                        )
                 )
             }
         }
@@ -373,12 +386,11 @@ class WeatherRepository private constructor(context: Context) {
             val today = SearchTime.getDate(SearchTime.DEFAULT)
             val time = SearchTime.getDate(SearchTime.CURRENT)
             DLog.d(
-                tag = TAG,
-                message = "loadWeatherInfo() --> today : $today, time : $time, gridX : $gridX, gridY : $gridY"
+                    tag = TAG,
+                    message = "loadWeatherInfo() --> today : $today, time : $time, gridX : $gridX, gridY : $gridY"
             )
             val weatherInfo =
-                mWeatherDB.weatherInfoDao()
-                    .loadWeatherInfo(address, today, time, gridX, gridY)
+                    mWeatherDB.weatherInfoDao().loadWeatherInfo(address, today, time, gridX, gridY)
             LocationUtils.splitAddressLine(address).let {
                 if (it.size >= 2) {
                     val sidoName = it[0]
@@ -401,16 +413,16 @@ class WeatherRepository private constructor(context: Context) {
     }
 
     fun loadCurrentWeather() =
-        mWeatherDB.currentWeatherDao().load(SearchTime.getDate(SearchTime.CURRENT))
+            mWeatherDB.currentWeatherDao().load(SearchTime.getDate(SearchTime.CURRENT))
 
     fun loadCurrentWeatherLive() =
-        mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.CURRENT))
+            mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.CURRENT))
 
     fun findYesterdayWeather(x: Int, y: Int) =
-        mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.YESTERDAY), x, y)
+            mWeatherDB.currentWeatherDao().findData(SearchTime.getDate(SearchTime.YESTERDAY), x, y)
 
     fun loadYesterdayWeatherLive() =
-        mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.YESTERDAY))
+            mWeatherDB.currentWeatherDao().loadLive(SearchTime.getDate(SearchTime.YESTERDAY))
 
     fun loadDailyWeatherLive(): LiveData<List<DailyWeather>> {
         val dailyTerm = SearchTime.getTerm(SearchTime.DAILY_START, SearchTime.DAILY_END)
@@ -423,10 +435,10 @@ class WeatherRepository private constructor(context: Context) {
     }
 
     fun findMinMaxTpr(x: Int, y: Int) =
-        mWeatherDB.dailyWeatherDao().findMinMaxTpr(SearchTime.getDate(SearchTime.DEFAULT), x, y)
+            mWeatherDB.dailyWeatherDao().findMinMaxTpr(SearchTime.getDate(SearchTime.DEFAULT), x, y)
 
     fun loadMinMaxTprLive() =
-        mWeatherDB.dailyWeatherDao().findMinMaxTprLive(SearchTime.getDate(SearchTime.DEFAULT))
+            mWeatherDB.dailyWeatherDao().findMinMaxTprLive(SearchTime.getDate(SearchTime.DEFAULT))
 
     fun loadWeekWeatherLive(): LiveData<List<DailyWeather>> {
         val weekTerm = SearchTime.getTerm(SearchTime.WEEK_START, SearchTime.WEEK_CHECK)
@@ -462,10 +474,10 @@ class WeatherRepository private constructor(context: Context) {
     fun loadAirMeasureLive() = mWeatherDB.airMeasureDao().loadLive()
 
     fun findAirMeasureData(sidoName: String, cityName: String) =
-        mWeatherDB.airMeasureDao().findData(sidoName, cityName)
+            mWeatherDB.airMeasureDao().findData(sidoName, cityName)
 
     fun loadSpecialNewsLive() =
-        mWeatherDB.specialNewsDao().loadLastDataLive(SearchTime.getDate(SearchTime.SPECIAL))
+            mWeatherDB.specialNewsDao().loadLastDataLive(SearchTime.getDate(SearchTime.SPECIAL))
 
     fun deletePlace(list: List<String>) {
         val deleteList = mutableListOf<FavoritePlace>()
@@ -488,10 +500,10 @@ class WeatherRepository private constructor(context: Context) {
         val forecastDataList = mutableListOf<ForecastData>()
         linkedMap.forEach { map ->
             forecastDataList.add(
-                ForecastData(
-                    map.key,
-                    map.value
-                )
+                    ForecastData(
+                            map.key,
+                            map.value
+                    )
             )
         }
         return forecastDataList
@@ -524,7 +536,7 @@ class WeatherRepository private constructor(context: Context) {
             val tpr = t.toDouble()
             val v = w.toDouble() * 3.6
             (13.12 + 0.6215 * tpr - 11.37 * v.pow(0.16) + 0.3965 * v.pow(0.16) * tpr).roundToInt()
-                .toString()
+                    .toString()
         } catch (e: NumberFormatException) {
             ""
         } catch (e: IllegalArgumentException) {

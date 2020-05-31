@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.databinding.ActivityMainBinding
 import com.kobbi.weather.info.presenter.WeatherApplication
+import com.kobbi.weather.info.presenter.service.ServiceManager
 import com.kobbi.weather.info.util.BackPressedCloser
 import com.kobbi.weather.info.util.DLog
 
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        WeatherApplication.refreshWeatherInfo(applicationContext)
+        ServiceManager.getWeatherInfo(applicationContext)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_refresh -> {
                 //데이터 새로고침
-                WeatherApplication.refreshWeatherInfo(applicationContext, true)
+                ServiceManager.getWeatherInfo(applicationContext, true)
             }
             R.id.action_add_location -> {
                 //즐겨찾는 장소 화면 이동

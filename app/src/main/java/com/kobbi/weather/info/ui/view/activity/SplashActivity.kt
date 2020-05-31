@@ -19,7 +19,7 @@ class SplashActivity : BaseActivity() {
             val isAgree =
                     SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION)
             if (!isAgree || GoogleClient.checkLocationEnabled(this)) {
-                WeatherApplication.startProcess(applicationContext)
+                //TODO check data
                 startActivity(Intent(applicationContext, MainActivity::class.java))
                 finish()
             }

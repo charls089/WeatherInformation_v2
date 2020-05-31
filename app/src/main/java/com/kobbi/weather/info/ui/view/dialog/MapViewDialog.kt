@@ -37,7 +37,7 @@ class MapViewDialog(private val latLng: LatLng?) : DialogFragment(), OnMapReadyC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in))
-        fragmentManager?.findFragmentById(R.id.fragment_map_view)?.let { mapFragment ->
+        parentFragmentManager.findFragmentById(R.id.fragment_map_view)?.let { mapFragment ->
             if (mapFragment is SupportMapFragment)
                 mapFragment.getMapAsync(this)
         }
@@ -54,7 +54,7 @@ class MapViewDialog(private val latLng: LatLng?) : DialogFragment(), OnMapReadyC
 
     override fun onDestroyView() {
         super.onDestroyView()
-        fragmentManager?.run {
+        parentFragmentManager.run {
             findFragmentById(R.id.fragment_map_view)?.let { mapFragment ->
                 if (mapFragment is SupportMapFragment)
                     beginTransaction().remove(mapFragment).commit()

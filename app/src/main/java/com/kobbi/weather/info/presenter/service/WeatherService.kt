@@ -66,23 +66,22 @@ class WeatherService : IntentService(WeatherService::class.simpleName) {
     }
 
     override fun onHandleIntent(workIntent: Intent?) {
-        DLog.i(tag = TAG, message = "WeatherService2.onHandleIntent()")
-        workIntent?.run {
-            when (getIntExtra("type", -1)) {
-                -1 -> {
-
-                }
-                0 -> {
-                    runService(true)
-                }
-                1 -> {
-                    notifyMyLocation()
-                }
-                2 -> {
-                    runService(false)
-                }
-                else -> {
-
+        DLog.i(tag = TAG, message = "onHandleIntent()")
+        with(ServiceManager) {
+            workIntent?.run {
+                when (getIntExtra(SERVICE_TYPE_NAME, SERVICE_TYPE_UNKNOWN)) {
+                    SERVICE_TYPE_RESET -> {
+                        runService(true)
+                    }
+                    SERVICE_TYPE_NOTIFICATION -> {
+                        notifyMyLocation()
+                    }
+                    SERVICE_TYPE_UPDATE -> {
+                        runService(false)
+                    }
+                    else -> {
+                        //nothing
+                    }
                 }
             }
         }
@@ -92,7 +91,6 @@ class WeatherService : IntentService(WeatherService::class.simpleName) {
         DLog.d(tag = TAG, message = "runService() - init : $init")
         applicationContext?.let { context ->
             startService()
-            WeatherApplication.setUpdateCheckTime(context)
             if (SharedPrefHelper.getBool(context, SharedPrefHelper.KEY_AGREE_TO_USE_LOCATION))
                 requestLocation()
             requestAllWeather(init)

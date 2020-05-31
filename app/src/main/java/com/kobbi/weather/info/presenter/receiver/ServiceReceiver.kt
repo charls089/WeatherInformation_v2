@@ -16,11 +16,6 @@ class ServiceReceiver : BroadcastReceiver() {
             )
             intent?.action?.let { action ->
                 when (action) {
-                    Intent.ACTION_BOOT_COMPLETED ->
-                        ServiceManager.restartService(it, true)
-                    ServiceManager.getAction(context, ServiceManager.ACTION_RESTART) ->
-                        ServiceManager.restartService(it, false)
-
                     ServiceManager.getAction(context, ServiceManager.ACTION_NOTIFY) ->
                         ServiceManager.notifyWeather(context)
                 }
