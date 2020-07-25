@@ -38,7 +38,10 @@ class AddPlaceActivity : AppCompatActivity() {
                     })
                 clickPosition.observe(this@AddPlaceActivity, Observer { address ->
                     val latLng = LocationUtils.convertAddress(applicationContext, address)
-                    MapViewDialog(latLng).show(supportFragmentManager, MapViewDialog.TAG)
+                    MapViewDialog(latLng).run {
+                        if (!this.isVisible)
+                            show(supportFragmentManager, MapViewDialog.TAG)
+                    }
                     DLog.d(
                         tag = "PlaceViewModel",
                         message = "clickPosition.observe() --> latLng : $latLng"
