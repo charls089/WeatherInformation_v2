@@ -56,42 +56,41 @@ class ApiRequestRepository private constructor() {
             }
             val client = WeatherClient.getInstance()
             client.requestWeather(
-                    ApiConstants.API_VILLAGE_SERVICE,
-                    apiUrl,
-                    getApiKey(context),
-                    params
-                )
-                .enqueue(object : Callback<WeatherResponse> {
-                    override fun onResponse(
-                        call: Call<WeatherResponse>,
-                        response: Response<WeatherResponse>
-                    ) {
-                        DLog.d(
-                            context,
-                            TAG,
-                            "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
-                        )
-                        val items = response.body()?.response?.body?.items?.item
-                        DLog.d(tag = TAG, message = "requestWeather.items : $items")
-                        WeatherRepository.getInstance(context).insertWeather(gridData, items)
-                        listener?.onComplete(ReturnCode.NO_ERROR, type)
-                    }
+                ApiConstants.API_VILLAGE_SERVICE,
+                apiUrl,
+                getApiKey(context),
+                params
+            ).enqueue(object : Callback<WeatherResponse> {
+                override fun onResponse(
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
+                ) {
+                    DLog.d(
+                        context,
+                        TAG,
+                        "requestWeather.onResponse() -> <$apiUrl>call : $call, response : $response"
+                    )
+                    val items = response.body()?.response?.body?.items?.item
+                    DLog.d(tag = TAG, message = "requestWeather.items : $items")
+                    WeatherRepository.getInstance(context).insertWeather(gridData, items)
+                    listener?.onComplete(ReturnCode.NO_ERROR, type)
+                }
 
-                    override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                        DLog.e(
-                            context,
-                            TAG,
-                            "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
-                        )
-                        listener?.run {
-                            if (t is SocketTimeoutException) {
-                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
-                            } else {
-                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
-                            }
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    DLog.e(
+                        context,
+                        TAG,
+                        "requestWeather.onFailure() -> <$apiUrl>call : $call, t : $t"
+                    )
+                    listener?.run {
+                        if (t is SocketTimeoutException) {
+                            listener.onComplete(ReturnCode.SOCKET_TIMEOUT, type)
+                        } else {
+                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, type)
                         }
                     }
-                })
+                }
+            })
         }
 
         @JvmStatic
@@ -115,41 +114,40 @@ class ApiRequestRepository private constructor() {
             }
             val client = WeatherClient.getInstance()
             client.requestWeather(
-                    ApiConstants.API_MIDDLE_SERVICE,
-                    apiUrl,
-                    getApiKey(context),
-                    params
-                )
-                .enqueue(object : Callback<WeatherResponse> {
-                    override fun onResponse(
-                        call: Call<WeatherResponse>,
-                        response: Response<WeatherResponse>
-                    ) {
-                        DLog.d(
-                            context, TAG,
-                            "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
-                        )
-                        val items = response.body()?.response?.body?.items?.item
-                        DLog.d(tag = TAG, message = "requestMiddle.items : $items")
-                        WeatherRepository.getInstance(context).insertMiddle(areaCode, items)
-                        listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
-                    }
+                ApiConstants.API_MIDDLE_SERVICE,
+                apiUrl,
+                getApiKey(context),
+                params
+            ).enqueue(object : Callback<WeatherResponse> {
+                override fun onResponse(
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
+                ) {
+                    DLog.d(
+                        context, TAG,
+                        "requestMiddle.onResponse() -> <$apiUrl>call : $call, response : $response"
+                    )
+                    val items = response.body()?.response?.body?.items?.item
+                    DLog.d(tag = TAG, message = "requestMiddle.items : $items")
+                    WeatherRepository.getInstance(context).insertMiddle(areaCode, items)
+                    listener?.onComplete(ReturnCode.NO_ERROR, OfferType.WEEKLY)
+                }
 
-                    override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                        DLog.e(
-                            context,
-                            TAG,
-                            "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
-                        )
-                        listener?.run {
-                            if (t is SocketTimeoutException) {
-                                listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
-                            } else {
-                                listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.WEEKLY)
-                            }
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    DLog.e(
+                        context,
+                        TAG,
+                        "requestMiddle.onFailure() -> <$apiUrl>call : $call, t : $t"
+                    )
+                    listener?.run {
+                        if (t is SocketTimeoutException) {
+                            listener.onComplete(ReturnCode.SOCKET_TIMEOUT, OfferType.WEEKLY)
+                        } else {
+                            listener.onComplete(ReturnCode.UNKNOWN_ERROR, OfferType.WEEKLY)
                         }
                     }
-                })
+                }
+            })
         }
 
         @JvmStatic

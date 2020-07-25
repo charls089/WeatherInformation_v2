@@ -6,12 +6,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.RemoteViews
-import androidx.core.os.postDelayed
 import com.kobbi.weather.info.R
 import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.model.data.WeatherInfo
@@ -119,10 +116,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                                 getErrPageView(context, R.string.info_widget_data_load_error)
                             }
                         }
-
-                Handler(Looper.getMainLooper()).postDelayed(500) {
-                    updateAppWidget(context, remoteViews)
-                }
+                updateAppWidget(context, remoteViews)
             }
         })
     }
@@ -163,6 +157,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    @Synchronized
     open fun updateAppWidget(context: Context, remoteViews: RemoteViews) {
         DLog.d(context, TAG, message = "updateAppWidget() --> remoteViews : $remoteViews")
         AppWidgetManager.getInstance(context)

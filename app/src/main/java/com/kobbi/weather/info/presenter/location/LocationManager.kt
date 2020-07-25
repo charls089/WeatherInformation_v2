@@ -8,8 +8,8 @@ import android.location.LocationManager.NETWORK_PROVIDER
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
+import com.google.android.gms.location.LocationServices
 import com.kobbi.weather.info.presenter.listener.LocationCompleteListener
-import com.kobbi.weather.info.presenter.service.ServiceManager
 import com.kobbi.weather.info.util.DLog
 import java.util.*
 import kotlin.concurrent.schedule
@@ -36,6 +36,23 @@ object LocationManager {
 
     private val mExecutionWaits = HashSet<LocationCompleteListener>()
     private var mIsRunning = false
+
+    fun getLastLocation(context: Context, listener: LocationCompleteListener) {
+        try {
+            mExecutionWaits.add(listener)
+            if (mIsRunning)
+                return
+
+            LocationServices.getFusedLocationProviderClient(context).lastLocation.addOnSuccessListener { location ->
+                sendCallbackComplete(
+                    if (location != null) ResponseCode.RESPONSE_NO_ERROR else ResponseCode.RESPONSE_LOCATION_TIMEOUT,
+                    location
+                )
+            }
+        } catch (e: SecurityException) {
+            sendCallbackComplete(ResponseCode.RESPONSE_MISSING_PERMISSION, null)
+        }
+    }
 
     @Synchronized
     fun getLocation(context: Context, listener: LocationCompleteListener) {

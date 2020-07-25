@@ -10,8 +10,8 @@ import android.content.IntentFilter
 import android.location.Location
 import android.os.Build
 import android.os.SystemClock
+import android.widget.Toast
 import com.kobbi.weather.info.R
-import com.kobbi.weather.info.presenter.WeatherApplication
 import com.kobbi.weather.info.presenter.listener.CompleteListener
 import com.kobbi.weather.info.presenter.listener.LocationCompleteListener
 import com.kobbi.weather.info.presenter.location.LocationManager
@@ -21,8 +21,6 @@ import com.kobbi.weather.info.presenter.repository.ApiRequestRepository
 import com.kobbi.weather.info.presenter.repository.WeatherRepository
 import com.kobbi.weather.info.ui.view.activity.SplashActivity
 import com.kobbi.weather.info.util.*
-import java.util.*
-import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 class WeatherService : IntentService(WeatherService::class.simpleName) {
@@ -31,36 +29,25 @@ class WeatherService : IntentService(WeatherService::class.simpleName) {
         private const val ACTION_RETRY = "com.kobbi.weather.info.action.retry"
     }
 
+    private var mToast: Toast? = null
     private val mWeatherRepository by lazy { WeatherRepository.getInstance(applicationContext) }
     private val mListener = object : CompleteListener {
         override fun onComplete(code: ReturnCode, data: Any) {
-            val message: String
-            when (code) {
-                ReturnCode.NO_ERROR -> {
-                    message = getString(R.string.info_network_success)
-                }
-                ReturnCode.NOT_UPDATE_TIME -> {
-                    message = getString(R.string.info_not_update_time)
-                }
-                ReturnCode.NETWORK_DISABLED -> {
-                    message = getString(R.string.info_network_disabled)
-                    if (data is OfferType)
-                        registerRetryReceiver(data)
-                }
-                ReturnCode.SOCKET_TIMEOUT -> {
-                    message = getString(R.string.info_network_timeout)
-                    if (data is OfferType)
-                        requestWeather(true, data)
-                }
-                ReturnCode.DATA_IS_NULL -> {
-                    message = getString(R.string.info_data_is_empty)
-                }
-                else -> {
-                    message = getString(R.string.info_network_unknown)
-                }
+            val message = when (code) {
+                ReturnCode.NO_ERROR -> getString(R.string.info_network_success)
+                ReturnCode.NOT_UPDATE_TIME -> getString(R.string.info_not_update_time)
+                ReturnCode.NETWORK_DISABLED -> getString(R.string.info_network_disabled)
+                ReturnCode.SOCKET_TIMEOUT -> getString(R.string.info_network_timeout)
+                ReturnCode.DATA_IS_NULL -> getString(R.string.info_data_is_empty)
+                else -> getString(R.string.info_network_unknown)
             }
             if (data is OfferType) {
                 DLog.d(applicationContext, TAG, "[$data] $message")
+                mToast?.cancel()
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).run {
+                    mToast = this
+                    show()
+                }
             }
         }
     }

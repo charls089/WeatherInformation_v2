@@ -8,7 +8,6 @@ class SharedPrefHelper private constructor() {
         private const val KEY_PREFERENCE = "_Preference"
 
         const val KEY_AREA_CODE_DATA_INITIALIZED = "area_code_db_init"
-        const val KEY_LAST_UPDATE_CHECK_TIME = "last_update_check_time"
         const val KEY_AGREE_TO_USE_LOCATION = "agree_to_use_location"
         const val KEY_AGREE_TO_USE_NOTIFICATION = "agree_to_use_notify"
 
@@ -26,6 +25,7 @@ class SharedPrefHelper private constructor() {
         fun getBool(context: Context, key: String, defValue: Boolean = false): Boolean {
             return getPreference(context).getBoolean(key, defValue)
         }
+
         @JvmStatic
         fun setInt(context: Context, key: String, value: Int) {
             getPreference(context).edit().run {
@@ -33,6 +33,7 @@ class SharedPrefHelper private constructor() {
                 apply()
             }
         }
+
         @JvmStatic
         fun getInt(context: Context, key: String, defValue: Int = Int.MIN_VALUE): Int {
             return getPreference(context).getInt(key, defValue)
@@ -45,10 +46,12 @@ class SharedPrefHelper private constructor() {
                 apply()
             }
         }
+
         @JvmStatic
         fun getLong(context: Context, key: String, defValue: Long = 0L): Long {
             return getPreference(context).getLong(key, defValue)
         }
+
         @JvmStatic
         fun registerPrefChangeListener(
             context: Context,
@@ -56,6 +59,7 @@ class SharedPrefHelper private constructor() {
         ) {
             getPreference(context).registerOnSharedPreferenceChangeListener(listener)
         }
+
         @JvmStatic
         fun unregisterPrefChangeListener(
             context: Context,

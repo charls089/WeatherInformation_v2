@@ -2,6 +2,7 @@ package com.kobbi.weather.info.presenter
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider
+import com.kobbi.weather.info.data.database.AreaCodeDatabase
 import com.kobbi.weather.info.presenter.viewmodel.AreaViewModel
 import com.kobbi.weather.info.presenter.viewmodel.WeatherViewModel
 
@@ -14,5 +15,10 @@ class WeatherApplication : Application() {
     val weatherViewModel: WeatherViewModel by lazy {
         ViewModelProvider.AndroidViewModelFactory.getInstance(this)
             .create(WeatherViewModel::class.java)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        AreaCodeDatabase.initializeDB(applicationContext)
     }
 }
